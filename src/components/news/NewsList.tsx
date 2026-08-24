@@ -238,7 +238,7 @@ export function NewsList({
                   </Link>
                 ) : author.outletSlug && !compact ? (
                   <Link
-                    href={`/news/outlet/${author.outletSlug}`}
+                    href={`/event/news/outlet/${author.outletSlug}`}
                     className="font-semibold text-foreground hover:underline"
                   >
                     {author.name}
