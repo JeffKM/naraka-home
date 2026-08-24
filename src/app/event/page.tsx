@@ -80,7 +80,7 @@ function QuoteRow({
   const down = q.change < 0;
   return (
     <Link
-      href={`/stocks/${q.code}`}
+      href={`/event/stocks/${q.code}`}
       className="flex items-center justify-between py-3 transition-colors hover:bg-muted/40"
     >
       <div className="flex items-center gap-2">
@@ -253,7 +253,7 @@ export default function Home() {
             title="로그인하면 관심종목을 등록할 수 있어요."
             action={
               <Link
-                href="/login"
+                href="/event/login"
                 className="text-sm text-primary-accent underline underline-offset-4"
               >
                 로그인하기

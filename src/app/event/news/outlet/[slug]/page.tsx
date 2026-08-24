@@ -30,7 +30,7 @@ export default function NewsOutletPage({
       {/* 매체 헤더 — 상단 고정 (프로필 상단바 감성) */}
       <div className="sticky top-14 z-20 -mx-4 border-b border-border bg-background/80 px-4 pb-3 pt-1 backdrop-blur">
         <Link
-          href="/news"
+          href="/event/news"
           className="inline-flex items-center gap-1 py-2 text-sm text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="size-4" />

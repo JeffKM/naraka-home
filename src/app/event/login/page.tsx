@@ -33,7 +33,7 @@ function LoginForm() {
       queryClient.clear();
       // 보호 라우트에서 넘어온 경우 원래 목적지로 (외부 URL 방지: 경로만 허용)
       const next = searchParams.get("next");
-      router.push(next?.startsWith("/") ? next : "/");
+      router.push(next?.startsWith("/") ? next : "/event");
       router.refresh();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "로그인에 실패했습니다.");
@@ -78,7 +78,7 @@ function LoginForm() {
         </form>
         <p className="mt-4 text-center text-sm text-muted-foreground">
           아직 계좌가 없나요?{" "}
-          <Link href="/signup" className="text-primary-accent underline underline-offset-4">
+          <Link href="/event/signup" className="text-primary-accent underline underline-offset-4">
             계좌 개설
           </Link>
         </p>

@@ -48,13 +48,13 @@ export default function SignupPage() {
       // 손님 코드는 매장 승인 대기 상태로 접수된다. 자동 로그인 없이 로그인 페이지로 안내한다.
       if (result.status === "pending") {
         toast.success("가입 요청이 접수되었습니다. 매장 승인 후 로그인해주세요");
-        router.push("/login");
+        router.push("/event/login");
         return;
       }
       // 어드민 코드는 자동 로그인이므로 캐시된 비로그인 상태(me 등)를 비워 헤더가 즉시 갱신되게 한다
       queryClient.clear();
       toast.success("계좌 개설 완료! 10,000,000원이 지급되었습니다");
-      router.push("/");
+      router.push("/event");
       router.refresh();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "가입에 실패했습니다.");
@@ -124,7 +124,7 @@ export default function SignupPage() {
         </form>
         <p className="mt-4 text-center text-sm text-muted-foreground">
           이미 계좌가 있나요?{" "}
-          <Link href="/login" className="text-primary-accent underline underline-offset-4">
+          <Link href="/event/login" className="text-primary-accent underline underline-offset-4">
             로그인
           </Link>
         </p>

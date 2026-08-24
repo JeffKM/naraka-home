@@ -7,20 +7,25 @@ import { SESSION_COOKIE_NAME, verifySessionToken } from "@/lib/auth/token";
 //
 // 어드민(사장님) 계정은 방문자 페이지가 필요 없으므로 항상 /admin으로 보낸다.
 
-const PROTECTED_PREFIXES = ["/portfolio", "/history", "/support", "/admin"];
-const AUTH_PAGES = ["/login", "/signup"];
+const PROTECTED_PREFIXES = [
+  "/event/portfolio",
+  "/event/history",
+  "/event/support",
+  "/admin",
+];
+const AUTH_PAGES = ["/event/login", "/event/signup"];
 // 어드민 리다이렉트 예외 — 게임 방법 등 어드민도 볼 수 있는 공용 안내 페이지
-const ADMIN_ALLOWED_PAGES = ["/guide"];
+const ADMIN_ALLOWED_PAGES = ["/event/guide"];
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get(SESSION_COOKIE_NAME)?.value;
   const session = token ? await verifySessionToken(token) : null;
 
-  // 어드민 → 방문자 페이지 대신 운영자 콘솔로 (공용 안내 페이지는 예외)
+  // 어드민 → 이벤트 방문자 페이지 대신 운영자 콘솔로 (카페 홈은 공용이라 예외)
   if (
     session?.isAdmin &&
-    !pathname.startsWith("/admin") &&
+    pathname.startsWith("/event") &&
     !ADMIN_ALLOWED_PAGES.includes(pathname)
   ) {
     return NextResponse.redirect(new URL("/admin", request.url));
@@ -28,14 +33,14 @@ export async function proxy(request: NextRequest) {
 
   // 비로그인 → 보호 라우트 접근 시 로그인으로 (원래 목적지 유지)
   if (!session && PROTECTED_PREFIXES.some((p) => pathname.startsWith(p))) {
-    const url = new URL("/login", request.url);
+    const url = new URL("/event/login", request.url);
     url.searchParams.set("next", pathname);
     return NextResponse.redirect(url);
   }
 
   // 로그인 상태 → 로그인/가입 페이지는 홈으로
   if (session && AUTH_PAGES.includes(pathname)) {
-    return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.redirect(new URL("/event", request.url));
   }
 
   return NextResponse.next();

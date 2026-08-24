@@ -32,7 +32,7 @@ function HoldingRow({ holding: h }: { holding: Portfolio["holdings"][number] }) 
   const livePnlPercent = cost > 0 ? Math.round((livePnl / cost) * 10000) / 100 : 0;
   return (
     <Link
-      href={`/stocks/${h.stockCode}`}
+      href={`/event/stocks/${h.stockCode}`}
       className="flex items-center justify-between rounded-lg px-2 py-2.5 transition-colors hover:bg-muted/50"
     >
       <div>
@@ -99,7 +99,7 @@ export default function PortfolioPage() {
 
   async function logout() {
     await postJson("/api/auth/logout");
-    router.push("/login");
+    router.push("/event/login");
     router.refresh();
   }
 
