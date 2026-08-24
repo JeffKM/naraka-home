@@ -23,9 +23,10 @@ export async function proxy(request: NextRequest) {
   const session = token ? await verifySessionToken(token) : null;
 
   // 어드민 → 이벤트 방문자 페이지 대신 운영자 콘솔로 (카페 홈은 공용이라 예외)
+  // "/event"·"/event/..."만 매칭 — "/events"(카페 홈 이벤트 탭)는 startsWith("/event")로 잘못 걸리므로 제외
   if (
     session?.isAdmin &&
-    pathname.startsWith("/event") &&
+    (pathname === "/event" || pathname.startsWith("/event/")) &&
     !ADMIN_ALLOWED_PAGES.includes(pathname)
   ) {
     return NextResponse.redirect(new URL("/admin", request.url));
