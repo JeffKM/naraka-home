@@ -6,7 +6,7 @@ export function HomeDeco() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 z-10 hidden select-none xl:block">
       <div className="home-hang absolute left-[4vw] top-0">
-        <Image src="/home/deco/hanging-tassel.webp" alt="" width={108} height={195} />
+        <Image src="/home/deco/hanging-tassel.webp" alt="" width={140} height={190} />
       </div>
       <Image
         src="/home/deco/wisp-a.webp"
@@ -18,8 +18,8 @@ export function HomeDeco() {
       <Image
         src="/home/deco/deco-bat.webp"
         alt=""
-        width={92}
-        height={54}
+        width={94}
+        height={57}
         className="home-wisp-float absolute right-[5vw] top-[130px] [animation-delay:0.8s]"
       />
       <Image

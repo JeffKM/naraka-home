@@ -10,8 +10,8 @@ export function HomeFooter() {
         alt=""
         aria-hidden
         width={62}
-        height={79}
-        className="pointer-events-none absolute -top-[70px] left-5 select-none"
+        height={85}
+        className="pointer-events-none absolute -top-[78px] left-5 select-none"
       />
       {/* 원화 장식 — 푸터 위를 걷는 검은 고양이(15화) */}
       <Image
