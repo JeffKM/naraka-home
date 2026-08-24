@@ -1,0 +1,15 @@
+/* 카페 홈 전용 팔레트 — 앤틱 레트로 (원화 무드: 버건디·크림·앰버·먹색) */
+.home-scope {
+  --home-bg: #f7efe2;        /* 밝은 크림 한지 */
+  --home-surface: #fdf8ee;
+  --home-ink: #2b1d1a;       /* 먹색에 가까운 진갈색 */
+  --home-muted: #7a6a5c;
+  --home-burgundy: #7c2231;  /* 커튼 버건디 */
+  --home-amber: #b97f2e;     /* 앰버 골드 */
+  --home-line: #e2d5bd;
+  background: var(--home-bg);
+  color: var(--home-ink);
+}
+.home-scope a {
+  color: inherit;
+}
