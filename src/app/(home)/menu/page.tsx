@@ -1,3 +1,4 @@
+import { HomeDeco } from "@/components/home/HomeDeco";
 import type { Metadata } from "next";
 import { listMenu } from "@/services/homeContentService";
 
@@ -9,7 +10,10 @@ export default async function MenuPage() {
   const categories = [...new Set(items.map((i) => i.category))];
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-10">
+    <>
+      <HomeDeco />
+      <main className="mx-auto max-w-3xl px-4 py-10">
+        <div className="home-paper p-5 sm:p-8">
       <h1 className="text-2xl font-bold">메뉴</h1>
       {categories.length === 0 && (
         <p className="mt-6 text-sm text-[var(--home-muted)]">
@@ -53,6 +57,8 @@ export default async function MenuPage() {
           </ul>
         </section>
       ))}
-    </main>
+        </div>
+      </main>
+    </>
   );
 }

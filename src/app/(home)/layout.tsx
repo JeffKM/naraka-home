@@ -1,5 +1,4 @@
 import { Gaegu, Gowun_Dodum, Hahmlet } from "next/font/google";
-import Image from "next/image";
 import "./home.css";
 import { HomeFooter } from "@/components/home/HomeFooter";
 import { HomeHeader } from "@/components/home/HomeHeader";
@@ -30,33 +29,6 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
       <div className="home-curtain" aria-hidden />
       <HomeHeader />
       <div className="relative flex-1">
-        {/* 원화 장식 — xl 이상 본문 바깥 여백에만 표시 */}
-        <div aria-hidden className="pointer-events-none absolute inset-0 z-10 hidden select-none xl:block">
-          <div className="home-hang absolute left-[4vw] top-0">
-            <Image src="/home/deco/hanging-tassel.webp" alt="" width={108} height={195} />
-          </div>
-          <Image
-            src="/home/deco/wisp-a.webp"
-            alt=""
-            width={44}
-            height={55}
-            className="home-wisp-float absolute left-[calc(4vw+120px)] top-[150px]"
-          />
-          <Image
-            src="/home/deco/deco-bat.webp"
-            alt=""
-            width={92}
-            height={54}
-            className="home-wisp-float absolute right-[5vw] top-[130px] [animation-delay:0.8s]"
-          />
-          <Image
-            src="/home/deco/wisp-b.webp"
-            alt=""
-            width={50}
-            height={75}
-            className="home-wisp-float absolute right-[4vw] top-[360px] [animation-delay:1.6s]"
-          />
-        </div>
         {children}
       </div>
       <HomeFooter />

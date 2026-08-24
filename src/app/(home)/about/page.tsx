@@ -1,3 +1,4 @@
+import { HomeDeco } from "@/components/home/HomeDeco";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "소개" };
@@ -11,7 +12,10 @@ const CAST = [
 
 export default function AboutPage() {
   return (
-    <main className="mx-auto max-w-3xl px-4 py-10">
+    <>
+      <HomeDeco />
+      <main className="mx-auto max-w-3xl px-4 py-10">
+        <div className="home-paper p-5 sm:p-8">
       <h1 className="text-2xl font-bold">나라카 이야기</h1>
       <p className="mt-4 leading-7">
         나라카(奈落)는 지옥을 뜻합니다. 이 카페는 지옥이고, 감옥이고, 직장입니다.
@@ -35,6 +39,8 @@ export default function AboutPage() {
           </div>
         ))}
       </div>
-    </main>
+        </div>
+      </main>
+    </>
   );
 }

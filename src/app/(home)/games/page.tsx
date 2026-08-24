@@ -1,3 +1,4 @@
+import { HomeDeco } from "@/components/home/HomeDeco";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -8,7 +9,10 @@ const GAMES: { href: string; title: string; desc: string }[] = [];
 
 export default function GamesPage() {
   return (
-    <main className="mx-auto max-w-3xl px-4 py-10">
+    <>
+      <HomeDeco />
+      <main className="mx-auto max-w-3xl px-4 py-10">
+        <div className="home-paper p-5 sm:p-8">
       <h1 className="text-2xl font-bold">나라카 게임</h1>
       {GAMES.length === 0 ? (
         <div className="mt-10 rounded-[14px] border-2 border-dashed border-[var(--home-muted)] p-10 text-center text-[var(--home-muted)]">
@@ -35,6 +39,8 @@ export default function GamesPage() {
           ))}
         </div>
       )}
-    </main>
+        </div>
+      </main>
+    </>
   );
 }

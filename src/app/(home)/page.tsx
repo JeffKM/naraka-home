@@ -1,3 +1,4 @@
+import { HomeDeco } from "@/components/home/HomeDeco";
 import Link from "next/link";
 import { CalendarSection } from "@/components/home/CalendarSection";
 import { ScrubJourney } from "@/components/home/journey/ScrubJourney";
@@ -53,6 +54,8 @@ export default async function HomePage({
   return (
     <main>
       <ScrubJourney />
+      <div className="relative">
+      <HomeDeco />
       <section className="mx-auto max-w-3xl px-4 pt-12 text-center">
         <p className="home-tally text-sm" aria-hidden>
           {"//// //"}
@@ -69,6 +72,7 @@ export default async function HomePage({
       />
 
       <section className="mx-auto max-w-3xl px-4 py-6">
+        <div className="home-paper home-tape home-paper-tilt p-5 sm:p-7">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold">새 소식</h2>
           <Link
@@ -108,9 +112,11 @@ export default async function HomePage({
             </li>
           )}
         </ul>
+        </div>
       </section>
 
       <section className="mx-auto max-w-3xl px-4 py-6 pb-12">
+        <div className="home-paper home-tape p-5 sm:p-7">
         <h2 className="text-xl font-semibold">오시는 길</h2>
         <p className="mt-2 text-sm text-[var(--home-muted)]">
           {HOME_INFO.addressLine} · {HOME_INFO.hoursNote}
@@ -121,7 +127,9 @@ export default async function HomePage({
         >
           자세히 보기
         </Link>
+        </div>
       </section>
+      </div>
     </main>
   );
 }

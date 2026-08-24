@@ -4,7 +4,7 @@
    스펙트럴 블루는 초자연 포인트(포커스 링·위스프)에만 아껴 쓴다. */
 .home-scope {
   --home-noise: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='140'%20height='140'%3E%3Cfilter%20id='n'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.8'%20numOctaves='2'%20stitchTiles='stitch'/%3E%3CfeColorMatrix%20type='saturate'%20values='0'/%3E%3C/filter%3E%3Crect%20width='140'%20height='140'%20filter='url(%23n)'%20opacity='0.06'/%3E%3C/svg%3E");
-  --home-bg: #ebdfb6;            /* 낡은 양피지 — 페이지 바탕 */
+  --home-bg: #e3d3a2;            /* 낡은 양피지 — 페이지 바탕 (한지 시트보다 한 톤 깊게) */
   --home-surface: #f5edc9;       /* 크림 — 카드·달력 칸 */
   --home-paper-deep: #d9cb9c;    /* 짙은 양피지 — 보조 면 */
   --home-ink: #2b1a0e;           /* 다크 브라운 잉크 — 텍스트 */
@@ -233,4 +233,38 @@
   .home-wisp-float {
     animation: none;
   }
+}
+
+/* 한지 시트 — 콘텐츠 뭉치마다 낡은 종이 한 장을 깔아준다 (불규칙 모서리 + 얼룩 + 비네트) */
+.home-paper {
+  position: relative;
+  background:
+    var(--home-noise),
+    radial-gradient(120% 90% at 22% 0%, rgba(255, 251, 232, 0.85), transparent 55%),
+    radial-gradient(80% 70% at 88% 94%, rgba(158, 118, 58, 0.2), transparent 60%),
+    radial-gradient(38% 30% at 92% 6%, rgba(150, 110, 55, 0.14), transparent 70%),
+    radial-gradient(30% 22% at 6% 78%, rgba(150, 112, 58, 0.12), transparent 70%),
+    linear-gradient(180deg, #f7efcd, #eee0b0);
+  border: 1px solid #c4ab74;
+  border-radius: 14px 90px 16px 70px / 70px 15px 80px 14px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 250, 225, 0.55),
+    inset 0 0 34px rgba(140, 105, 55, 0.18),
+    0 3px 10px rgba(26, 15, 7, 0.28);
+}
+.home-paper-tilt {
+  transform: rotate(-0.4deg);
+}
+/* 테이프 조각 — 공지/알림 종이 상단 고정 연출 */
+.home-tape::before {
+  content: "";
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  width: 92px;
+  height: 24px;
+  transform: translateX(-50%) rotate(-2deg);
+  background: rgba(224, 196, 130, 0.6);
+  border: 1px solid rgba(140, 105, 55, 0.35);
+  box-shadow: 0 1px 2px rgba(26, 15, 7, 0.15);
 }

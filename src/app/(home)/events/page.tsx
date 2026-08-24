@@ -1,3 +1,4 @@
+import { HomeDeco } from "@/components/home/HomeDeco";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { listPosts } from "@/services/homeContentService";
@@ -9,7 +10,10 @@ export default async function EventsPage() {
   const posts = await listPosts({ type: "event" });
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-10">
+    <>
+      <HomeDeco />
+      <main className="mx-auto max-w-3xl px-4 py-10">
+        <div className="home-paper p-5 sm:p-8">
       <h1 className="text-2xl font-bold">이벤트</h1>
 
       {/* 나라카증권 상설 카드 — /event 주식앱 진입점 */}
@@ -48,6 +52,8 @@ export default async function EventsPage() {
           </li>
         )}
       </ul>
-    </main>
+        </div>
+      </main>
+    </>
   );
 }

@@ -1,3 +1,4 @@
+import { HomeDeco } from "@/components/home/HomeDeco";
 import type { Metadata } from "next";
 import { listStaff } from "@/services/homeContentService";
 
@@ -8,7 +9,10 @@ export default async function StaffPage() {
   const staff = await listStaff(true);
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-10">
+    <>
+      <HomeDeco />
+      <main className="mx-auto max-w-3xl px-4 py-10">
+        <div className="home-paper p-5 sm:p-8">
       <h1 className="text-2xl font-bold">나라카의 요괴들</h1>
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         {staff.map((s) => (
@@ -43,6 +47,8 @@ export default async function StaffPage() {
           </p>
         )}
       </div>
-    </main>
+        </div>
+      </main>
+    </>
   );
 }

@@ -1,3 +1,4 @@
+import { HomeDeco } from "@/components/home/HomeDeco";
 import { notFound } from "next/navigation";
 import { PostBody } from "@/components/home/PostBody";
 import { getPost } from "@/services/homeContentService";
@@ -16,7 +17,10 @@ export default async function NoticeDetailPage({
   if (!post || post.type !== "notice") notFound();
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-10">
+    <>
+      <HomeDeco />
+      <main className="mx-auto max-w-3xl px-4 py-10">
+        <div className="home-paper p-5 sm:p-8">
       <p className="text-xs text-[var(--home-muted)]">{post.publishedAt.slice(0, 10)}</p>
       <h1 className="mt-1 text-2xl font-bold">{post.title}</h1>
       {post.coverImageUrl && (
@@ -28,6 +32,8 @@ export default async function NoticeDetailPage({
         />
       )}
       <PostBody markdown={post.bodyMd} />
-    </main>
+        </div>
+      </main>
+    </>
   );
 }
