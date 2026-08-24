@@ -1,0 +1,16 @@
+{
+  "mode": "stills",
+  "scenes": [
+    { "id": "desk", "label": "마녀의 책상", "image": "/journey/placeholder/scene1.svg" },
+    { "id": "frame", "label": "액자 속으로", "image": "/journey/placeholder/scene2.svg" },
+    { "id": "hall", "label": "카페 홀", "image": "/journey/placeholder/scene3.svg" },
+    { "id": "board", "label": "게시판 앞", "image": "/journey/placeholder/scene4.svg" }
+  ],
+  "frames": {
+    "basePath": "/journey/desktop",
+    "pattern": "s_%04d.webp",
+    "count": 0,
+    "mobileBasePath": "/journey/mobile",
+    "mobileCount": 0
+  }
+}

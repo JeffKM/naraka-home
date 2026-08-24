@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CalendarSection } from "@/components/home/CalendarSection";
+import { ScrubJourney } from "@/components/home/journey/ScrubJourney";
 import { buildMonthGrid } from "@/lib/homeCalendar";
 import { HOME_INFO } from "@/lib/homeConfig";
 import { getKstParts } from "@/lib/market";
@@ -51,7 +52,7 @@ export default async function HomePage({
 
   return (
     <main>
-      {/* Task 11에서 이 자리에 스크럽 여정 히어로가 들어간다 */}
+      <ScrubJourney />
       <section className="mx-auto max-w-3xl px-4 pt-12 text-center">
         <h1 className="text-3xl font-bold tracking-widest">{HOME_INFO.name}</h1>
         <p className="mt-2 text-[var(--home-muted)]">{HOME_INFO.tagline}</p>
