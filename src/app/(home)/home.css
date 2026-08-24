@@ -203,3 +203,34 @@
   font-weight: 600;
   transform: rotate(-8deg);
 }
+
+/* 원화 장식 — 매달린 술 장식(13화)·위스프(9화)·검은 고양이(15화). 본문과 겹치지 않는 여백 전용 */
+.home-hang {
+  animation: home-sway 7s ease-in-out infinite;
+  transform-origin: top center;
+}
+.home-hang::before {
+  content: "";
+  display: block;
+  width: 2.5px;
+  height: 64px;
+  margin: 0 auto;
+  background: #6d5142;
+}
+@keyframes home-sway {
+  0%, 100% { transform: rotate(-1.5deg); }
+  50% { transform: rotate(1.8deg); }
+}
+.home-wisp-float {
+  animation: home-wisp 5s ease-in-out infinite;
+}
+@keyframes home-wisp {
+  0%, 100% { transform: translateY(0); opacity: 0.85; }
+  50% { transform: translateY(-9px); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-hang,
+  .home-wisp-float {
+    animation: none;
+  }
+}
