@@ -30,15 +30,30 @@ export function CalendarSection({ month, weeks, staff, daySchedule }: Props) {
   return (
     <section id="calendar" className="mx-auto max-w-3xl px-4 py-10">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold">이번 달의 나라카</h2>
-        <div className="flex items-center gap-3 text-sm">
-          <Link href={`/?month=${shiftMonth(month, -1)}#calendar`}>이전 달</Link>
-          <span className="font-semibold">{month.replace("-", ".")}</span>
-          <Link href={`/?month=${shiftMonth(month, 1)}#calendar`}>다음 달</Link>
+        <h2 className="flex items-baseline gap-2 text-xl font-semibold">
+          이번 달의 나라카
+          <span className="home-tally text-sm" aria-hidden>
+            {"////"}
+          </span>
+        </h2>
+        <div className="home-ui flex items-center gap-3 text-sm">
+          <Link
+            href={`/?month=${shiftMonth(month, -1)}#calendar`}
+            className="hover:text-[var(--home-burgundy)]"
+          >
+            이전 달
+          </Link>
+          <span className="tabular-nums">{month.replace("-", ".")}</span>
+          <Link
+            href={`/?month=${shiftMonth(month, 1)}#calendar`}
+            className="hover:text-[var(--home-burgundy)]"
+          >
+            다음 달
+          </Link>
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-7 gap-1 text-center text-xs text-[var(--home-muted)]">
+      <div className="home-ui mt-4 grid grid-cols-7 gap-1 text-center text-xs text-[var(--home-muted)]">
         {WEEKDAYS.map((d) => (
           <div key={d} className="py-1">{d}</div>
         ))}
@@ -51,17 +66,31 @@ export function CalendarSection({ month, weeks, staff, daySchedule }: Props) {
               type="button"
               onClick={() => setSelected(cell.date)}
               className={[
-                "flex min-h-16 flex-col items-start gap-1 rounded-md border p-1 text-left",
+                "flex min-h-16 flex-col items-start gap-1 rounded-lg p-1 text-left",
                 cell.inMonth
-                  ? "border-[var(--home-line)] bg-[var(--home-surface)]"
-                  : "border-transparent opacity-40",
-                cell.isToday ? "ring-2 ring-[var(--home-amber)]" : "",
-                selected === cell.date ? "border-[var(--home-burgundy)]" : "",
+                  ? "bg-[var(--home-paper-deep)]"
+                  : "bg-transparent opacity-40",
+                cell.isToday
+                  ? "border-[2.5px] border-[var(--home-burgundy)] bg-[var(--home-surface)]"
+                  : "border border-transparent",
+                selected === cell.date && !cell.isToday
+                  ? "ring-2 ring-[var(--home-amber)]"
+                  : "",
+                selected === cell.date && cell.isToday
+                  ? "ring-2 ring-[var(--home-amber)] ring-offset-1"
+                  : "",
               ].join(" ")}
             >
-              <span className="text-xs">{Number(cell.date.slice(8))}</span>
+              <span
+                className={[
+                  "home-ui text-xs tabular-nums",
+                  cell.isToday ? "text-[var(--home-burgundy)]" : "",
+                ].join(" ")}
+              >
+                {Number(cell.date.slice(8))}
+              </span>
               {cell.events.length > 0 && (
-                <span className="max-w-full truncate rounded bg-[var(--home-burgundy)] px-1 text-[10px] text-[var(--home-surface)]">
+                <span className="max-w-full truncate rounded bg-[var(--home-teal)] px-1 text-[10px] text-[var(--home-surface)]">
                   {cell.events[0].title}
                   {cell.events.length > 1 ? ` 외 ${cell.events.length - 1}` : ""}
                 </span>
@@ -80,8 +109,8 @@ export function CalendarSection({ month, weeks, staff, daySchedule }: Props) {
       ))}
 
       {selectedCell && (
-        <div className="mt-4 rounded-lg border border-[var(--home-line)] bg-[var(--home-surface)] p-4">
-          <h3 className="font-semibold">
+        <div className="home-card mt-4 p-4">
+          <h3 className="home-ui text-base">
             {selectedCell.date.replaceAll("-", ".")}
             {selectedCell.isToday ? " (오늘)" : ""}
           </h3>

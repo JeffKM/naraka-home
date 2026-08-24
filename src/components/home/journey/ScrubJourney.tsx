@@ -139,7 +139,7 @@ export function ScrubJourney() {
           {collapsed && !reduced && (
             <button
               type="button"
-              className="rounded-md bg-[var(--home-surface)]/90 px-4 py-2 text-sm"
+              className="home-btn px-4 py-1.5 text-sm"
               onClick={() => {
                 setCollapsed(false);
                 try {
@@ -154,7 +154,7 @@ export function ScrubJourney() {
           )}
           <Link
             href="#calendar"
-            className="rounded-md bg-[var(--home-burgundy)] px-4 py-2 text-sm text-[var(--home-surface)]"
+            className="home-btn home-btn-primary px-4 py-1.5 text-sm"
           >
             달력·출근표 보기
           </Link>
@@ -170,7 +170,7 @@ export function ScrubJourney() {
 
   return (
     <div ref={wrapRef} style={{ height: `${scenes.length * 120}vh` }}>
-      <div className="sticky top-0 h-dvh overflow-hidden">
+      <div className="sticky top-0 h-dvh overflow-hidden bg-[var(--home-stage)]">
         {manifest.mode === "frames" && manifest.frames.count > 0 ? (
           <canvas ref={canvasRef} className="size-full object-cover" />
         ) : (
@@ -189,7 +189,7 @@ export function ScrubJourney() {
         )}
         <button
           type="button"
-          className="absolute right-4 top-4 rounded-md bg-[var(--home-surface)]/90 px-3 py-1.5 text-sm"
+          className="home-btn home-ui absolute right-4 top-4 px-3 py-1 text-sm"
           onClick={() =>
             document.getElementById("calendar")?.scrollIntoView({ behavior: "smooth" })
           }

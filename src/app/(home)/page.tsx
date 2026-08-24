@@ -54,7 +54,10 @@ export default async function HomePage({
     <main>
       <ScrubJourney />
       <section className="mx-auto max-w-3xl px-4 pt-12 text-center">
-        <h1 className="text-3xl font-bold tracking-widest">{HOME_INFO.name}</h1>
+        <p className="home-tally text-sm" aria-hidden>
+          {"//// //"}
+        </p>
+        <h1 className="mt-1 text-3xl font-extrabold">{HOME_INFO.name}</h1>
         <p className="mt-2 text-[var(--home-muted)]">{HOME_INFO.tagline}</p>
       </section>
 
@@ -67,8 +70,11 @@ export default async function HomePage({
 
       <section className="mx-auto max-w-3xl px-4 py-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold">새 소식</h2>
-          <Link href="/notice" className="text-sm underline underline-offset-2">
+          <h2 className="text-xl font-semibold">새 소식</h2>
+          <Link
+            href="/notice"
+            className="home-ui text-sm hover:text-[var(--home-burgundy)]"
+          >
             전체 보기
           </Link>
         </div>
@@ -77,13 +83,20 @@ export default async function HomePage({
             <li key={p.id}>
               <Link
                 href={p.type === "event" ? `/events/${p.id}` : `/notice/${p.id}`}
-                className="flex items-baseline gap-2"
+                className="home-card flex items-baseline gap-2 px-3 py-2 hover:bg-[var(--home-bg)]"
               >
-                <span className="shrink-0 text-xs text-[var(--home-burgundy)]">
+                <span
+                  className={[
+                    "home-tag shrink-0 px-2 text-xs",
+                    p.type === "event"
+                      ? "bg-[var(--home-burgundy)] text-[var(--home-surface)]"
+                      : "bg-[var(--home-amber)] text-[var(--home-ink)]",
+                  ].join(" ")}
+                >
                   {p.type === "event" ? "이벤트" : "공지"}
                 </span>
                 <span className="truncate">{p.title}</span>
-                <span className="ml-auto shrink-0 text-xs text-[var(--home-muted)]">
+                <span className="ml-auto shrink-0 text-xs tabular-nums text-[var(--home-muted)]">
                   {p.publishedAt.slice(0, 10)}
                 </span>
               </Link>
@@ -97,12 +110,15 @@ export default async function HomePage({
         </ul>
       </section>
 
-      <section className="mx-auto max-w-3xl px-4 py-6">
-        <h2 className="text-xl font-bold">오시는 길</h2>
+      <section className="mx-auto max-w-3xl px-4 py-6 pb-12">
+        <h2 className="text-xl font-semibold">오시는 길</h2>
         <p className="mt-2 text-sm text-[var(--home-muted)]">
           {HOME_INFO.addressLine} · {HOME_INFO.hoursNote}
         </p>
-        <Link href="/location" className="text-sm underline underline-offset-2">
+        <Link
+          href="/location"
+          className="home-btn mt-3 inline-block px-4 py-1.5 text-sm"
+        >
           자세히 보기
         </Link>
       </section>

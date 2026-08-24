@@ -11,8 +11,8 @@ export default function GamesPage() {
     <main className="mx-auto max-w-3xl px-4 py-10">
       <h1 className="text-2xl font-bold">나라카 게임</h1>
       {GAMES.length === 0 ? (
-        <div className="mt-10 rounded-lg border border-dashed border-[var(--home-line)] p-10 text-center text-[var(--home-muted)]">
-          <p className="font-semibold">준비 중입니다</p>
+        <div className="mt-10 rounded-[14px] border-2 border-dashed border-[var(--home-muted)] p-10 text-center text-[var(--home-muted)]">
+          <p className="home-ui text-base text-[var(--home-ink)]">준비 중입니다</p>
           <p className="mt-2 text-sm">
             요괴들이 새 게임을 만들고 있어요. 지금은{" "}
             <Link href="/events" className="underline underline-offset-2">
