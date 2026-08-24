@@ -2,6 +2,7 @@ import { z } from "zod";
 import { apiError, apiOk, handleApiError } from "@/lib/api/response";
 import { requireAdmin } from "@/lib/auth/guards";
 import { deleteMenuItem, updateMenuItem } from "@/services/homeContentService";
+import { parseId } from "../../parseId";
 
 const patchSchema = z.object({
   category: z.string().trim().min(1).max(30).optional(),
@@ -19,11 +20,15 @@ export async function PATCH(request: Request, ctx: Ctx) {
   try {
     await requireAdmin();
     const { id } = await ctx.params;
+    const menuId = parseId(id);
+    if (menuId === null) {
+      return apiError("VALIDATION", "잘못된 id입니다.");
+    }
     const parsed = patchSchema.safeParse(await request.json());
     if (!parsed.success) {
       return apiError("VALIDATION", parsed.error.issues[0].message);
     }
-    await updateMenuItem(Number(id), parsed.data);
+    await updateMenuItem(menuId, parsed.data);
     return apiOk({ ok: true });
   } catch (error) {
     return handleApiError(error);
@@ -34,7 +39,11 @@ export async function DELETE(_request: Request, ctx: Ctx) {
   try {
     await requireAdmin();
     const { id } = await ctx.params;
-    await deleteMenuItem(Number(id));
+    const menuId = parseId(id);
+    if (menuId === null) {
+      return apiError("VALIDATION", "잘못된 id입니다.");
+    }
+    await deleteMenuItem(menuId);
     return apiOk({ ok: true });
   } catch (error) {
     return handleApiError(error);

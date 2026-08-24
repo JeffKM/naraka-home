@@ -21,9 +21,9 @@ export default async function HomePage({
 }) {
   const { month: rawMonth } = await searchParams;
   const today = getKstParts().date;
-  const month = /^\d{4}-\d{2}$/.test(rawMonth ?? "")
-    ? (rawMonth as string)
-    : today.slice(0, 7);
+  const monthMatch = /^\d{4}-(\d{2})$/.exec(rawMonth ?? "");
+  const isValidMonth = monthMatch !== null && Number(monthMatch[1]) >= 1 && Number(monthMatch[1]) <= 12;
+  const month = isValidMonth ? (rawMonth as string) : today.slice(0, 7);
 
   const [y, m] = month.split("-").map(Number);
   const lastDay = new Date(Date.UTC(y, m, 0)).getUTCDate();

@@ -10,7 +10,9 @@ export default async function EventDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const post = await getPost(Number(id));
+  const numId = Number(id);
+  if (!Number.isInteger(numId) || numId <= 0) notFound();
+  const post = await getPost(numId);
   if (!post || post.type !== "event") notFound();
 
   return (
