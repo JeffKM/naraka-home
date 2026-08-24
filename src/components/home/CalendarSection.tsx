@@ -53,13 +53,14 @@ export function CalendarSection({ month, weeks, staff, daySchedule }: Props) {
         </div>
       </div>
 
-      <div className="home-ui mt-4 grid grid-cols-7 gap-1 text-center text-xs text-[var(--home-muted)]">
+      <div className="home-wood-frame mt-4">
+      <div className="home-ui grid grid-cols-7 gap-1 text-center text-xs text-[var(--home-muted)]">
         {WEEKDAYS.map((d) => (
           <div key={d} className="py-1">{d}</div>
         ))}
       </div>
       {weeks.map((week, wi) => (
-        <div key={wi} className="grid grid-cols-7 gap-1">
+        <div key={wi} className="mt-1 grid grid-cols-7 gap-1">
           {week.map((cell) => (
             <button
               key={cell.date}
@@ -68,8 +69,8 @@ export function CalendarSection({ month, weeks, staff, daySchedule }: Props) {
               className={[
                 "flex min-h-16 flex-col items-start gap-1 rounded-lg p-1 text-left",
                 cell.inMonth
-                  ? "bg-[var(--home-paper-deep)]"
-                  : "bg-transparent opacity-40",
+                  ? "bg-[var(--home-surface)]"
+                  : "bg-transparent text-[var(--home-cream)] opacity-50",
                 cell.isToday
                   ? "border-[2.5px] border-[var(--home-burgundy)] bg-[var(--home-surface)]"
                   : "border border-transparent",
@@ -90,7 +91,7 @@ export function CalendarSection({ month, weeks, staff, daySchedule }: Props) {
                 {Number(cell.date.slice(8))}
               </span>
               {cell.events.length > 0 && (
-                <span className="max-w-full truncate rounded bg-[var(--home-teal)] px-1 text-[10px] text-[var(--home-surface)]">
+                <span className="max-w-full truncate rounded border border-[#b49b63] bg-[var(--home-paper-deep)] px-1 text-[10px] font-semibold text-[var(--home-ink)]">
                   {cell.events[0].title}
                   {cell.events.length > 1 ? ` 외 ${cell.events.length - 1}` : ""}
                 </span>
@@ -107,9 +108,10 @@ export function CalendarSection({ month, weeks, staff, daySchedule }: Props) {
           ))}
         </div>
       ))}
+      </div>
 
       {selectedCell && (
-        <div className="home-card mt-4 p-4">
+        <div className="home-lacquer-panel mt-4 p-4">
           <h3 className="home-ui text-base">
             {selectedCell.date.replaceAll("-", ".")}
             {selectedCell.isToday ? " (오늘)" : ""}

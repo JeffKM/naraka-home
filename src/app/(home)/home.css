@@ -1,21 +1,31 @@
-/* 카페 홈 디자인 시스템 — "종이 위의 요괴들" (치비 원화 팔레트 × 앤틱 디테일)
-   규칙: 화면의 90%는 종이+먹선, 색은 한 화면에 두 가지까지.
-   앤틱은 배경이 아니라 디테일(커튼 스트립·세리프 제목·도장·골드 라인·빗금)로만. */
+/* 카페 홈 디자인 시스템 — "나라카 앤틱" (다크 오크 × 양피지 × 레드 래커 × 앤틱 골드)
+   레퍼런스: 사장님 제공 앤틱 컨셉 목업 2장 (2026-08-25)
+   규칙: 크롬(헤더·푸터·프레임)=다크 우드+골드, 콘텐츠 면=양피지, 주 CTA=레드 래커+골드 테두리.
+   스펙트럴 블루는 초자연 포인트(포커스 링·위스프)에만 아껴 쓴다. */
 .home-scope {
-  --home-bg: #f3e9d2;            /* 종이 크림 — 페이지 바탕 */
-  --home-surface: #fbf4e4;       /* 밝은 종이 — 카드·표면 */
-  --home-paper-deep: #eadcbc;    /* 깊은 종이 — 달력 필러 셀 */
-  --home-ink: #29242e;           /* 먹선 — 텍스트·테두리 */
-  --home-muted: #8a7f74;
-  --home-burgundy: #a8402e;      /* 도장 버건디 — 주 CTA·강조 */
-  --home-burgundy-deep: #8e3327;
-  --home-teal: #2f9fb7;          /* 멜 청록 — 보조·상태 */
-  --home-amber: #e0952c;         /* 부적 앰버 — 하이라이트·오늘 */
-  --home-wisp: #5fa8e8;          /* 위스프 — 장식 전용 */
-  --home-stage: #56525f;         /* 무대 회색 — 히어로(릴스) 구간 전용 */
-  --home-line: #e0d2b2;          /* 옅은 종이 괘선 — 비강조 구분선 */
-  --home-gold: #c2913c;          /* 골드 — 장식 라인 전용, 버튼·글자 금지 */
-  background: var(--home-bg);
+  --home-noise: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='140'%20height='140'%3E%3Cfilter%20id='n'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.8'%20numOctaves='2'%20stitchTiles='stitch'/%3E%3CfeColorMatrix%20type='saturate'%20values='0'/%3E%3C/filter%3E%3Crect%20width='140'%20height='140'%20filter='url(%23n)'%20opacity='0.06'/%3E%3C/svg%3E");
+  --home-bg: #ebdfb6;            /* 낡은 양피지 — 페이지 바탕 */
+  --home-surface: #f5edc9;       /* 크림 — 카드·달력 칸 */
+  --home-paper-deep: #d9cb9c;    /* 짙은 양피지 — 보조 면 */
+  --home-ink: #2b1a0e;           /* 다크 브라운 잉크 — 텍스트 */
+  --home-muted: #85714e;
+  --home-burgundy: #a41010;      /* 레드 래커 — 주 CTA·강조 */
+  --home-burgundy-deep: #7c0b0b;
+  --home-teal: #46cfcf;          /* 스펙트럴 블루 — 초자연 포인트 전용 */
+  --home-amber: #c8b16b;         /* 앤틱 골드 — 하이라이트·태그 */
+  --home-wisp: #46cfcf;
+  --home-oak: #1a0f07;           /* 딥 다크 오크 — 크롬 */
+  --home-oak-2: #2a1810;
+  --home-stage: #140b05;         /* 히어로(릴스) 구간 — 어두운 무대 */
+  --home-line: #c7b27e;          /* 양피지 괘선 */
+  --home-gold: #c8b16b;
+  --home-gold-deep: #8f7343;
+  --home-cream: #f5edc9;
+  background:
+    var(--home-noise),
+    radial-gradient(120% 80% at 50% 0%, rgba(255, 250, 224, 0.55), transparent 60%),
+    radial-gradient(150% 120% at 50% 100%, rgba(120, 88, 40, 0.2), transparent 55%),
+    var(--home-bg);
   color: var(--home-ink);
   font-family: var(--font-gowun), "Apple SD Gothic Neo", sans-serif;
 }
@@ -23,7 +33,7 @@
   color: inherit;
 }
 
-/* 타이포 위계: Hahmlet(제목·앤틱) → Jua(UI·치비) → Gowun Dodum(본문) → Gaegu(장식) */
+/* 타이포 위계: Hahmlet(제목·UI·앤틱 세리프) → Gowun Dodum(본문) → Gaegu(손글씨 주석) */
 .home-scope h1,
 .home-scope h2 {
   font-family: var(--font-hahmlet), serif;
@@ -33,8 +43,9 @@
   font-family: var(--font-hahmlet), serif;
 }
 .home-ui {
-  font-family: var(--font-jua), sans-serif;
-  font-weight: 400;
+  font-family: var(--font-hahmlet), serif;
+  font-weight: 600;
+  letter-spacing: 0.01em;
 }
 .home-hand {
   font-family: var(--font-gaegu), cursive;
@@ -45,40 +56,84 @@
   color: var(--home-muted);
 }
 
-/* 커튼 스트립 — 페이지 최상단 띠 하나가 앤틱 무드의 앵커 (다른 곳 커튼 무늬 금지) */
-.home-curtain {
-  height: 10px;
-  background: repeating-linear-gradient(90deg, #bf4e3d 0 26px, #c85a48 26px 34px);
-  border-bottom: 3px solid var(--home-ink);
+/* 다크 우드 크롬 — 헤더·푸터·프레임 공용 텍스처. 내부 텍스트 변수를 크림/골드로 재정의 */
+.home-wood {
+  --home-ink: var(--home-cream);
+  --home-muted: #b7a379;
+  --home-burgundy: #d8452e;
+  background:
+    var(--home-noise),
+    repeating-linear-gradient(90deg, rgba(255, 236, 190, 0.03) 0 2px, transparent 2px 9px),
+    linear-gradient(180deg, var(--home-oak-2), var(--home-oak));
+  color: var(--home-cream);
 }
 
-/* 치비 컴포넌트 문법: 2.5px 먹선 + 12~14px 라운드 (+ 인터랙티브는 낙하 그림자) */
-.home-card {
-  border: 2.5px solid var(--home-ink);
-  border-radius: 14px;
-  background: var(--home-surface);
+/* 상단 몰딩 — 페이지 맨 위 가는 우드 빔 + 골드 라인 */
+.home-curtain {
+  height: 8px;
+  background:
+    repeating-linear-gradient(90deg, rgba(200, 177, 107, 0.22) 0 2px, transparent 2px 26px),
+    linear-gradient(180deg, #241408, #120a04);
+  border-bottom: 2px solid var(--home-gold-deep);
 }
+
+/* 양피지 카드 — 얇은 세피아 테두리 + 안쪽 하이라이트 + 은은한 비네트 */
+.home-card {
+  border: 1px solid #b49b63;
+  border-radius: 10px;
+  background:
+    var(--home-noise),
+    linear-gradient(180deg, #f7efce, #efe3b4);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 250, 228, 0.6),
+    inset 0 0 18px rgba(146, 114, 58, 0.14),
+    0 2px 6px rgba(26, 15, 7, 0.18);
+}
+
+/* 버튼 — 기본은 골드 금속판, 주 CTA는 레드 래커 + 골드 이중 테두리 */
 .home-btn {
-  font-family: var(--font-jua), sans-serif;
-  font-weight: 400;
-  border: 2.5px solid var(--home-ink);
-  border-radius: 12px;
-  background: var(--home-surface);
-  color: var(--home-ink);
-  box-shadow: 3.5px 3.5px 0 var(--home-ink);
-  transition: transform 0.08s, box-shadow 0.08s;
+  font-family: var(--font-hahmlet), serif;
+  font-weight: 600;
+  border: 1px solid #6d5423;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #efe0ac, #d9c48c 55%, #c8b16b);
+  color: #3a2a12;
+  text-shadow: 0 1px 0 rgba(255, 250, 230, 0.5);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 220, 0.8),
+    inset 0 0 0 2px rgba(255, 244, 205, 0.35),
+    0 2px 4px rgba(26, 15, 7, 0.35);
+  transition: filter 0.1s, transform 0.1s, box-shadow 0.1s;
 }
 .home-btn:hover {
-  transform: translate(1.5px, 1.5px);
-  box-shadow: 2px 2px 0 var(--home-ink);
+  filter: brightness(1.06);
+}
+.home-btn:active {
+  transform: translateY(1px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 220, 0.8),
+    inset 0 0 0 2px rgba(255, 244, 205, 0.35),
+    0 1px 2px rgba(26, 15, 7, 0.35);
 }
 .home-btn:focus-visible {
-  outline: 3px dashed var(--home-burgundy);
-  outline-offset: 3px;
+  outline: 3px solid var(--home-teal);
+  outline-offset: 2px;
 }
 .home-btn-primary {
-  background: var(--home-burgundy);
-  color: var(--home-surface);
+  background: linear-gradient(180deg, #c41a12, #a41010 55%, #7c0b0b);
+  color: var(--home-cream);
+  border: 1px solid #4a0606;
+  text-shadow: 0 1px 2px rgba(60, 4, 4, 0.6);
+  box-shadow:
+    inset 0 0 0 2px rgba(200, 177, 107, 0.85),
+    inset 0 1px 0 rgba(255, 200, 160, 0.35),
+    0 2px 5px rgba(26, 15, 7, 0.45);
+}
+.home-btn-primary:active {
+  box-shadow:
+    inset 0 0 0 2px rgba(200, 177, 107, 0.85),
+    inset 0 1px 0 rgba(255, 200, 160, 0.35),
+    0 1px 2px rgba(26, 15, 7, 0.45);
 }
 @media (prefers-reduced-motion: reduce) {
   .home-btn {
@@ -86,21 +141,55 @@
   }
 }
 
-/* 손글씨 태그 — 카드 모서리에 비스듬히 */
+/* 태그 — 밀랍 인장 칩 (색은 사용처에서 bg로 지정) */
 .home-tag {
-  font-family: var(--font-gaegu), cursive;
-  border: 2px solid var(--home-ink);
-  border-radius: 8px;
+  font-family: var(--font-hahmlet), serif;
+  font-weight: 600;
+  border: 1px solid rgba(58, 26, 12, 0.55);
+  border-radius: 999px;
   transform: rotate(-2deg);
   display: inline-block;
+  box-shadow: 0 1px 2px rgba(26, 15, 7, 0.3);
 }
 
-/* 골드 라인 — 카드당 1개까지, 장식 전용 */
+/* 골드 라인 — 섹션·카드 장식 괘선 */
 .home-gold-line {
-  height: 3px;
-  width: 52px;
+  height: 2px;
+  width: 64px;
   border-radius: 2px;
-  background: linear-gradient(90deg, var(--home-gold), #e8c98a);
+  background: linear-gradient(90deg, transparent, var(--home-gold) 22%, #e6d193 50%, var(--home-gold) 78%, transparent);
+}
+
+/* 우드 프레임 — 달력 등 콘텐츠를 감싸는 액자 (바깥 우드 + 안쪽 골드 라인) */
+.home-wood-frame {
+  --home-muted: #c9b372;
+  border-radius: 12px;
+  padding: 10px;
+  background:
+    var(--home-noise),
+    repeating-linear-gradient(90deg, rgba(255, 236, 190, 0.03) 0 2px, transparent 2px 9px),
+    linear-gradient(180deg, var(--home-oak-2), var(--home-oak));
+  box-shadow:
+    inset 0 0 0 2px rgba(200, 177, 107, 0.55),
+    inset 0 0 0 5px #241408,
+    0 4px 10px rgba(26, 15, 7, 0.35);
+}
+
+/* 레드 래커 패널 — 선택일 상세 등 강조 오버레이. 내부 텍스트 변수를 크림/골드로 재정의 */
+.home-lacquer-panel {
+  --home-ink: var(--home-cream);
+  --home-muted: #e3cfa0;
+  --home-burgundy: #ebd9a6;
+  border: 1px solid #3f0505;
+  border-radius: 10px;
+  background:
+    var(--home-noise),
+    radial-gradient(120% 100% at 50% 0%, #b81511, #8e0d0c 70%);
+  color: var(--home-cream);
+  box-shadow:
+    inset 0 0 0 2px rgba(200, 177, 107, 0.75),
+    inset 0 0 24px rgba(40, 2, 2, 0.5),
+    0 3px 8px rgba(26, 15, 7, 0.4);
 }
 
 /* 도장 — "확정·채용·완료" 상태 전용 */
@@ -110,6 +199,7 @@
   border: 3px solid var(--home-burgundy-deep);
   color: var(--home-burgundy-deep);
   border-radius: 50%;
-  font-family: var(--font-jua), sans-serif;
+  font-family: var(--font-hahmlet), serif;
+  font-weight: 600;
   transform: rotate(-8deg);
 }
