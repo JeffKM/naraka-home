@@ -4,6 +4,15 @@ import { HOME_INFO } from "@/lib/homeConfig";
 export function HomeFooter() {
   return (
     <footer className="home-wood relative mt-12 border-t-2 border-[var(--home-gold-deep)]">
+      {/* 원화 장식 — 푸터 왼쪽의 돈주머니(2화, 가림 부분 복원) */}
+      <Image
+        src="/home/deco/deco-moneybag.webp"
+        alt=""
+        aria-hidden
+        width={62}
+        height={79}
+        className="pointer-events-none absolute -top-[70px] left-5 select-none"
+      />
       {/* 원화 장식 — 푸터 위를 걷는 검은 고양이(15화) */}
       <Image
         src="/home/deco/deco-cat.webp"

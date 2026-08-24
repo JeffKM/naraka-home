@@ -43,6 +43,13 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
             className="home-wisp-float absolute left-[calc(4vw+120px)] top-[150px]"
           />
           <Image
+            src="/home/deco/deco-bat.webp"
+            alt=""
+            width={92}
+            height={54}
+            className="home-wisp-float absolute right-[5vw] top-[130px] [animation-delay:0.8s]"
+          />
+          <Image
             src="/home/deco/wisp-b.webp"
             alt=""
             width={50}
