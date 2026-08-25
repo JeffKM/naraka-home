@@ -18,9 +18,9 @@ export default async function NoticePage() {
         src="/home/deco/video/v-scrap.webp"
         alt=""
         aria-hidden
-        width={100}
-        height={84}
-        className="pointer-events-none absolute right-[5vw] top-[440px] z-10 hidden select-none xl:block"
+        width={90}
+        height={76}
+        className="pointer-events-none absolute left-[3vw] top-[330px] z-10 hidden select-none xl:block"
       />
       <main className="mx-auto max-w-3xl px-4 py-10">
         <div className="home-paper p-5 sm:p-8">

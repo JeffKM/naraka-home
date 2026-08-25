@@ -17,9 +17,9 @@ export default async function StaffPage() {
         src="/home/deco/video/v-quill-ink.webp"
         alt=""
         aria-hidden
-        width={84}
-        height={204}
-        className="pointer-events-none absolute right-[4vw] top-[420px] z-10 hidden select-none xl:block"
+        width={74}
+        height={180}
+        className="pointer-events-none absolute left-[3vw] top-[320px] z-10 hidden select-none xl:block"
       />
       <main className="mx-auto max-w-3xl px-4 py-10">
         <div className="home-paper p-5 sm:p-8">

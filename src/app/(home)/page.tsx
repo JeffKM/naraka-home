@@ -56,7 +56,7 @@ export default async function HomePage({
     <main>
       <ScrubJourney />
       <div className="relative">
-      <HomeDeco />
+      <HomeDeco tall />
       <section className="mx-auto max-w-3xl px-4 pt-12 text-center">
         <p className="home-tally text-sm" aria-hidden>
           {"//// //"}

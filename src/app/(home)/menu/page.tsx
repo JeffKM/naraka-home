@@ -18,9 +18,9 @@ export default async function MenuPage() {
         src="/home/deco/video/v-jar.webp"
         alt=""
         aria-hidden
-        width={92}
-        height={161}
-        className="pointer-events-none absolute right-[5vw] top-[450px] rotate-3 z-10 hidden select-none xl:block"
+        width={84}
+        height={147}
+        className="pointer-events-none absolute left-[3vw] top-[330px] rotate-3 z-10 hidden select-none xl:block"
       />
       <main className="mx-auto max-w-3xl px-4 py-10">
         <div className="home-paper p-5 sm:p-8">

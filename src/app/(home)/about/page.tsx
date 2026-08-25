@@ -37,7 +37,7 @@ const COMIC_COUNT = 17;
 export default function AboutPage() {
   return (
     <>
-      <HomeDeco />
+      <HomeDeco tall />
       {/* 릴스 발췌 소품 — 페이지 포인트 */}
       <Image
         src="/home/deco/video/v-resume.webp"

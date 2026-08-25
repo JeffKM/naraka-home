@@ -17,9 +17,9 @@ export default function GamesPage() {
         src="/home/deco/video/v-mace.webp"
         alt=""
         aria-hidden
-        width={110}
-        height={174}
-        className="pointer-events-none absolute right-[4vw] top-[430px] rotate-12 z-10 hidden select-none xl:block"
+        width={90}
+        height={142}
+        className="pointer-events-none absolute left-[3vw] top-[330px] rotate-12 z-10 hidden select-none xl:block"
       />
       <main className="mx-auto max-w-3xl px-4 py-10">
         <div className="home-paper p-5 sm:p-8">

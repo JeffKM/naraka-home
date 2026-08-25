@@ -28,7 +28,8 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
     >
       <div className="home-curtain" aria-hidden />
       <HomeHeader />
-      <div className="relative flex-1">
+      {/* overflow-clip: 절대배치 장식이 짧은 페이지에서 푸터 아래로 넘쳐 흰 배경을 드러내는 것 방지 */}
+      <div className="relative flex-1 overflow-clip">
         {children}
       </div>
       <HomeFooter />

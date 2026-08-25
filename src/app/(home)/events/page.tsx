@@ -18,9 +18,9 @@ export default async function EventsPage() {
         src="/home/deco/video/v-stamp-tool.webp"
         alt=""
         aria-hidden
-        width={90}
-        height={127}
-        className="pointer-events-none absolute right-[5vw] top-[460px] -rotate-6 z-10 hidden select-none xl:block"
+        width={80}
+        height={113}
+        className="pointer-events-none absolute left-[3vw] top-[330px] -rotate-6 z-10 hidden select-none xl:block"
       />
       <main className="mx-auto max-w-3xl px-4 py-10">
         <div className="home-paper p-5 sm:p-8">
