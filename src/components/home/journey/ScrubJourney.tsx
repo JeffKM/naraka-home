@@ -36,6 +36,7 @@ export function ScrubJourney() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const framesRef = useRef<(HTMLImageElement | null)[]>([]);
   const [manifest, setManifest] = useState<JourneyManifest | null>(null);
+  const [framesMeta, setFramesMeta] = useState<{ base: string; count: number } | null>(null);
   const [progress, setProgress] = useState(0);
   const [collapsed, setCollapsed] = useState(false);
   const [reduced, setReduced] = useState(false);
@@ -61,15 +62,24 @@ export function ScrubJourney() {
       .catch(() => setManifest(null));
   }, []);
 
-  // frames 모드: 프레임 지연 로드
+  // frames 모드: 뷰포트에 맞는 세트 선택 후 프레임 지연 로드
   useEffect(() => {
-    if (!manifest || manifest.mode !== "frames" || manifest.frames.count === 0) return;
-    framesRef.current = new Array<HTMLImageElement | null>(
-      manifest.frames.count
-    ).fill(null);
-    for (let i = 0; i < manifest.frames.count; i += 1) {
+    if (!manifest || manifest.mode !== "frames") return;
+    let isMobile = false;
+    try {
+      isMobile = window.matchMedia("(max-width: 767px)").matches;
+    } catch {
+      // matchMedia 미지원 환경은 데스크톱 세트 사용
+    }
+    const base = isMobile ? manifest.frames.mobileBasePath : manifest.frames.basePath;
+    const count = isMobile ? manifest.frames.mobileCount : manifest.frames.count;
+    if (count === 0) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- manifest 도착 시 1회 세트 판정, 외부 API 동기화
+    setFramesMeta({ base, count });
+    framesRef.current = new Array<HTMLImageElement | null>(count).fill(null);
+    for (let i = 0; i < count; i += 1) {
       const img = new Image();
-      img.src = frameUrl(manifest.frames.basePath, manifest.frames.pattern, i);
+      img.src = frameUrl(base, manifest.frames.pattern, i);
       img.onload = () => {
         framesRef.current[i] = img;
       };
@@ -101,14 +111,11 @@ export function ScrubJourney() {
 
   // frames 모드: 진행도에 해당하는 프레임을 canvas에 그린다
   useEffect(() => {
-    if (!manifest || manifest.mode !== "frames") return;
+    if (!framesMeta) return;
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
-    const idx = Math.min(
-      manifest.frames.count - 1,
-      Math.floor(progress * manifest.frames.count)
-    );
+    const idx = Math.min(framesMeta.count - 1, Math.floor(progress * framesMeta.count));
     // 가장 가까운 로드 완료 프레임을 찾아 그린다 (미로드 구간 검은 화면 방지)
     for (let i = idx; i >= 0; i -= 1) {
       const img = framesRef.current[i];
@@ -119,7 +126,7 @@ export function ScrubJourney() {
         break;
       }
     }
-  }, [progress, manifest]);
+  }, [progress, framesMeta]);
 
   if (!manifest || manifest.scenes.length === 0) return null;
 
@@ -172,7 +179,7 @@ export function ScrubJourney() {
     <div ref={wrapRef} style={{ height: `${scenes.length * 120}vh` }}>
       <div className="sticky top-0 h-dvh overflow-hidden bg-[var(--home-stage)]">
         {manifest.mode === "frames" && manifest.frames.count > 0 ? (
-          <canvas ref={canvasRef} className="size-full object-cover" />
+          <canvas ref={canvasRef} className="size-full object-cover md:object-contain" />
         ) : (
           scenes.map((scene, i) => (
             // eslint-disable-next-line @next/next/no-img-element -- 여정 에셋
@@ -187,6 +194,17 @@ export function ScrubJourney() {
             />
           ))
         )}
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-20 px-4 text-center transition-opacity duration-500"
+          style={{ opacity: progress > 0.9 ? 1 : 0 }}
+        >
+          <p className="home-serif text-2xl font-extrabold text-[var(--home-gold)] sm:text-3xl">
+            나라카에 오신 것을 환영합니다
+          </p>
+          <p className="home-ui mt-2 text-sm text-[var(--home-surface)]/80">
+            지옥이자 감옥이자 직장인 카페
+          </p>
+        </div>
         <button
           type="button"
           className="home-btn home-ui absolute right-4 top-4 px-3 py-1 text-sm"

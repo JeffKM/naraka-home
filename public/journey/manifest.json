@@ -1,16 +1,15 @@
 {
-  "mode": "stills",
+  "mode": "frames",
   "scenes": [
-    { "id": "desk", "label": "마녀의 책상", "image": "/journey/placeholder/scene1.svg" },
-    { "id": "frame", "label": "액자 속으로", "image": "/journey/placeholder/scene2.svg" },
-    { "id": "hall", "label": "카페 홀", "image": "/journey/placeholder/scene3.svg" },
-    { "id": "board", "label": "게시판 앞", "image": "/journey/placeholder/scene4.svg" }
+    { "id": "group", "label": "나라카 단체 사진", "image": "/journey/stills/group.webp" },
+    { "id": "frame", "label": "액자 속으로", "image": "/journey/stills/frame.webp" },
+    { "id": "desk", "label": "마녀의 책상", "image": "/journey/stills/desk.webp" }
   ],
   "frames": {
     "basePath": "/journey/desktop",
     "pattern": "s_%04d.webp",
-    "count": 0,
+    "count": 72,
     "mobileBasePath": "/journey/mobile",
-    "mobileCount": 0
+    "mobileCount": 72
   }
 }
