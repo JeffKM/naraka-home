@@ -23,9 +23,18 @@ export function HomeFooter() {
         className="pointer-events-none absolute -top-[74px] right-5 select-none"
       />
       <div className="mx-auto flex max-w-3xl flex-col gap-1 px-4 py-8 text-sm text-[var(--home-muted)]">
+        {/* 릴스 발췌 — @naraka_concafe 명패 (책상 위 실물) */}
+        <Image
+          src="/home/deco/video/v-nameplate.webp"
+          alt=""
+          aria-hidden
+          width={210}
+          height={129}
+          className="pointer-events-none absolute bottom-6 right-5 hidden select-none sm:block"
+        />
         <p className="home-serif font-bold text-[var(--home-chalk)]">
           {HOME_INFO.name}
-          <span className="text-[var(--home-wisp)]">.</span>
+          <span className="text-[var(--home-heart)]">.</span>
         </p>
         <p>{HOME_INFO.addressLine}</p>
         <p>{HOME_INFO.hoursNote}</p>

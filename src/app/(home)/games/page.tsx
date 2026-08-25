@@ -1,4 +1,5 @@
 import { HomeDeco } from "@/components/home/HomeDeco";
+import Image from "next/image";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -11,6 +12,15 @@ export default function GamesPage() {
   return (
     <>
       <HomeDeco />
+      {/* 릴스 발췌 소품 — 페이지 포인트 */}
+      <Image
+        src="/home/deco/video/v-mace.webp"
+        alt=""
+        aria-hidden
+        width={110}
+        height={174}
+        className="pointer-events-none absolute right-[4vw] top-[430px] rotate-12 z-10 hidden select-none xl:block"
+      />
       <main className="mx-auto max-w-3xl px-4 py-10">
         <div className="home-paper p-5 sm:p-8">
       <h1 className="text-2xl font-bold">나라카 게임</h1>

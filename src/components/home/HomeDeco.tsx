@@ -1,7 +1,8 @@
 import Image from "next/image";
 
-// 원화 컷아웃 장식 레이어 — position:relative 부모(콘텐츠 영역)에 깔린다.
+// 원화·릴스 컷아웃 장식 레이어 — position:relative 부모(콘텐츠 영역)에 깔린다.
 // 여정(릴스) 칸에는 콘텐츠가 꽉 차므로 이 레이어를 여정 위에 두지 않는다.
+// 세로로 분산 배치해 과밀을 피한다 (xl 이상 여백 전용).
 export function HomeDeco() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 z-10 hidden select-none xl:block">
@@ -28,6 +29,35 @@ export function HomeDeco() {
         width={50}
         height={75}
         className="home-wisp-float absolute right-[4vw] top-[360px] [animation-delay:1.6s]"
+      />
+      {/* 릴스 발췌 소품 — 밤의 책상 위 물건들 */}
+      <Image
+        src="/home/deco/video/v-note.webp"
+        alt=""
+        width={44}
+        height={76}
+        className="home-wisp-float absolute right-[7vw] top-[560px] [animation-delay:2.4s]"
+      />
+      <Image
+        src="/home/deco/video/v-cushion.webp"
+        alt=""
+        width={150}
+        height={151}
+        className="absolute left-[3vw] top-[680px] -rotate-6"
+      />
+      <Image
+        src="/home/deco/video/v-cross.webp"
+        alt=""
+        width={120}
+        height={64}
+        className="absolute right-[4vw] top-[940px] rotate-12"
+      />
+      <Image
+        src="/home/deco/video/v-inkwell.webp"
+        alt=""
+        width={84}
+        height={150}
+        className="absolute left-[4vw] top-[1220px]"
       />
     </div>
   );

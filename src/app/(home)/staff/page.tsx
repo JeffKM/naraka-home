@@ -1,4 +1,5 @@
 import { HomeDeco } from "@/components/home/HomeDeco";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { listStaff } from "@/services/homeContentService";
 
@@ -11,6 +12,15 @@ export default async function StaffPage() {
   return (
     <>
       <HomeDeco />
+      {/* 릴스 발췌 소품 — 페이지 포인트 */}
+      <Image
+        src="/home/deco/video/v-quill-ink.webp"
+        alt=""
+        aria-hidden
+        width={84}
+        height={204}
+        className="pointer-events-none absolute right-[4vw] top-[420px] z-10 hidden select-none xl:block"
+      />
       <main className="mx-auto max-w-3xl px-4 py-10">
         <div className="home-paper p-5 sm:p-8">
       <h1 className="text-2xl font-bold">나라카의 요괴들</h1>

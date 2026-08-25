@@ -1,4 +1,5 @@
 import { HomeDeco } from "@/components/home/HomeDeco";
+import Image from "next/image";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { listPosts } from "@/services/homeContentService";
@@ -12,6 +13,15 @@ export default async function EventsPage() {
   return (
     <>
       <HomeDeco />
+      {/* 릴스 발췌 소품 — 페이지 포인트 */}
+      <Image
+        src="/home/deco/video/v-stamp-tool.webp"
+        alt=""
+        aria-hidden
+        width={90}
+        height={127}
+        className="pointer-events-none absolute right-[5vw] top-[460px] -rotate-6 z-10 hidden select-none xl:block"
+      />
       <main className="mx-auto max-w-3xl px-4 py-10">
         <div className="home-paper p-5 sm:p-8">
       <h1 className="text-2xl font-bold">이벤트</h1>

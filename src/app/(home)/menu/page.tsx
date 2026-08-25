@@ -1,4 +1,5 @@
 import { HomeDeco } from "@/components/home/HomeDeco";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { listMenu } from "@/services/homeContentService";
 
@@ -12,6 +13,15 @@ export default async function MenuPage() {
   return (
     <>
       <HomeDeco />
+      {/* 릴스 발췌 소품 — 페이지 포인트 */}
+      <Image
+        src="/home/deco/video/v-jar.webp"
+        alt=""
+        aria-hidden
+        width={92}
+        height={161}
+        className="pointer-events-none absolute right-[5vw] top-[450px] rotate-3 z-10 hidden select-none xl:block"
+      />
       <main className="mx-auto max-w-3xl px-4 py-10">
         <div className="home-paper p-5 sm:p-8">
       <h1 className="text-2xl font-bold">메뉴</h1>
