@@ -4,7 +4,6 @@ import { HOME_INFO } from "@/lib/homeConfig";
 const HOME_NAV = [
   { href: "/", label: "홈" },
   { href: "/about", label: "소개" },
-  { href: "/story", label: "설화" },
   { href: "/location", label: "오시는 길" },
   { href: "/menu", label: "메뉴" },
   { href: "/staff", label: "스태프" },

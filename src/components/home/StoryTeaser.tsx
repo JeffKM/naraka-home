@@ -11,8 +11,8 @@ export function StoryTeaser() {
           붙잡혔는데 — 그게 바로 채용이었다.
         </p>
         <Link
-          href="/story"
-          aria-label="채용 설화 영상 보러 가기"
+          href="/about"
+          aria-label="채용 설화 보러 가기"
           className="group mx-auto mt-5 block w-full max-w-[260px]"
         >
           <span className="relative block aspect-[9/16] overflow-hidden rounded-xl">
