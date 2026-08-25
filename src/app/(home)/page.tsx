@@ -2,6 +2,7 @@ import { HomeDeco } from "@/components/home/HomeDeco";
 import Link from "next/link";
 import { CalendarSection } from "@/components/home/CalendarSection";
 import { ScrubJourney } from "@/components/home/journey/ScrubJourney";
+import { StoryTeaser } from "@/components/home/StoryTeaser";
 import { buildMonthGrid } from "@/lib/homeCalendar";
 import { HOME_INFO } from "@/lib/homeConfig";
 import { getKstParts } from "@/lib/market";
@@ -70,6 +71,8 @@ export default async function HomePage({
         staff={staff}
         daySchedule={daySchedule}
       />
+
+      <StoryTeaser />
 
       <section className="mx-auto max-w-3xl px-4 py-6">
         <div className="home-paper home-tape home-paper-tilt p-5 sm:p-7">
