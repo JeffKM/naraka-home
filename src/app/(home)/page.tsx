@@ -80,7 +80,7 @@ export default async function HomePage({
           <h2 className="text-xl font-semibold">새 소식</h2>
           <Link
             href="/notice"
-            className="home-ui text-sm hover:text-[var(--home-burgundy)]"
+            className="home-ui text-sm hover:text-[var(--home-red)]"
           >
             전체 보기
           </Link>
@@ -90,14 +90,14 @@ export default async function HomePage({
             <li key={p.id}>
               <Link
                 href={p.type === "event" ? `/events/${p.id}` : `/notice/${p.id}`}
-                className="home-card flex items-baseline gap-2 px-3 py-2 hover:bg-[var(--home-bg)]"
+                className="home-card flex items-baseline gap-2 px-3 py-2 hover:bg-[var(--home-cream)]"
               >
                 <span
                   className={[
                     "home-tag shrink-0 px-2 text-xs",
                     p.type === "event"
-                      ? "bg-[var(--home-burgundy)] text-[var(--home-surface)]"
-                      : "bg-[var(--home-amber)] text-[var(--home-ink)]",
+                      ? "bg-[var(--home-red)] text-[var(--home-surface)]"
+                      : "bg-[var(--home-chalk)] text-[var(--home-ink)]",
                   ].join(" ")}
                 >
                   {p.type === "event" ? "이벤트" : "공지"}

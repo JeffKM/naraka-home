@@ -180,7 +180,7 @@ export function ScrubJourney() {
 
   return (
     <div ref={wrapRef} style={{ height: `${scenes.length * 120}vh` }}>
-      <div className="sticky top-0 h-dvh overflow-hidden bg-[var(--home-stage)]">
+      <div className="sticky top-0 h-dvh overflow-hidden bg-[var(--home-void)]">
         {manifest.mode === "frames" && manifest.frames.count > 0 ? (
           <canvas ref={canvasRef} className="size-full object-cover md:object-contain" />
         ) : (
@@ -201,7 +201,7 @@ export function ScrubJourney() {
           className="pointer-events-none absolute inset-x-0 bottom-20 px-4 text-center transition-opacity duration-500"
           style={{ opacity: progress > 0.9 ? 1 : 0 }}
         >
-          <p className="home-serif text-2xl font-extrabold text-[var(--home-gold)] [text-shadow:0_2px_10px_rgba(0,0,0,0.85)] sm:text-3xl">
+          <p className="home-serif text-2xl font-extrabold text-[var(--home-chalk)] [text-shadow:0_2px_10px_rgba(0,0,0,0.85)] sm:text-3xl">
             나라카에 오신 것을 환영합니다
           </p>
           <p className="home-ui mt-2 text-sm text-[var(--home-surface)]/90 [text-shadow:0_1px_6px_rgba(0,0,0,0.85)]">

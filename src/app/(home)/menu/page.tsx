@@ -42,7 +42,7 @@ export default async function MenuPage() {
                     <p className="font-medium">
                       {i.name}
                       {i.isSoldOut && (
-                        <span className="ml-2 text-xs text-[var(--home-burgundy)]">
+                        <span className="ml-2 text-xs text-[var(--home-red)]">
                           품절
                         </span>
                       )}

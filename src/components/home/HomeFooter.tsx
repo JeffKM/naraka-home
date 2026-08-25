@@ -3,7 +3,7 @@ import { HOME_INFO } from "@/lib/homeConfig";
 
 export function HomeFooter() {
   return (
-    <footer className="home-wood relative mt-12 border-t-2 border-[var(--home-gold-deep)]">
+    <footer className="home-chrome relative mt-12 border-t-2 border-[var(--home-rosewood)]">
       {/* 원화 장식 — 푸터 왼쪽의 돈주머니(2화, 가림 부분 복원) */}
       <Image
         src="/home/deco/deco-moneybag.webp"
@@ -23,9 +23,9 @@ export function HomeFooter() {
         className="pointer-events-none absolute -top-[74px] right-5 select-none"
       />
       <div className="mx-auto flex max-w-3xl flex-col gap-1 px-4 py-8 text-sm text-[var(--home-muted)]">
-        <p className="home-serif font-bold text-[var(--home-gold)]">
+        <p className="home-serif font-bold text-[var(--home-chalk)]">
           {HOME_INFO.name}
-          <span className="text-[var(--home-teal)]">.</span>
+          <span className="text-[var(--home-wisp)]">.</span>
         </p>
         <p>{HOME_INFO.addressLine}</p>
         <p>{HOME_INFO.hoursNote}</p>

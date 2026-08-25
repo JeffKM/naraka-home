@@ -80,7 +80,7 @@ export default function StoryPage() {
                 key={a.name}
                 className="rounded-lg border border-[var(--home-line)] bg-[var(--home-surface)] p-4"
               >
-                <p className="text-xs text-[var(--home-burgundy)]">
+                <p className="text-xs text-[var(--home-red)]">
                   {a.act} · {a.species}
                 </p>
                 <p className="mt-1 font-semibold">{a.name}</p>

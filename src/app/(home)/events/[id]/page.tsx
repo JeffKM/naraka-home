@@ -21,7 +21,7 @@ export default async function EventDetailPage({
       <HomeDeco />
       <main className="mx-auto max-w-3xl px-4 py-10">
         <div className="home-paper p-5 sm:p-8">
-      <p className="text-xs text-[var(--home-burgundy)]">
+      <p className="text-xs text-[var(--home-red)]">
         {post.eventStartDate}
         {post.eventEndDate ? ` ~ ${post.eventEndDate}` : ""}
       </p>

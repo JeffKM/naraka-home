@@ -18,7 +18,7 @@ export default async function EventsPage() {
 
       {/* 나라카증권 상설 카드 — /event 주식앱 진입점 */}
       <Link href="/event" className="home-card relative mt-8 block p-5">
-        <span className="home-tag absolute -top-3 left-4 bg-[var(--home-burgundy)] px-2 text-xs text-[var(--home-surface)]">
+        <span className="home-tag absolute -top-3 left-4 bg-[var(--home-red)] px-2 text-xs text-[var(--home-surface)]">
           상설
         </span>
         <p className="home-ui mt-1 text-lg">나라카증권 — 모의 주식 거래</p>
@@ -26,7 +26,7 @@ export default async function EventsPage() {
           가상 화폐로 요괴 도시의 주식을 거래해보세요. 매장 방문 코드로 참여할 수
           있습니다.
         </p>
-        <div className="home-gold-line mt-3" aria-hidden />
+        <div className="home-rule mt-3" aria-hidden />
       </Link>
 
       <ul className="mt-8 flex flex-col gap-5">
@@ -34,7 +34,7 @@ export default async function EventsPage() {
           <li key={p.id}>
             <Link href={`/events/${p.id}`} className="home-card relative block p-4">
               {p.pinned && (
-                <span className="home-tag absolute -top-3 left-4 bg-[var(--home-amber)] px-2 text-xs text-[var(--home-ink)]">
+                <span className="home-tag absolute -top-3 left-4 bg-[var(--home-chalk)] px-2 text-xs text-[var(--home-ink)]">
                   고정
                 </span>
               )}

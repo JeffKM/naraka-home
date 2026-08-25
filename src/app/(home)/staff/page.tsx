@@ -35,7 +35,7 @@ export default async function StaffPage() {
             <div className="p-4">
               <p className="font-semibold">{s.name}</p>
               {s.role && (
-                <p className="text-xs text-[var(--home-burgundy)]">{s.role}</p>
+                <p className="text-xs text-[var(--home-red)]">{s.role}</p>
               )}
               <p className="mt-2 text-sm text-[var(--home-muted)]">{s.intro}</p>
             </div>

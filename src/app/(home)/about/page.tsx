@@ -34,7 +34,7 @@ export default function AboutPage() {
             className="rounded-lg border border-[var(--home-line)] bg-[var(--home-surface)] p-4"
           >
             <p className="font-semibold">{c.name}</p>
-            <p className="text-xs text-[var(--home-burgundy)]">{c.role}</p>
+            <p className="text-xs text-[var(--home-red)]">{c.role}</p>
             <p className="mt-2 text-sm text-[var(--home-muted)]">{c.desc}</p>
           </div>
         ))}

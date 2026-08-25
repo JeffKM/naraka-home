@@ -40,21 +40,21 @@ export function CalendarSection({ month, weeks, staff, daySchedule }: Props) {
         <div className="home-ui flex items-center gap-3 text-sm">
           <Link
             href={`/?month=${shiftMonth(month, -1)}#calendar`}
-            className="hover:text-[var(--home-burgundy)]"
+            className="hover:text-[var(--home-red)]"
           >
             이전 달
           </Link>
           <span className="tabular-nums">{month.replace("-", ".")}</span>
           <Link
             href={`/?month=${shiftMonth(month, 1)}#calendar`}
-            className="hover:text-[var(--home-burgundy)]"
+            className="hover:text-[var(--home-red)]"
           >
             다음 달
           </Link>
         </div>
       </div>
 
-      <div className="home-wood-frame mt-4">
+      <div className="home-frame mt-4">
       <div className="home-ui grid grid-cols-7 gap-1 text-center text-xs text-[var(--home-muted)]">
         {WEEKDAYS.map((d) => (
           <div key={d} className="py-1">{d}</div>
@@ -73,20 +73,20 @@ export function CalendarSection({ month, weeks, staff, daySchedule }: Props) {
                   ? "bg-[var(--home-surface)]"
                   : "bg-transparent text-[var(--home-cream)] opacity-50",
                 cell.isToday
-                  ? "border-[2.5px] border-[var(--home-burgundy)] bg-[var(--home-surface)]"
+                  ? "border-[2.5px] border-[var(--home-red)] bg-[var(--home-surface)]"
                   : "border border-transparent",
                 selected === cell.date && !cell.isToday
-                  ? "ring-2 ring-[var(--home-amber)]"
+                  ? "ring-2 ring-[var(--home-chalk)]"
                   : "",
                 selected === cell.date && cell.isToday
-                  ? "ring-2 ring-[var(--home-amber)] ring-offset-1"
+                  ? "ring-2 ring-[var(--home-chalk)] ring-offset-1"
                   : "",
               ].join(" ")}
             >
               <span
                 className={[
                   "home-ui text-xs tabular-nums",
-                  cell.isToday ? "text-[var(--home-burgundy)]" : "",
+                  cell.isToday ? "text-[var(--home-red)]" : "",
                 ].join(" ")}
               >
                 {Number(cell.date.slice(8))}
@@ -122,7 +122,7 @@ export function CalendarSection({ month, weeks, staff, daySchedule }: Props) {
               <Link
                 key={ev.id}
                 href={`/events/${ev.id}`}
-                className="text-[var(--home-burgundy)] underline underline-offset-2"
+                className="text-[var(--home-red)] underline underline-offset-2"
               >
                 {ev.title}
               </Link>
