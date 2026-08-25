@@ -37,6 +37,7 @@ export function ScrubJourney() {
   const framesRef = useRef<(HTMLImageElement | null)[]>([]);
   const [manifest, setManifest] = useState<JourneyManifest | null>(null);
   const [framesMeta, setFramesMeta] = useState<{ base: string; count: number } | null>(null);
+  const [loadedCount, setLoadedCount] = useState(0);
   const [progress, setProgress] = useState(0);
   const [collapsed, setCollapsed] = useState(false);
   const [reduced, setReduced] = useState(false);
@@ -82,6 +83,8 @@ export function ScrubJourney() {
       img.src = frameUrl(base, manifest.frames.pattern, i);
       img.onload = () => {
         framesRef.current[i] = img;
+        // 로드 완료를 상태로 알려 현재 진행도 프레임을 다시 그린다 (초기 검은 화면 방지)
+        setLoadedCount((c) => c + 1);
       };
     }
   }, [manifest]);
@@ -126,7 +129,7 @@ export function ScrubJourney() {
         break;
       }
     }
-  }, [progress, framesMeta]);
+  }, [progress, framesMeta, loadedCount]);
 
   if (!manifest || manifest.scenes.length === 0) return null;
 
@@ -198,10 +201,10 @@ export function ScrubJourney() {
           className="pointer-events-none absolute inset-x-0 bottom-20 px-4 text-center transition-opacity duration-500"
           style={{ opacity: progress > 0.9 ? 1 : 0 }}
         >
-          <p className="home-serif text-2xl font-extrabold text-[var(--home-gold)] sm:text-3xl">
+          <p className="home-serif text-2xl font-extrabold text-[var(--home-gold)] [text-shadow:0_2px_10px_rgba(0,0,0,0.85)] sm:text-3xl">
             나라카에 오신 것을 환영합니다
           </p>
-          <p className="home-ui mt-2 text-sm text-[var(--home-surface)]/80">
+          <p className="home-ui mt-2 text-sm text-[var(--home-surface)]/90 [text-shadow:0_1px_6px_rgba(0,0,0,0.85)]">
             지옥이자 감옥이자 직장인 카페
           </p>
         </div>
