@@ -5,7 +5,7 @@ export function StoryTeaser() {
   return (
     <section className="mx-auto max-w-3xl px-4 py-6">
       <div className="home-paper home-tape p-5 sm:p-7">
-        <h2 className="text-xl font-semibold">나라카 채용 설화</h2>
+        <h2 className="home-plate text-xl font-semibold">나라카 채용 설화</h2>
         <p className="mt-2 text-sm text-[var(--home-muted)]">
           마녀 사장이 이력서 세 장을 심사했다. 지원자들은 전부 사고를 치고
           붙잡혔는데 — 그게 바로 채용이었다.

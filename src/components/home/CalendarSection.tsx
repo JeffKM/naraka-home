@@ -31,7 +31,7 @@ export function CalendarSection({ month, weeks, staff, daySchedule }: Props) {
     <section id="calendar" className="mx-auto max-w-3xl px-4 py-10">
       <div className="home-paper p-4 sm:p-6">
       <div className="flex items-center justify-between">
-        <h2 className="flex items-baseline gap-2 text-xl font-semibold">
+        <h2 className="home-plate flex items-baseline gap-2 text-xl font-semibold">
           이번 달의 나라카
           <span className="home-tally text-sm" aria-hidden>
             {"////"}

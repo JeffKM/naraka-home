@@ -77,7 +77,7 @@ export default async function HomePage({
       <section className="mx-auto max-w-3xl px-4 py-6">
         <div className="home-paper home-tape home-paper-tilt p-5 sm:p-7">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">새 소식</h2>
+          <h2 className="home-plate text-xl font-semibold">새 소식</h2>
           <Link
             href="/notice"
             className="home-ui text-sm hover:text-[var(--home-red)]"

@@ -16,11 +16,11 @@ const HOME_NAV = [
 // 카페 홈 고정 헤더 — 어느 페이지에서든 모든 탭 1클릭 (스크럽 여정 UX 안전장치)
 export function HomeHeader() {
   return (
-    <header className="home-chrome sticky top-0 z-40 border-b-2 border-[var(--home-rosewood)]">
+    <header className="home-chrome sticky top-0 z-40 border-b">
       <div className="mx-auto flex max-w-3xl items-center gap-4 px-4 py-3">
         <Link href="/" className="home-serif shrink-0 text-xl font-extrabold text-[var(--home-chalk)]">
           {HOME_INFO.name}
-          <span className="text-[var(--home-wisp)]">.</span>
+          <span className="text-[var(--home-heart)]">.</span>
         </Link>
         <nav className="home-ui scrollbar-none flex gap-4 overflow-x-auto text-sm">
           {HOME_NAV.map((item) => (
