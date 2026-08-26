@@ -3,7 +3,7 @@
 # 주의: 로컬 ffmpeg에 libwebp가 없어 PNG 중간 산출 후 PIL로 WebP 변환한다.
 set -euo pipefail
 
-SRC="${REELS_SRC:-$HOME/Desktop/naraka/reels/07-ae/naraka_reels_fianl.mp4}"
+SRC="${REELS_SRC:-$HOME/Desktop/naraka/reels/07-ae/naraka_reels_final_v2.mp4}"
 FRAME_PNG="${INSTA_FRAME_SRC:-$HOME/Desktop/naraka/reels/06-ae-assets/insta-frame.png}"
 COMIC_DIR="${COMIC_SRC:-$HOME/Desktop/naraka/story}"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -33,7 +33,7 @@ import glob
 import os
 import sys
 
-from PIL import Image
+from PIL import Image, ImageDraw
 
 tmp, frame_png, comic_dir, pub = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
 
@@ -42,26 +42,22 @@ Image.open(f"{tmp}/stills/hero.png").convert("RGB").save(f"{pub}/home/hero-poste
 Image.open(f"{tmp}/stills/group.png").convert("RGB").save(f"{pub}/story/poster.webp", "WEBP", quality=82)
 
 # 인스타 프레임 (알파 유지 540×960) — 원본은 폰 바깥에 인스타 다크 배경(#0e0d11)이 불투명으로 남아 있어
-# 이미지 모서리에서 배경색 flood-fill로 투명화한다 (폰 바 #16151c는 tol 7 밖이라 보존)
-import numpy as np
-from collections import deque
+# 모서리에서 배경색 flood-fill로 투명화한다 (폰 바 #16151c는 임계 밖이라 보존)
 frame = Image.open(frame_png).convert("RGBA").resize((540, 960), Image.LANCZOS)
-arr = np.array(frame).astype(int)
-fh, fw = arr.shape[:2]
-near = (np.abs(arr[..., :3] - np.array([14, 13, 17])).max(2) <= 7) & (arr[..., 3] > 0)
-seen = np.zeros((fh, fw), bool)
-queue = deque()
-for y, x in ((0, 0), (0, fw - 1), (fh - 1, 0), (fh - 1, fw - 1), (0, fw // 2), (fh // 2, 0), (fh // 2, fw - 1)):
-    seen[y, x] = True
-    queue.append((y, x))
-while queue:
-    y, x = queue.popleft()
-    for ny, nx in ((y + 1, x), (y - 1, x), (y, x + 1), (y, x - 1)):
-        if 0 <= ny < fh and 0 <= nx < fw and not seen[ny, nx] and (near[ny, nx] or arr[ny, nx, 3] == 0):
-            seen[ny, nx] = True
-            queue.append((ny, nx))
-arr[seen, 3] = 0
-Image.fromarray(arr.astype(np.uint8)).save(f"{pub}/story/insta-frame.webp", "WEBP", quality=90)
+flat = Image.new("RGBA", frame.size, (14, 13, 17, 255))
+flat.alpha_composite(frame)
+probe = flat.convert("RGB")
+SENTINEL = (255, 0, 255)
+for seed in ((0, 0), (539, 0), (0, 959), (539, 959), (270, 0), (0, 480), (539, 480)):
+    ImageDraw.floodfill(probe, seed, SENTINEL, thresh=30)
+hit = probe.load()
+px = frame.load()
+for y in range(960):
+    for x in range(540):
+        if hit[x, y] == SENTINEL:
+            r, g, b, _ = px[x, y]
+            px[x, y] = (r, g, b, 0)
+frame.save(f"{pub}/story/insta-frame.webp", "WEBP", quality=90)
 
 # 치비 원화 17장 (폭 840)
 for i in range(1, 18):
