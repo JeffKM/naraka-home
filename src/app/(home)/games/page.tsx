@@ -26,13 +26,13 @@ export default function GamesPage() {
       <h1 className="text-2xl font-bold">나라카 게임</h1>
       {GAMES.length === 0 ? (
         <div className="mt-10 rounded-[14px] border-2 border-dashed border-[var(--home-muted)] p-10 text-center text-[var(--home-muted)]">
-          <p className="home-ui text-base text-[var(--home-ink)]">준비 중입니다</p>
+          <p className="home-ui text-base text-[var(--home-ink)]">아직 만드는 중이에요</p>
           <p className="mt-2 text-sm">
-            요괴들이 새 게임을 만들고 있어요. 지금은{" "}
+            요괴들이 새 게임을 짜고 있어요. 그동안은{" "}
             <Link href="/events" className="underline underline-offset-2">
               이벤트 탭
             </Link>
-            에서 나라카증권을 즐겨주세요.
+            의 나라카증권을 즐겨주세요.
           </p>
         </div>
       ) : (

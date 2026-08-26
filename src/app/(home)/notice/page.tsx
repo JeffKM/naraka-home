@@ -41,7 +41,7 @@ export default async function NoticePage() {
         ))}
         {posts.length === 0 && (
           <li className="py-6 text-sm text-[var(--home-muted)]">
-            등록된 공지가 없습니다.
+            아직 붙은 공지가 없습니다.
           </li>
         )}
       </ul>

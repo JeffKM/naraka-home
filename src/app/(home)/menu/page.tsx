@@ -27,7 +27,7 @@ export default async function MenuPage() {
       <h1 className="text-2xl font-bold">메뉴</h1>
       {categories.length === 0 && (
         <p className="mt-6 text-sm text-[var(--home-muted)]">
-          메뉴를 준비 중입니다. 인스타그램에서 미리 만나보세요.
+          메뉴판을 짜는 중이에요. 인스타그램에 먼저 올라와요.
         </p>
       )}
       {categories.map((cat) => (

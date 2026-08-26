@@ -53,7 +53,7 @@ export default async function StaffPage() {
         ))}
         {staff.length === 0 && (
           <p className="text-sm text-[var(--home-muted)]">
-            스태프 소개를 준비 중입니다.
+            요괴 소개는 곧 올릴게요.
           </p>
         )}
       </div>

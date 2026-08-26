@@ -35,7 +35,7 @@ export default function LocationPage() {
         </div>
       </dl>
       <p className="mt-8 text-xs text-[var(--home-muted)]">
-        지도 안내는 준비 중입니다. 인스타그램 프로필의 위치 정보를 확인해주세요.
+        지도는 아직 준비 중이에요. 위치는 인스타그램 프로필에 있어요.
       </p>
         </div>
       </main>

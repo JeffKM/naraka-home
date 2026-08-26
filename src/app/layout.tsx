@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const OG_DESCRIPTION = "대구 동성로 요괴 컨셉카페 나라카 — 요괴들의 도시에 오신 것을 환영합니다";
+const OG_DESCRIPTION = "대구 동성로 요괴 컨셉카페 나라카. 마녀 사장에게 붙잡힌 요괴들이 손님을 맞이합니다. 메뉴·이벤트·요괴 출근표를 확인해보세요.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://naraka.cafe"),

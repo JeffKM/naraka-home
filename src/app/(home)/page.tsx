@@ -100,7 +100,7 @@ export default async function HomePage({
           ))}
           {latest.length === 0 && (
             <li className="text-sm text-[var(--home-muted)]">
-              아직 등록된 소식이 없습니다.
+              아직 전할 소식이 없습니다.
             </li>
           )}
         </ul>

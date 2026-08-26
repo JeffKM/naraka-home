@@ -155,7 +155,7 @@ export function CalendarSection({ month, weeks, staff, daySchedule }: Props) {
               </Link>
             ))}
             {selectedCell.events.length === 0 && (
-              <p className="text-[var(--home-muted)]">예정된 이벤트가 없습니다.</p>
+              <p className="text-[var(--home-muted)]">이날은 잡힌 일정이 없습니다.</p>
             )}
           </div>
           <h4 className="mt-3 text-sm font-semibold">출근 요괴</h4>
@@ -174,7 +174,7 @@ export function CalendarSection({ month, weeks, staff, daySchedule }: Props) {
               );
             })}
             {selectedEntries.length === 0 && (
-              <p className="text-[var(--home-muted)]">출근 정보가 아직 없습니다.</p>
+              <p className="text-[var(--home-muted)]">이날 출근표는 아직 안 나왔습니다.</p>
             )}
           </div>
         </div>

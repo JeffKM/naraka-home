@@ -33,8 +33,7 @@ export default async function EventsPage() {
         </span>
         <p className="home-ui mt-1 text-lg">나라카증권 — 모의 주식 거래</p>
         <p className="mt-1 text-sm text-[var(--home-muted)]">
-          가상 화폐로 요괴 도시의 주식을 거래해보세요. 매장 방문 코드로 참여할 수
-          있습니다.
+          가상 화폐로 요괴 도시의 주식을 거래해보세요. 참여 코드는 매장에서 드려요.
         </p>
         <div className="home-rule mt-3" aria-hidden />
       </Link>
@@ -58,7 +57,7 @@ export default async function EventsPage() {
         ))}
         {posts.length === 0 && (
           <li className="text-sm text-[var(--home-muted)]">
-            진행 중인 이벤트가 없습니다.
+            지금 열린 이벤트가 없습니다.
           </li>
         )}
       </ul>
