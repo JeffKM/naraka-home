@@ -73,6 +73,30 @@
   border-color: rgba(223, 223, 223, 0.14);
 }
 
+/* 홈 내비 — 44px 터치 타깃, 현재 페이지 표시, 넘칠 때 우측 페이드로 "더 있음" 신호 */
+.home-nav-link {
+  min-height: 44px;
+  color: var(--home-muted);
+  border-bottom: 2px solid transparent;
+  transition: color 0.1s;
+}
+.home-nav-link:hover {
+  color: var(--home-chalk);
+}
+.home-nav-link[data-active="true"] {
+  color: var(--home-chalk);
+  border-bottom-color: var(--home-red);
+}
+.home-nav[data-overflow="true"] {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-nav-link {
+    transition: none;
+  }
+}
+
 /* 상단 몰딩 — 가는 잉크 바 + 옥자 레드 헤어라인 */
 .home-curtain {
   height: 6px;

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { HomeNav } from "@/components/home/HomeNav";
 import { HOME_INFO } from "@/lib/homeConfig";
 
 const HOME_NAV = [
@@ -16,27 +17,17 @@ const HOME_NAV = [
 export function HomeHeader() {
   return (
     <header className="home-chrome sticky top-0 z-40 border-b">
-      <div className="mx-auto flex max-w-3xl items-center gap-4 px-4 py-3">
+      <div className="mx-auto flex max-w-3xl items-center gap-4 px-4 py-1.5">
         <Link href="/" className="home-serif shrink-0 text-xl font-extrabold text-[var(--home-chalk)]">
           {HOME_INFO.name}
           <span className="text-[var(--home-heart)]">.</span>
         </Link>
-        <nav className="home-ui scrollbar-none flex gap-4 overflow-x-auto text-sm">
-          {HOME_NAV.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="shrink-0 py-1 hover:text-[var(--home-chalk)]"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
+        <HomeNav items={HOME_NAV} />
         <a
           href={HOME_INFO.reserveUrl}
           target="_blank"
           rel="noreferrer"
-          className="home-btn home-btn-primary ml-auto hidden shrink-0 px-3 py-1 text-sm sm:inline-block"
+          className="home-btn home-btn-primary ml-auto hidden min-h-11 shrink-0 items-center px-3 text-sm sm:flex"
         >
           예약하기
         </a>
