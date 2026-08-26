@@ -41,25 +41,11 @@ export function HomeDeco({ tall = false }: { tall?: boolean }) {
             className="home-wisp-float absolute right-[7vw] top-[560px] [animation-delay:2.4s]"
           />
           <Image
-            src="/home/deco/video/v-cushion.webp"
-            alt=""
-            width={150}
-            height={151}
-            className="absolute left-[3vw] top-[680px] -rotate-6"
-          />
-          <Image
             src="/home/deco/video/v-cross.webp"
             alt=""
             width={120}
             height={64}
             className="absolute right-[4vw] top-[940px] rotate-12"
-          />
-          <Image
-            src="/home/deco/video/v-inkwell.webp"
-            alt=""
-            width={84}
-            height={150}
-            className="absolute left-[4vw] top-[1220px]"
           />
         </>
       )}

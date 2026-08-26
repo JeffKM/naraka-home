@@ -17,12 +17,12 @@ export function DeskHero() {
             "linear-gradient(180deg, transparent, rgba(58,42,38,0.55) 30%, var(--home-rosewood-deep) 60%, #2a1e1b)",
         }}
       />
-      <div className="mx-auto grid max-w-5xl gap-8 px-4 pb-24 pt-10 md:grid-cols-[1fr_auto] md:items-center md:gap-14 md:pb-32 md:pt-14">
+      <div className="mx-auto grid max-w-3xl gap-8 px-4 pb-24 pt-10 md:grid-cols-[1fr_auto] md:items-center md:gap-12 md:pb-32 md:pt-14">
         {/* 인스타 프레임 — 모바일은 위, 데스크톱은 우측 */}
         <Link
           href="/about"
           aria-label="나라카 채용 설화 보러 가기"
-          className="relative order-first mx-auto block w-[220px] md:order-last md:w-[300px] lg:w-[340px]"
+          className="relative order-first mx-auto block w-[220px] md:order-last md:w-[260px] lg:w-[300px]"
         >
           <span className="relative block aspect-[9/16] overflow-hidden">
             <HeroVideo className="absolute left-[10.19%] top-[8.13%] h-[79.64%] w-[79.63%] object-cover" />
@@ -52,47 +52,43 @@ export function DeskHero() {
               나라카 이야기
             </Link>
           </div>
-          {/* 릴스 실물 명패 — 책상 위 @naraka_concafe */}
-          <Image
-            src="/home/deco/video/v-nameplate.webp"
-            alt=""
-            aria-hidden
-            width={210}
-            height={129}
-            className="pointer-events-none mx-auto mt-8 hidden w-[180px] select-none md:mx-0 md:block"
-          />
         </div>
       </div>
 
-      {/* 책상 위 소품 — 상판 띠 위 (넓은 화면 전용) */}
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 hidden select-none xl:block">
+      {/* 책상 위 소품 — 상판 띠 위 (넓은 화면 전용).
+          콘텐츠 축(max-w-3xl) 바깥에 바로 붙여 배치하고, 밝기를 눌러 배경 오브젝트로 둔다
+          (흰 방석이 CTA보다 시선을 먼저 끌던 문제) */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 hidden select-none opacity-85 [filter:brightness(0.82)] xl:block"
+      >
         <Image
           src="/home/deco/video/v-inkwell.webp"
           alt=""
           width={84}
           height={150}
-          className="absolute bottom-6 left-[6vw] w-[64px]"
+          className="absolute bottom-6 left-[calc(50%-476px)] w-[60px]"
         />
         <Image
           src="/home/deco/video/v-cushion.webp"
           alt=""
           width={150}
           height={151}
-          className="absolute bottom-2 left-[calc(6vw+90px)] w-[120px] -rotate-3"
+          className="absolute bottom-2 left-[calc(50%-396px)] w-[92px] -rotate-3"
         />
         <Image
           src="/home/deco/video/v-resume.webp"
           alt=""
           width={110}
           height={255}
-          className="absolute bottom-3 right-[5vw] w-[80px] rotate-[8deg]"
+          className="absolute bottom-3 right-[calc(50%-470px)] w-[76px] rotate-[8deg]"
         />
         <Image
           src="/home/deco/video/v-stamp-tool.webp"
           alt=""
           width={116}
           height={164}
-          className="absolute bottom-5 right-[calc(5vw+110px)] w-[72px] -rotate-6"
+          className="absolute bottom-5 right-[calc(50%-386px)] w-[66px] -rotate-6"
         />
       </div>
     </section>
