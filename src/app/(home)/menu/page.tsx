@@ -1,4 +1,3 @@
-import { DeskProp } from "@/components/home/DeskProp";
 import type { Metadata } from "next";
 import { listMenu } from "@/services/homeContentService";
 
@@ -12,13 +11,6 @@ export default async function MenuPage() {
   return (
     <main className="mx-auto max-w-3xl px-4 py-10">
       <div className="home-paper p-5 sm:p-8">
-        {/* 시트 아래 모서리에 놓인 약병 */}
-        <DeskProp
-          src="/home/deco/video/v-jar.webp"
-          width={154}
-          height={279}
-          className="-bottom-6 right-6 w-12 sm:right-10 sm:w-16"
-        />
     <h1 className="text-2xl font-bold">메뉴</h1>
     {categories.length === 0 && (
       <p className="mt-6 text-sm text-[var(--home-muted)]">

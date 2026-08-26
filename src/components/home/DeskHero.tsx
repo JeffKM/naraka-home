@@ -1,10 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import { HeroVideo } from "@/components/home/HeroVideo";
 import { HOME_INFO } from "@/lib/homeConfig";
 
 // 홈 첫 화면 — 릴스 마지막 장면(밤의 책상 위 인스타)을 가로로 다시 지은 히어로
-// 좌: 이름·태그라인·CTA·명패 / 우: 인스타 프레임 소품 안 하이라이트 루프 / 하단: 책상 상판 + 소품
+// 좌: 이름·태그라인·CTA / 우: 인스타 프레임 안 하이라이트 루프 / 하단: 책상 상판 띠
 export function DeskHero() {
   return (
     <section className="relative overflow-hidden bg-[var(--home-void)]">
@@ -53,43 +52,6 @@ export function DeskHero() {
             </Link>
           </div>
         </div>
-      </div>
-
-      {/* 책상 위 소품 — 상판 띠 위 (넓은 화면 전용).
-          콘텐츠 축(max-w-3xl) 바깥에 바로 붙여 배치하고, 밝기를 눌러 배경 오브젝트로 둔다
-          (흰 방석이 CTA보다 시선을 먼저 끌던 문제) */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 hidden select-none opacity-85 [filter:brightness(0.82)] xl:block"
-      >
-        <Image
-          src="/home/deco/video/v-inkwell.webp"
-          alt=""
-          width={84}
-          height={150}
-          className="absolute bottom-6 left-[calc(50%-476px)] w-[60px]"
-        />
-        <Image
-          src="/home/deco/video/v-cushion.webp"
-          alt=""
-          width={150}
-          height={151}
-          className="absolute bottom-2 left-[calc(50%-396px)] w-[92px] -rotate-3"
-        />
-        <Image
-          src="/home/deco/video/v-resume.webp"
-          alt=""
-          width={110}
-          height={255}
-          className="absolute bottom-3 right-[calc(50%-470px)] w-[76px] rotate-[8deg]"
-        />
-        <Image
-          src="/home/deco/video/v-stamp-tool.webp"
-          alt=""
-          width={116}
-          height={164}
-          className="absolute bottom-5 right-[calc(50%-386px)] w-[66px] -rotate-6"
-        />
       </div>
     </section>
   );

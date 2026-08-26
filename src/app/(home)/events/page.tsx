@@ -1,4 +1,3 @@
-import { DeskProp } from "@/components/home/DeskProp";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { listPosts } from "@/services/homeContentService";
@@ -19,13 +18,6 @@ export default async function EventsPage() {
       <span className="home-tag absolute -top-3 left-4 bg-[var(--home-red)] px-2 text-xs text-[var(--home-on-red)]">
         상설
       </span>
-      {/* 상설 도장이 카드 위 모서리에 찍혀 있다 */}
-      <DeskProp
-        src="/home/deco/video/v-stamp-tool.webp"
-        width={116}
-        height={164}
-        className="-top-6 right-5 w-9 -rotate-12 sm:right-8 sm:w-12"
-      />
       <p className="home-ui mt-1 text-lg">나라카증권 — 모의 주식 거래</p>
       <p className="mt-1 text-sm text-[var(--home-muted)]">
         가상 화폐로 요괴 도시의 주식을 거래해보세요. 참여 코드는 매장에서 드려요.

@@ -1,4 +1,3 @@
-import { DeskProp } from "@/components/home/DeskProp";
 import { notFound } from "next/navigation";
 import { PostBody } from "@/components/home/PostBody";
 import { getPost } from "@/services/homeContentService";
@@ -19,13 +18,6 @@ export default async function EventDetailPage({
   return (
     <main className="mx-auto max-w-3xl px-4 py-10">
       <div className="home-paper p-5 sm:p-8">
-        {/* 이벤트 상품 자루 */}
-        <DeskProp
-          src="/home/deco/deco-moneybag.webp"
-          width={218}
-          height={300}
-          className="-bottom-5 right-6 w-12 sm:right-10 sm:w-16"
-        />
     <p className="text-xs text-[var(--home-red)]">
       {post.eventStartDate}
       {post.eventEndDate ? ` ~ ${post.eventEndDate}` : ""}

@@ -261,38 +261,6 @@
   transform: rotate(-8deg);
 }
 
-/* 소품 모션 — 매달린 물건은 위쪽을 축으로 흔들린다. 끈(::before)은 천장에 매다는
-   배치에서만 붙인다 — 시트 모서리에 건 소품은 끈이 허공에서 끊겨 보인다. */
-.home-hang {
-  animation: home-sway 7s ease-in-out infinite;
-  transform-origin: top center;
-}
-.home-hang-cord::before {
-  content: "";
-  display: block;
-  width: 2.5px;
-  height: 64px;
-  margin: 0 auto;
-  background: #55403a;
-}
-@keyframes home-sway {
-  0%, 100% { transform: rotate(-1.5deg); }
-  50% { transform: rotate(1.8deg); }
-}
-.home-wisp-float {
-  animation: home-wisp 5s ease-in-out infinite;
-}
-@keyframes home-wisp {
-  0%, 100% { transform: translateY(0); opacity: 0.85; }
-  50% { transform: translateY(-9px); opacity: 1; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .home-hang,
-  .home-wisp-float {
-    animation: none;
-  }
-}
-
 /* 이력서 시트 — 콘텐츠 뭉치마다 양피지 한 장 (불규칙 모서리+얼룩 유지, 실측 종이색). 내부는 시트 잉크 */
 .home-paper {
   --home-ink: var(--home-sheet-ink);

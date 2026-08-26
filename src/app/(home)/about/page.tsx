@@ -1,4 +1,3 @@
-import { DeskProp } from "@/components/home/DeskProp";
 import type { Metadata } from "next";
 import { HOME_INFO } from "@/lib/homeConfig";
 
@@ -37,19 +36,6 @@ export default function AboutPage() {
   return (
     <main className="mx-auto max-w-3xl px-4 py-10">
       <div className="home-paper p-5 sm:p-8">
-        {/* 심사가 끝난 이력서와 종신 도장 — 이야기 끝에 나란히 놓인다 */}
-        <DeskProp
-          src="/home/deco/video/v-resume.webp"
-          width={220}
-          height={510}
-          className="-bottom-12 left-6 w-10 rotate-6 sm:left-10 sm:w-12"
-        />
-        <DeskProp
-          src="/home/deco/video/v-stamp-tool.webp"
-          width={116}
-          height={164}
-          className="-bottom-6 right-6 w-11 -rotate-6 sm:right-10 sm:w-14"
-        />
         <h1 className="text-2xl font-bold">나라카 이야기</h1>
         <p className="mt-4 leading-7">
           나라카(奈落)는 지옥을 뜻합니다. 이 카페는 지옥이고, 감옥이고, 직장입니다.

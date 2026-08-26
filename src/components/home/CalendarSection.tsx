@@ -8,7 +8,6 @@ import {
   type CalendarDayCell,
 } from "@/lib/homeCalendar";
 import type { HomeScheduleEntry, HomeStaff } from "@/types/home";
-import { DeskProp } from "./DeskProp";
 import { StaffAvatar } from "./StaffAvatar";
 
 const WEEKDAYS = ["월", "화", "수", "목", "금", "토", "일"];
@@ -56,14 +55,7 @@ export function CalendarSection({ month, weeks, staff, daySchedule }: Props) {
         </div>
       </div>
 
-      <div className="home-frame relative mt-4">
-        {/* 달력 액자 아래 모서리에 걸터앉은 고양이 */}
-        <DeskProp
-          src="/home/deco/deco-cat.webp"
-          width={270}
-          height={240}
-          className="-bottom-4 right-5 w-14 sm:right-8 sm:w-20"
-        />
+      <div className="home-frame mt-4">
       <div className="home-ui grid grid-cols-7 gap-1 text-center text-xs text-[var(--home-muted)]">
         {WEEKDAYS.map((d) => (
           <div key={d} className="py-1">{d}</div>
@@ -147,15 +139,7 @@ export function CalendarSection({ month, weeks, staff, daySchedule }: Props) {
       </div>
 
       {selectedCell && (
-        <div className="home-lacquer-panel relative mt-4 p-4">
-          {/* 선택일 패널 아래 모서리에 떠 있는 위스프 */}
-          <DeskProp
-            src="/home/deco/wisp-a.webp"
-            width={180}
-            height={226}
-            className="-bottom-4 right-5 w-9 sm:right-8 sm:w-11"
-            motion="float"
-          />
+        <div className="home-lacquer-panel mt-4 p-4">
           <h3 className="home-ui text-base">
             {selectedCell.date.replaceAll("-", ".")}
             {selectedCell.isToday ? " (오늘)" : ""}

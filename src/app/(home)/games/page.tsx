@@ -1,4 +1,3 @@
-import { DeskProp } from "@/components/home/DeskProp";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -11,13 +10,6 @@ export default function GamesPage() {
   return (
     <main className="mx-auto max-w-3xl px-4 py-10">
       <div className="home-paper p-5 sm:p-8">
-        {/* 시트 아래 모서리에 기대 둔 철퇴 */}
-        <DeskProp
-          src="/home/deco/video/v-mace.webp"
-          width={220}
-          height={347}
-          className="-bottom-7 right-6 w-12 sm:right-10 sm:w-16"
-        />
     <h1 className="text-2xl font-bold">나라카 게임</h1>
     {GAMES.length === 0 ? (
       <div className="mt-10 rounded-[14px] border-2 border-dashed border-[var(--home-muted)] p-10 text-center text-[var(--home-muted)]">

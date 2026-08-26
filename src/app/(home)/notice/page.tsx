@@ -1,4 +1,3 @@
-import { DeskProp } from "@/components/home/DeskProp";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { listPosts } from "@/services/homeContentService";
@@ -12,13 +11,6 @@ export default async function NoticePage() {
   return (
     <main className="mx-auto max-w-3xl px-4 py-10">
       <div className="home-paper p-5 sm:p-8">
-        {/* 공지 시트 위 모서리에 붙은 쪽지 조각 */}
-        <DeskProp
-          src="/home/deco/video/v-scrap.webp"
-          width={140}
-          height={117}
-          className="-top-6 right-6 w-14 -rotate-6 sm:right-10 sm:w-20"
-        />
     <h1 className="text-2xl font-bold">공지사항</h1>
     <ul className="mt-6 divide-y divide-[var(--home-line)]">
       {posts.map((p) => (
