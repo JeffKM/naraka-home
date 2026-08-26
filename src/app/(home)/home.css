@@ -39,6 +39,14 @@
   color: inherit;
 }
 
+/* 한국어 줄바꿈 — 기본값은 CJK를 아무 글자에서나 끊어 "요괴 / 들이"처럼
+   어절 중간이 갈라진다. keep-all로 어절 경계에서만 끊고, 끊을 수 없는
+   긴 토큰(URL 등)만 break-word로 흘린다. */
+.home-scope {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
 /* 타이포 위계: Hahmlet(제목·UI) → Gowun Dodum(본문) → Gaegu(손글씨·백묵) — 유지 */
 .home-scope h1,
 .home-scope h2 {
