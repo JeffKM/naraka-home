@@ -32,7 +32,10 @@ export function useBookScroll(containerRef: React.RefObject<HTMLElement | null>,
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
-      if (raf.current) cancelAnimationFrame(raf.current);
+      if (raf.current) {
+        cancelAnimationFrame(raf.current);
+        raf.current = 0;
+      }
     };
   }, [containerRef, pageCount]);
 
