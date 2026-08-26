@@ -51,7 +51,7 @@ export function NewsHighlight() {
     .slice(0, 2);
 
   return (
-    <Link href="/news">
+    <Link href="/event/news">
       <Card className="transition-colors hover:bg-muted/40">
         <CardContent className="py-3">
           <div className="flex items-center justify-between">

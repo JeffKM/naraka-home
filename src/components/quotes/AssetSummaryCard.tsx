@@ -56,7 +56,7 @@ export function AssetSummaryCard() {
 
   if (isError || !portfolio) {
     return (
-      <Link href="/login">
+      <Link href="/event/login">
         <Card className="transition-colors hover:bg-muted/40">
           <CardContent className="flex items-center justify-between py-3">
             <div>
@@ -96,7 +96,7 @@ export function AssetSummaryCard() {
   const trendDown = !!trend && trend[trend.length - 1] < trend[0];
 
   return (
-    <Link href="/portfolio">
+    <Link href="/event/portfolio">
       <Card className="transition-colors hover:bg-muted/40">
         <CardContent className="flex flex-col gap-3 py-3">
           <div className="flex items-start justify-between gap-2">

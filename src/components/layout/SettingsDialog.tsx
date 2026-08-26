@@ -187,7 +187,7 @@ export function SettingsDialog() {
               variant="ghost"
               className="-mx-2 h-auto justify-between px-2 py-2"
             >
-              <Link href="/guide">
+              <Link href="/event/guide">
                 <span className="flex items-center gap-2 text-sm font-semibold">
                   <BookOpenIcon className="size-4" />
                   게임 방법

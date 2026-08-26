@@ -1,0 +1,323 @@
+/* 카페 홈 디자인 시스템 — "옥자의 책상" (밤의 책상 × 이력서 양피지 × 백묵 명패 × 옥자 레드)
+   레퍼런스: 릴스 최종본 실측 팔레트 (2026-08-26 스펙 §2)
+   규칙: 페이지 바탕=밤의 책상(잉크 다크), 콘텐츠 면=이력서 양피지(내부 텍스트는 시트 잉크로 재정의),
+   섹션 라벨=백묵 명패, 주 CTA=옥자 레드. 위스프 블루는 포커스 링·초자연 포인트에만 아껴 쓴다. */
+.home-scope {
+  --home-noise: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='140'%20height='140'%3E%3Cfilter%20id='n'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.8'%20numOctaves='2'%20stitchTiles='stitch'/%3E%3CfeColorMatrix%20type='saturate'%20values='0'/%3E%3C/filter%3E%3Crect%20width='140'%20height='140'%20filter='url(%23n)'%20opacity='0.06'/%3E%3C/svg%3E");
+  --home-void: #0d0c11;          /* 인스타 최외곽 — 최심부 배경 */
+  --home-bar: #16151c;           /* 인스타 상·하단 바 — 크롬 */
+  --home-bg: #131117;            /* 밤의 책상 바탕 */
+  --home-rosewood: #6b4a44;      /* 책상 목재 */
+  --home-rosewood-deep: #3a2a26;
+  --home-parchment: #d1b89d;     /* 이력서 종이 */
+  --home-cream: #e6d4b8;
+  --home-surface: #e6d4b8;       /* 시트 위 카드·달력 칸 */
+  --home-paper-deep: #c3a988;
+  --home-ink: #ddd8d0;           /* 다크 바탕 기본 텍스트 (시트 안에서 재정의됨) */
+  --home-muted: #9a938c;
+  --home-sheet-ink: #2a2119;     /* 시트 위 잉크 텍스트 */
+  --home-sheet-muted: #6e5c49;
+  --home-red: #a34c37;           /* 옥자 레드 — 주 CTA */
+  --home-red-deep: #7d3728;
+  --home-on-red: #f3e6d4;   /* 레드 배경 위 텍스트 — 크림(3.97:1)은 AA 미달이라 분리 */
+  --home-heart: #e54f5b;         /* 인스타 하트 — 마이크로 액센트 */
+  --home-chalk: #dfdfdf;         /* 백묵 */
+  --home-slate: #515151;         /* 명패 블랙보드 */
+  --home-wisp: #8fd0e8;          /* 위스프 코어(포커스 링 대비 보정) */
+  --home-wisp-pale: #dff5fd;
+  --home-moss: #757f70;          /* 초록 책 — 보조 액센트 */
+  --home-line: #b39a76;          /* 양피지 괘선 */
+  background:
+    var(--home-noise),
+    radial-gradient(120% 70% at 50% 100%, rgba(107, 74, 68, 0.32), transparent 60%),
+    radial-gradient(140% 80% at 50% 0%, rgba(13, 12, 17, 0.9), transparent 70%),
+    var(--home-bg);
+  color: var(--home-ink);
+  font-family: var(--font-gowun), "Apple SD Gothic Neo", sans-serif;
+}
+.home-scope a {
+  color: inherit;
+}
+
+/* 타이포 위계: Hahmlet(제목·UI) → Gowun Dodum(본문) → Gaegu(손글씨·백묵) — 유지 */
+.home-scope h1,
+.home-scope h2 {
+  font-family: var(--font-hahmlet), serif;
+  letter-spacing: -0.01em;
+}
+.home-serif {
+  font-family: var(--font-hahmlet), serif;
+}
+.home-ui {
+  font-family: var(--font-hahmlet), serif;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.home-hand {
+  font-family: var(--font-gaegu), cursive;
+}
+.home-tally {
+  font-family: var(--font-gaegu), cursive;
+  letter-spacing: 3px;
+  color: var(--home-muted);
+}
+
+/* 잉크 크롬 — 헤더·푸터 공용 (인스타 바 실측 톤, 평면+헤어라인) */
+.home-chrome {
+  --home-ink: var(--home-chalk);
+  --home-muted: #9a938c;
+  --home-red: #c0654e;
+  background:
+    var(--home-noise),
+    linear-gradient(180deg, #1a1920, var(--home-bar));
+  color: var(--home-chalk);
+  border-color: rgba(223, 223, 223, 0.14);
+}
+
+/* 홈 내비 — 44px 터치 타깃, 현재 페이지 표시, 넘칠 때 우측 페이드로 "더 있음" 신호 */
+.home-nav-link {
+  min-height: 44px;
+  color: var(--home-muted);
+  border-bottom: 2px solid transparent;
+  transition: color 0.1s;
+}
+.home-nav-link:hover {
+  color: var(--home-chalk);
+}
+.home-nav-link[data-active="true"] {
+  color: var(--home-chalk);
+  border-bottom-color: var(--home-red);
+}
+.home-nav[data-overflow="true"] {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-nav-link {
+    transition: none;
+  }
+}
+
+/* 상단 몰딩 — 가는 잉크 바 + 옥자 레드 헤어라인 */
+.home-curtain {
+  height: 6px;
+  background: linear-gradient(180deg, #1a1920, var(--home-bar));
+  border-bottom: 1px solid var(--home-red);
+}
+
+/* 양피지 카드 — 시트 안팎 공용. 내부 텍스트는 시트 잉크 */
+.home-card {
+  --home-ink: var(--home-sheet-ink);
+  --home-muted: var(--home-sheet-muted);
+  --home-red: #a34c37;
+  border: 1px solid #a98f6b;
+  border-radius: 10px;
+  background:
+    var(--home-noise),
+    linear-gradient(180deg, #ecdcc0, #dcc5a6);
+  color: var(--home-sheet-ink);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 246, 226, 0.5),
+    inset 0 0 18px rgba(120, 90, 50, 0.14),
+    0 2px 6px rgba(6, 5, 8, 0.4);
+}
+
+/* 버튼 — 기본은 명패(블랙보드+백묵), 주 CTA는 옥자 레드 */
+.home-btn {
+  font-family: var(--font-hahmlet), serif;
+  font-weight: 600;
+  border: 1px solid #2e2e2e;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #5c5c5c, #464646);
+  color: #e8e8e8;
+  box-shadow:
+    inset 0 1px 0 rgba(223, 223, 223, 0.25),
+    0 2px 4px rgba(6, 5, 8, 0.5);
+  transition: filter 0.1s, transform 0.1s, box-shadow 0.1s;
+}
+.home-btn:hover {
+  filter: brightness(1.1);
+}
+.home-btn:active {
+  transform: translateY(1px);
+  box-shadow:
+    inset 0 1px 0 rgba(223, 223, 223, 0.25),
+    0 1px 2px rgba(6, 5, 8, 0.5);
+}
+.home-btn:focus-visible {
+  outline: 3px solid var(--home-wisp);
+  outline-offset: 2px;
+}
+.home-btn-primary {
+  background: linear-gradient(180deg, #b0543e, #a34c37 55%, #7d3728);
+  color: #f3e6d4;
+  border: 1px solid #5f2a1e;
+  text-shadow: 0 1px 2px rgba(60, 15, 8, 0.5);
+  box-shadow:
+    inset 0 1px 0 rgba(240, 200, 170, 0.3),
+    0 2px 5px rgba(6, 5, 8, 0.5);
+}
+.home-btn-primary:active {
+  box-shadow:
+    inset 0 1px 0 rgba(240, 200, 170, 0.3),
+    0 1px 2px rgba(6, 5, 8, 0.5);
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-btn {
+    transition: none;
+  }
+}
+
+/* 명패 라벨 — 섹션 제목용 블랙보드+백묵 (@naraka_concafe 명패 실측 문법) */
+.home-plate {
+  display: inline-block;
+  font-family: var(--font-gaegu), cursive;
+  background: linear-gradient(180deg, #565656, #454545);
+  color: #e8e8e8;
+  border: 1px solid #2b2b2b;
+  border-radius: 6px;
+  padding: 1px 14px 3px;
+  transform: rotate(-1deg);
+  box-shadow:
+    inset 0 0 0 1px rgba(223, 223, 223, 0.14),
+    0 2px 4px rgba(6, 5, 8, 0.45);
+}
+
+.home-plate .home-tally {
+  color: #c2c2c2;
+  /* 부모의 flex gap은 텍스트 노드와 span 사이에 적용되지 않아 실제 간격이 0px였다 */
+  margin-left: 8px;
+  margin-right: 2px;
+}
+
+/* 태그 — 밀랍 인장 칩 (색은 사용처에서 bg로 지정) — 유지 */
+.home-tag {
+  font-family: var(--font-hahmlet), serif;
+  font-weight: 600;
+  border: 1px solid rgba(30, 24, 18, 0.55);
+  border-radius: 999px;
+  transform: rotate(-2deg);
+  display: inline-block;
+  box-shadow: 0 1px 2px rgba(6, 5, 8, 0.35);
+}
+
+/* 구분 괘선 — 로즈우드 그라데이션 (구 골드 라인) */
+.home-rule {
+  height: 2px;
+  width: 64px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--home-rosewood) 25%, #8d6a5f 50%, var(--home-rosewood) 75%, transparent);
+}
+
+/* 로즈우드 액자 — 달력 등 콘텐츠 프레임 (책상 목재 실측 톤). 내부는 시트 잉크 */
+.home-frame {
+  --home-ink: var(--home-sheet-ink);
+  --home-muted: var(--home-sheet-muted);
+  border-radius: 12px;
+  padding: 10px;
+  background:
+    var(--home-noise),
+    linear-gradient(180deg, #7a544d, var(--home-rosewood) 40%, var(--home-rosewood-deep));
+  box-shadow:
+    inset 0 0 0 2px rgba(223, 223, 223, 0.18),
+    inset 0 0 0 5px #2c201d,
+    0 4px 10px rgba(6, 5, 8, 0.5);
+}
+
+/* 레드 패널 — 선택일 상세 등 강조 오버레이 (옥자 레드 실측 톤) */
+.home-lacquer-panel {
+  --home-ink: #f3e6d4;
+  --home-muted: #e0bfa8;
+  --home-red: #f3d9a6;
+  border: 1px solid #4a2016;
+  border-radius: 10px;
+  background:
+    var(--home-noise),
+    radial-gradient(120% 100% at 50% 0%, #b0543e, #8d4030 70%);
+  color: #f3e6d4;
+  box-shadow:
+    inset 0 0 0 2px rgba(240, 220, 190, 0.35),
+    inset 0 0 24px rgba(50, 12, 6, 0.5),
+    0 3px 8px rgba(6, 5, 8, 0.5);
+}
+
+/* 도장 — "확정·채용·완료" 상태 전용 — 유지 */
+.home-stamp {
+  display: inline-grid;
+  place-items: center;
+  border: 3px solid var(--home-red-deep);
+  color: var(--home-red-deep);
+  border-radius: 50%;
+  font-family: var(--font-hahmlet), serif;
+  font-weight: 600;
+  transform: rotate(-8deg);
+}
+
+/* 장식 애니메이션 — 유지 */
+.home-hang {
+  animation: home-sway 7s ease-in-out infinite;
+  transform-origin: top center;
+}
+.home-hang::before {
+  content: "";
+  display: block;
+  width: 2.5px;
+  height: 64px;
+  margin: 0 auto;
+  background: #55403a;
+}
+@keyframes home-sway {
+  0%, 100% { transform: rotate(-1.5deg); }
+  50% { transform: rotate(1.8deg); }
+}
+.home-wisp-float {
+  animation: home-wisp 5s ease-in-out infinite;
+}
+@keyframes home-wisp {
+  0%, 100% { transform: translateY(0); opacity: 0.85; }
+  50% { transform: translateY(-9px); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-hang,
+  .home-wisp-float {
+    animation: none;
+  }
+}
+
+/* 이력서 시트 — 콘텐츠 뭉치마다 양피지 한 장 (불규칙 모서리+얼룩 유지, 실측 종이색). 내부는 시트 잉크 */
+.home-paper {
+  --home-ink: var(--home-sheet-ink);
+  --home-muted: var(--home-sheet-muted);
+  --home-red: #a34c37;
+  position: relative;
+  background:
+    var(--home-noise),
+    radial-gradient(120% 90% at 22% 0%, rgba(240, 224, 196, 0.85), transparent 55%),
+    radial-gradient(80% 70% at 88% 94%, rgba(130, 96, 52, 0.22), transparent 60%),
+    radial-gradient(38% 30% at 92% 6%, rgba(124, 90, 48, 0.16), transparent 70%),
+    radial-gradient(30% 22% at 6% 78%, rgba(124, 92, 50, 0.14), transparent 70%),
+    linear-gradient(180deg, #dcc5a6, #cbb190);
+  border: 1px solid #9c8261;
+  border-radius: 14px 90px 16px 70px / 70px 15px 80px 14px;
+  color: var(--home-sheet-ink);
+  box-shadow:
+    inset 0 0 0 1px rgba(250, 240, 218, 0.5),
+    inset 0 0 34px rgba(110, 82, 44, 0.2),
+    0 3px 10px rgba(6, 5, 8, 0.5);
+}
+.home-paper-tilt {
+  transform: rotate(-0.4deg);
+}
+/* 테이프 조각 — 유지, 양피지 톤 */
+.home-tape::before {
+  content: "";
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  width: 92px;
+  height: 24px;
+  transform: translateX(-50%) rotate(-2deg);
+  background: rgba(210, 184, 140, 0.6);
+  border: 1px solid rgba(120, 90, 50, 0.35);
+  box-shadow: 0 1px 2px rgba(6, 5, 8, 0.2);
+}
