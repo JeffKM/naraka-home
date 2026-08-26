@@ -1,8 +1,7 @@
 import { HomeDeco } from "@/components/home/HomeDeco";
 import Link from "next/link";
 import { CalendarSection } from "@/components/home/CalendarSection";
-import { ScrubJourney } from "@/components/home/journey/ScrubJourney";
-import { StoryTeaser } from "@/components/home/StoryTeaser";
+import { DeskHero } from "@/components/home/DeskHero";
 import { buildMonthGrid } from "@/lib/homeCalendar";
 import { HOME_INFO } from "@/lib/homeConfig";
 import { getKstParts } from "@/lib/market";
@@ -54,25 +53,15 @@ export default async function HomePage({
 
   return (
     <main>
-      <ScrubJourney />
+      <DeskHero />
       <div className="relative">
       <HomeDeco tall />
-      <section className="mx-auto max-w-3xl px-4 pt-12 text-center">
-        <p className="home-tally text-sm" aria-hidden>
-          {"//// //"}
-        </p>
-        <h1 className="mt-1 text-3xl font-extrabold">{HOME_INFO.name}</h1>
-        <p className="mt-2 text-[var(--home-muted)]">{HOME_INFO.tagline}</p>
-      </section>
-
       <CalendarSection
         month={month}
         weeks={weeks}
         staff={staff}
         daySchedule={daySchedule}
       />
-
-      <StoryTeaser />
 
       <section className="mx-auto max-w-3xl px-4 py-6">
         <div className="home-paper home-tape home-paper-tilt p-5 sm:p-7">
