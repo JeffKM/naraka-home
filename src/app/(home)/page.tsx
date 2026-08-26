@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CalendarSection } from "@/components/home/CalendarSection";
 import { DeskHero } from "@/components/home/DeskHero";
+import { PopupBookDev } from "@/components/home/book/PopupBookDev";
 import { buildMonthGrid } from "@/lib/homeCalendar";
 import { HOME_INFO } from "@/lib/homeConfig";
 import { getKstParts } from "@/lib/market";
@@ -53,6 +54,7 @@ export default async function HomePage({
   return (
     <main>
       <DeskHero />
+      <PopupBookDev />
       <CalendarSection
         month={month}
         weeks={weeks}
