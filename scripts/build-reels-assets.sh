@@ -41,9 +41,27 @@ tmp, frame_png, comic_dir, pub = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv
 Image.open(f"{tmp}/stills/hero.png").convert("RGB").save(f"{pub}/home/hero-poster.webp", "WEBP", quality=85)
 Image.open(f"{tmp}/stills/group.png").convert("RGB").save(f"{pub}/story/poster.webp", "WEBP", quality=82)
 
-# 인스타 프레임 (알파 유지 540×960)
+# 인스타 프레임 (알파 유지 540×960) — 원본은 폰 바깥에 인스타 다크 배경(#0e0d11)이 불투명으로 남아 있어
+# 이미지 모서리에서 배경색 flood-fill로 투명화한다 (폰 바 #16151c는 tol 7 밖이라 보존)
+import numpy as np
+from collections import deque
 frame = Image.open(frame_png).convert("RGBA").resize((540, 960), Image.LANCZOS)
-frame.save(f"{pub}/story/insta-frame.webp", "WEBP", quality=90)
+arr = np.array(frame).astype(int)
+fh, fw = arr.shape[:2]
+near = (np.abs(arr[..., :3] - np.array([14, 13, 17])).max(2) <= 7) & (arr[..., 3] > 0)
+seen = np.zeros((fh, fw), bool)
+queue = deque()
+for y, x in ((0, 0), (0, fw - 1), (fh - 1, 0), (fh - 1, fw - 1), (0, fw // 2), (fh // 2, 0), (fh // 2, fw - 1)):
+    seen[y, x] = True
+    queue.append((y, x))
+while queue:
+    y, x = queue.popleft()
+    for ny, nx in ((y + 1, x), (y - 1, x), (y, x + 1), (y, x - 1)):
+        if 0 <= ny < fh and 0 <= nx < fw and not seen[ny, nx] and (near[ny, nx] or arr[ny, nx, 3] == 0):
+            seen[ny, nx] = True
+            queue.append((ny, nx))
+arr[seen, 3] = 0
+Image.fromarray(arr.astype(np.uint8)).save(f"{pub}/story/insta-frame.webp", "WEBP", quality=90)
 
 # 치비 원화 17장 (폭 840)
 for i in range(1, 18):
