@@ -1,4 +1,4 @@
-import { HomeDeco } from "@/components/home/HomeDeco";
+import { DeskProp } from "@/components/home/DeskProp";
 import { notFound } from "next/navigation";
 import { PostBody } from "@/components/home/PostBody";
 import { getPost } from "@/services/homeContentService";
@@ -17,23 +17,28 @@ export default async function NoticeDetailPage({
   if (!post || post.type !== "notice") notFound();
 
   return (
-    <>
-      <HomeDeco />
-      <main className="mx-auto max-w-3xl px-4 py-10">
-        <div className="home-paper p-5 sm:p-8">
-      <p className="text-xs text-[var(--home-muted)]">{post.publishedAt.slice(0, 10)}</p>
-      <h1 className="mt-1 text-2xl font-bold">{post.title}</h1>
-      {post.coverImageUrl && (
-        // eslint-disable-next-line @next/next/no-img-element -- Supabase Storage 공개 URL
-        <img
-          src={post.coverImageUrl}
-          alt=""
-          className="mt-4 w-full rounded-lg object-cover"
+    <main className="mx-auto max-w-3xl px-4 py-10">
+      <div className="home-paper p-5 sm:p-8">
+        {/* 공지를 읽고 가는 위스프 */}
+        <DeskProp
+          src="/home/deco/wisp-b.webp"
+          width={172}
+          height={257}
+          className="-top-6 right-6 w-9 sm:right-10 sm:w-11"
+          motion="float"
         />
-      )}
-      <PostBody markdown={post.bodyMd} />
-        </div>
-      </main>
-    </>
+    <p className="text-xs text-[var(--home-muted)]">{post.publishedAt.slice(0, 10)}</p>
+    <h1 className="mt-1 text-2xl font-bold">{post.title}</h1>
+    {post.coverImageUrl && (
+      // eslint-disable-next-line @next/next/no-img-element -- Supabase Storage 공개 URL
+      <img
+        src={post.coverImageUrl}
+        alt=""
+        className="mt-4 w-full rounded-lg object-cover"
+      />
+    )}
+    <PostBody markdown={post.bodyMd} />
+      </div>
+    </main>
   );
 }

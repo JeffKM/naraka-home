@@ -1,4 +1,4 @@
-import { HomeDeco } from "@/components/home/HomeDeco";
+import { DeskProp } from "@/components/home/DeskProp";
 import type { Metadata } from "next";
 import { HOME_INFO } from "@/lib/homeConfig";
 
@@ -6,39 +6,44 @@ export const metadata: Metadata = { title: "오시는 길" };
 
 export default function LocationPage() {
   return (
-    <>
-      <HomeDeco />
-      <main className="mx-auto max-w-3xl px-4 py-10">
-        <div className="home-paper p-5 sm:p-8">
-      <h1 className="text-2xl font-bold">오시는 길</h1>
-      <dl className="mt-6 flex flex-col gap-4 text-sm">
-        <div>
-          <dt className="font-semibold">주소</dt>
-          <dd className="mt-1 text-[var(--home-muted)]">{HOME_INFO.addressLine}</dd>
-        </div>
-        <div>
-          <dt className="font-semibold">영업시간</dt>
-          <dd className="mt-1 text-[var(--home-muted)]">{HOME_INFO.hoursNote}</dd>
-        </div>
-        <div>
-          <dt className="font-semibold">예약·문의</dt>
-          <dd className="mt-1">
-            <a
-              href={HOME_INFO.reserveUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="home-btn home-btn-primary inline-flex min-h-11 items-center px-4"
-            >
-              인스타그램으로 예약·문의하기
-            </a>
-          </dd>
-        </div>
-      </dl>
-      <p className="mt-8 text-xs text-[var(--home-muted)]">
-        지도는 아직 준비 중이에요. 위치는 인스타그램 프로필에 있어요.
-      </p>
-        </div>
-      </main>
-    </>
+    <main className="mx-auto max-w-3xl px-4 py-10">
+      <div className="home-paper p-5 sm:p-8">
+        {/* 길 안내하듯 시트 아래를 도는 박쥐 */}
+        <DeskProp
+          src="/home/deco/deco-bat.webp"
+          width={312}
+          height={189}
+          className="-bottom-4 right-6 w-16 sm:right-10 sm:w-24"
+          motion="float"
+        />
+    <h1 className="text-2xl font-bold">오시는 길</h1>
+    <dl className="mt-6 flex flex-col gap-4 text-sm">
+      <div>
+        <dt className="font-semibold">주소</dt>
+        <dd className="mt-1 text-[var(--home-muted)]">{HOME_INFO.addressLine}</dd>
+      </div>
+      <div>
+        <dt className="font-semibold">영업시간</dt>
+        <dd className="mt-1 text-[var(--home-muted)]">{HOME_INFO.hoursNote}</dd>
+      </div>
+      <div>
+        <dt className="font-semibold">예약·문의</dt>
+        <dd className="mt-1">
+          <a
+            href={HOME_INFO.reserveUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="home-btn home-btn-primary inline-flex min-h-11 items-center px-4"
+          >
+            인스타그램으로 예약·문의하기
+          </a>
+        </dd>
+      </div>
+    </dl>
+    <p className="mt-8 text-xs text-[var(--home-muted)]">
+      지도는 아직 준비 중이에요. 위치는 인스타그램 프로필에 있어요.
+    </p>
+      </div>
+    </main>
   );
 }

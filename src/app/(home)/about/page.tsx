@@ -1,5 +1,4 @@
-import { HomeDeco } from "@/components/home/HomeDeco";
-import Image from "next/image";
+import { DeskProp } from "@/components/home/DeskProp";
 import type { Metadata } from "next";
 import { HOME_INFO } from "@/lib/homeConfig";
 
@@ -36,100 +35,101 @@ const COMIC_COUNT = 17;
 
 export default function AboutPage() {
   return (
-    <>
-      <HomeDeco tall />
-      {/* 릴스 발췌 소품 — 페이지 포인트 */}
-      <Image
-        src="/home/deco/video/v-resume.webp"
-        alt=""
-        aria-hidden
-        width={110}
-        height={255}
-        className="pointer-events-none absolute right-[3vw] top-[480px] rotate-6 z-10 hidden select-none xl:block"
-      />
-      <main className="mx-auto max-w-3xl px-4 py-10">
-        <div className="home-paper p-5 sm:p-8">
-          <h1 className="text-2xl font-bold">나라카 이야기</h1>
-          <p className="mt-4 leading-7">
-            나라카(奈落)는 지옥을 뜻합니다. 이 카페는 지옥이고, 감옥이고, 직장입니다.
-            셋은 같은 곳입니다 — 그게 이 가게의 유일한 농담이자 전부입니다.
-          </p>
-          <p className="mt-2 leading-7 text-[var(--home-muted)]">
-            마녀 사장이 이력서 세 장을 심사했습니다. 지원자들은 전부 사고를 치고
-            붙잡혀 감옥에 갇혔는데 — 그게 바로 채용이었습니다.
-          </p>
+    <main className="mx-auto max-w-3xl px-4 py-10">
+      <div className="home-paper p-5 sm:p-8">
+        {/* 심사가 끝난 이력서와 종신 도장 — 이야기 끝에 나란히 놓인다 */}
+        <DeskProp
+          src="/home/deco/video/v-resume.webp"
+          width={220}
+          height={510}
+          className="-bottom-12 left-6 w-10 rotate-6 sm:left-10 sm:w-12"
+        />
+        <DeskProp
+          src="/home/deco/video/v-stamp-tool.webp"
+          width={116}
+          height={164}
+          className="-bottom-6 right-6 w-11 -rotate-6 sm:right-10 sm:w-14"
+        />
+        <h1 className="text-2xl font-bold">나라카 이야기</h1>
+        <p className="mt-4 leading-7">
+          나라카(奈落)는 지옥을 뜻합니다. 이 카페는 지옥이고, 감옥이고, 직장입니다.
+          셋은 같은 곳입니다 — 그게 이 가게의 유일한 농담이자 전부입니다.
+        </p>
+        <p className="mt-2 leading-7 text-[var(--home-muted)]">
+          마녀 사장이 이력서 세 장을 심사했습니다. 지원자들은 전부 사고를 치고
+          붙잡혀 감옥에 갇혔는데 — 그게 바로 채용이었습니다.
+        </p>
 
-          <div className="mx-auto mt-6 w-full max-w-[420px]">
-            {/* 모바일: 9:16 풀폭 플레이어 */}
+        <div className="mx-auto mt-6 w-full max-w-[420px]">
+          {/* 모바일: 9:16 풀폭 플레이어 */}
+          <video
+            className="w-full rounded-lg sm:hidden"
+            controls
+            playsInline
+            preload="none"
+            poster="/story/poster.webp"
+            src="/story/naraka-story.mp4"
+            aria-label="나라카 채용 설화 애니메이션"
+          />
+          {/* 데스크톱: 인스타 프레임 목업 안 재생 */}
+          <div className="relative hidden aspect-[9/16] sm:block">
             <video
-              className="w-full rounded-lg sm:hidden"
+              className="absolute left-[10.19%] top-[8.13%] h-[79.64%] w-[79.63%] object-cover"
               controls
-              playsInline
               preload="none"
               poster="/story/poster.webp"
               src="/story/naraka-story.mp4"
               aria-label="나라카 채용 설화 애니메이션"
             />
-            {/* 데스크톱: 인스타 프레임 목업 안 재생 */}
-            <div className="relative hidden aspect-[9/16] sm:block">
-              <video
-                className="absolute left-[10.19%] top-[8.13%] h-[79.64%] w-[79.63%] object-cover"
-                controls
-                preload="none"
-                poster="/story/poster.webp"
-                src="/story/naraka-story.mp4"
-                aria-label="나라카 채용 설화 애니메이션"
-              />
-              {/* eslint-disable-next-line @next/next/no-img-element -- 설화 에셋 */}
-              <img
-                src="/story/insta-frame.webp"
-                alt=""
-                className="pointer-events-none absolute inset-0 size-full"
-              />
-            </div>
-          </div>
-
-          <h2 className="home-plate mt-10 text-xl font-bold">요괴들</h2>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            {CAST.map((c) => (
-              <div key={c.name} className="home-card p-4">
-                <p className="font-semibold">{c.name}</p>
-                <p className="text-xs text-[var(--home-red)]">{c.role}</p>
-                <p className="mt-2 text-sm text-[var(--home-muted)]">{c.desc}</p>
-              </div>
-            ))}
-          </div>
-          <p className="mt-4 text-sm leading-6 text-[var(--home-muted)]">
-            붙잡히는 것이 곧 채용 — 감옥은 직원 휴게실이고, 벽의 형기 빗금은
-            근속이 됩니다. 오늘도 요괴들이 손님을 맞이합니다.
-          </p>
-
-          <h2 className="home-plate mt-10 text-xl font-bold">원화 컷</h2>
-          <div className="scrollbar-none -mx-4 mt-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4">
-            {Array.from({ length: COMIC_COUNT }, (_, i) => (
-              // eslint-disable-next-line @next/next/no-img-element -- 설화 원화
-              <img
-                key={i}
-                src={`/story/comic/${String(i + 1).padStart(2, "0")}.webp`}
-                alt={`채용 설화 원화 ${i + 1}번`}
-                loading="lazy"
-                className="w-4/5 max-w-[360px] shrink-0 snap-center rounded-lg border border-[var(--home-line)]"
-              />
-            ))}
-          </div>
-
-          <div className="mt-8 text-center">
-            <a
-              href={HOME_INFO.instagramUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="home-btn home-btn-primary inline-flex min-h-11 items-center px-5"
-            >
-              instagram @{HOME_INFO.instagramHandle}
-            </a>
+            {/* eslint-disable-next-line @next/next/no-img-element -- 설화 에셋 */}
+            <img
+              src="/story/insta-frame.webp"
+              alt=""
+              className="pointer-events-none absolute inset-0 size-full"
+            />
           </div>
         </div>
-      </main>
-    </>
+
+        <h2 className="home-plate mt-10 text-xl font-bold">요괴들</h2>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          {CAST.map((c) => (
+            <div key={c.name} className="home-card p-4">
+              <p className="font-semibold">{c.name}</p>
+              <p className="text-xs text-[var(--home-red)]">{c.role}</p>
+              <p className="mt-2 text-sm text-[var(--home-muted)]">{c.desc}</p>
+            </div>
+          ))}
+        </div>
+        <p className="mt-4 text-sm leading-6 text-[var(--home-muted)]">
+          붙잡히는 것이 곧 채용 — 감옥은 직원 휴게실이고, 벽의 형기 빗금은
+          근속이 됩니다. 오늘도 요괴들이 손님을 맞이합니다.
+        </p>
+
+        <h2 className="home-plate mt-10 text-xl font-bold">원화 컷</h2>
+        <div className="scrollbar-none -mx-4 mt-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4">
+          {Array.from({ length: COMIC_COUNT }, (_, i) => (
+            // eslint-disable-next-line @next/next/no-img-element -- 설화 원화
+            <img
+              key={i}
+              src={`/story/comic/${String(i + 1).padStart(2, "0")}.webp`}
+              alt={`채용 설화 원화 ${i + 1}번`}
+              loading="lazy"
+              className="w-4/5 max-w-[360px] shrink-0 snap-center rounded-lg border border-[var(--home-line)]"
+            />
+          ))}
+        </div>
+
+        <div className="mt-8 text-center">
+          <a
+            href={HOME_INFO.instagramUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="home-btn home-btn-primary inline-flex min-h-11 items-center px-5"
+          >
+            instagram @{HOME_INFO.instagramHandle}
+          </a>
+        </div>
+      </div>
+    </main>
   );
 }

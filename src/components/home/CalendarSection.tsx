@@ -8,6 +8,7 @@ import {
   type CalendarDayCell,
 } from "@/lib/homeCalendar";
 import type { HomeScheduleEntry, HomeStaff } from "@/types/home";
+import { DeskProp } from "./DeskProp";
 import { StaffAvatar } from "./StaffAvatar";
 
 const WEEKDAYS = ["월", "화", "수", "목", "금", "토", "일"];
@@ -30,7 +31,7 @@ export function CalendarSection({ month, weeks, staff, daySchedule }: Props) {
   return (
     <section id="calendar" className="mx-auto max-w-3xl px-4 py-10">
       <div className="home-paper p-4 sm:p-6">
-      {/* 390px에서 명패가 단어 중간에 끊기고 월 이동이 세로로 쌓여, 줄바꿈은 두 덩어리 사이에서만 */}
+        {/* 390px에서 명패가 단어 중간에 끊기고 월 이동이 세로로 쌓여, 줄바꿈은 두 덩어리 사이에서만 */}
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <h2 className="home-plate flex items-baseline gap-2 whitespace-nowrap text-xl font-semibold">
           이번 달의 나라카
@@ -55,7 +56,14 @@ export function CalendarSection({ month, weeks, staff, daySchedule }: Props) {
         </div>
       </div>
 
-      <div className="home-frame mt-4">
+      <div className="home-frame relative mt-4">
+        {/* 달력 액자 아래 모서리에 걸터앉은 고양이 */}
+        <DeskProp
+          src="/home/deco/deco-cat.webp"
+          width={270}
+          height={240}
+          className="-bottom-4 right-5 w-14 sm:right-8 sm:w-20"
+        />
       <div className="home-ui grid grid-cols-7 gap-1 text-center text-xs text-[var(--home-muted)]">
         {WEEKDAYS.map((d) => (
           <div key={d} className="py-1">{d}</div>
@@ -139,7 +147,15 @@ export function CalendarSection({ month, weeks, staff, daySchedule }: Props) {
       </div>
 
       {selectedCell && (
-        <div className="home-lacquer-panel mt-4 p-4">
+        <div className="home-lacquer-panel relative mt-4 p-4">
+          {/* 선택일 패널 아래 모서리에 떠 있는 위스프 */}
+          <DeskProp
+            src="/home/deco/wisp-a.webp"
+            width={180}
+            height={226}
+            className="-bottom-4 right-5 w-9 sm:right-8 sm:w-11"
+            motion="float"
+          />
           <h3 className="home-ui text-base">
             {selectedCell.date.replaceAll("-", ".")}
             {selectedCell.isToday ? " (오늘)" : ""}
