@@ -14,11 +14,22 @@ export interface CalendarScheduleItem {
   endMin: number;
 }
 
+// 기간 이벤트를 칸마다 제목으로 반복하면 한 달짜리 이벤트가 30칸을 똑같이 채운다.
+// 대신 구간 정보를 실어 "시작일·주 첫 칸에만 제목, 나머지는 이어짐 띠"로 그린다.
+export interface CalendarDayEvent extends CalendarEventItem {
+  /** 이벤트 실제 시작일 — 띠 왼쪽 끝을 둥글게 */
+  isStart: boolean;
+  /** 이벤트 실제 종료일 — 띠 오른쪽 끝을 둥글게 */
+  isEnd: boolean;
+  /** 제목을 쓰는 칸 (실제 시작일 또는 그 주의 첫 칸) */
+  showLabel: boolean;
+}
+
 export interface CalendarDayCell {
   date: string;
   inMonth: boolean;
   isToday: boolean;
-  events: CalendarEventItem[];
+  events: CalendarDayEvent[];
   staffIds: number[];
 }
 
@@ -44,14 +55,24 @@ export function buildMonthGrid(
   const lead = (first.getUTCDay() + 6) % 7; // 월요일=0 기준 앞 채움 일수
   const totalCells = Math.ceil((lead + daysInMonth) / 7) * 7;
 
-  // 날짜별 이벤트 전개 (기간 이벤트는 각 날짜에 복제)
-  const eventsByDate = new Map<string, CalendarEventItem[]>();
-  for (const ev of events) {
-    const end = parseUtc(ev.endDate ?? ev.startDate);
+  // 날짜별 이벤트 전개 — 기간 이벤트는 각 날짜에 구간 정보와 함께 복제.
+  // 시작일 순 정렬로 여러 이벤트가 겹칠 때 칸마다 띠 순서가 뒤집히지 않게 한다.
+  const sorted = [...events].sort(
+    (a, b) => a.startDate.localeCompare(b.startDate) || a.id - b.id
+  );
+  const eventsByDate = new Map<string, CalendarDayEvent[]>();
+  for (const ev of sorted) {
+    const endStr = ev.endDate ?? ev.startDate;
+    const end = parseUtc(endStr);
     for (let d = parseUtc(ev.startDate); d <= end; d.setUTCDate(d.getUTCDate() + 1)) {
       const key = toDateStr(d);
       const list = eventsByDate.get(key) ?? [];
-      list.push(ev);
+      list.push({
+        ...ev,
+        isStart: key === ev.startDate,
+        isEnd: key === endStr,
+        showLabel: key === ev.startDate, // 주 첫 칸 여부는 그리드 조립 때 덧붙인다
+      });
       eventsByDate.set(key, list);
     }
   }
@@ -67,11 +88,15 @@ export function buildMonthGrid(
   const cursor = new Date(Date.UTC(year, mon - 1, 1 - lead));
   for (let i = 0; i < totalCells; i += 1) {
     const date = toDateStr(cursor);
+    const isWeekStart = i % 7 === 0; // 월요일 = 줄바꿈 지점이라 제목을 다시 쓴다
     const cell: CalendarDayCell = {
       date,
       inMonth: cursor.getUTCMonth() === mon - 1,
       isToday: date === todayKst,
-      events: eventsByDate.get(date) ?? [],
+      events: (eventsByDate.get(date) ?? []).map((ev) => ({
+        ...ev,
+        showLabel: ev.showLabel || isWeekStart,
+      })),
       staffIds: [...(staffByDate.get(date) ?? [])].sort((a, b) => a - b),
     };
     if (i % 7 === 0) weeks.push([]);

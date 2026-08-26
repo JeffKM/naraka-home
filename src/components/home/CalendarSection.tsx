@@ -62,7 +62,7 @@ export function CalendarSection({ month, weeks, staff, daySchedule }: Props) {
       </div>
       {weeks.map((week, wi) => (
         <div key={wi} className="mt-1 grid grid-cols-7 gap-1">
-          {week.map((cell) => (
+          {week.map((cell, di) => (
             <button
               key={cell.date}
               type="button"
@@ -92,13 +92,39 @@ export function CalendarSection({ month, weeks, staff, daySchedule }: Props) {
                 {Number(cell.date.slice(8))}
               </span>
               {cell.events.length > 0 && (
-                <span className="max-w-full truncate rounded border border-[#b49b63] bg-[var(--home-paper-deep)] px-1 text-[10px] font-semibold text-[var(--home-ink)]">
-                  {cell.events[0].title}
-                  {cell.events.length > 1 ? ` 외 ${cell.events.length - 1}` : ""}
+                <span className="flex w-full flex-col gap-0.5 self-stretch">
+                  {cell.events.slice(0, 2).map((ev) => (
+                    // 이어짐 띠 — 제목은 시작일·주 첫 칸에만, 나머지 칸은 빈 띠로 이어진다.
+                    // 이어지는 쪽은 칸 사이 gap(4px)까지 물려(-mx-2 + z-10) 한 줄로 붙어 보이게 하고,
+                    // 시작·끝과 줄 끝에서는 물리지 않게 막아 프레임 밖으로 새지 않게 한다.
+                    <span
+                      key={ev.id}
+                      className={[
+                        "relative z-10 -mx-1 flex h-[13px] items-center overflow-hidden border-y border-[#b49b63] bg-[var(--home-paper-deep)] px-1 text-[10px] font-semibold leading-none text-[var(--home-ink)]",
+                        ev.isStart
+                          ? "ml-0 rounded-l-[3px] border-l"
+                          : di > 0
+                            ? "ml-[-8px]"
+                            : "",
+                        ev.isEnd
+                          ? "mr-0 rounded-r-[3px] border-r"
+                          : di < 6
+                            ? "mr-[-8px]"
+                            : "",
+                      ].join(" ")}
+                    >
+                      {ev.showLabel && <span className="hidden truncate sm:inline">{ev.title}</span>}
+                    </span>
+                  ))}
+                  {cell.events.length > 2 && (
+                    <span className="px-0 text-[10px] font-semibold leading-none text-[var(--home-sheet-muted)]">
+                      외 {cell.events.length - 2}
+                    </span>
+                  )}
                 </span>
               )}
               {cell.staffIds.length > 0 && (
-                <span className="flex -space-x-1">
+                <span className="flex max-w-full overflow-hidden -space-x-1">
                   {cell.staffIds.slice(0, 4).map((id) => {
                     const s = staffById.get(id);
                     return s ? <StaffAvatar key={id} staff={s} size={18} /> : null;

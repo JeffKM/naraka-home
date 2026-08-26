@@ -10,14 +10,14 @@ export function StaffAvatar({ staff, size = 24 }: { staff: HomeStaff; size?: num
         alt={staff.name}
         width={size}
         height={size}
-        className="rounded-full border border-[var(--home-line)] object-cover"
+        className="shrink-0 rounded-full border border-[var(--home-line)] object-cover"
         style={{ width: size, height: size }}
       />
     );
   }
   return (
     <span
-      className="flex items-center justify-center rounded-full bg-[var(--home-red)] text-[11px] font-bold text-[var(--home-on-red)]"
+      className="flex shrink-0 items-center justify-center rounded-full bg-[var(--home-red)] text-[11px] font-bold text-[var(--home-on-red)]"
       style={{ width: size, height: size }}
     >
       {staff.name.slice(0, 1)}
