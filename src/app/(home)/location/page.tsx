@@ -27,7 +27,7 @@ export default function LocationPage() {
               href={HOME_INFO.reserveUrl}
               target="_blank"
               rel="noreferrer"
-              className="home-btn home-btn-primary inline-block px-4 py-2"
+              className="home-btn home-btn-primary inline-flex min-h-11 items-center px-4"
             >
               인스타그램으로 예약·문의하기
             </a>

@@ -123,7 +123,7 @@ export default function AboutPage() {
               href={HOME_INFO.instagramUrl}
               target="_blank"
               rel="noreferrer"
-              className="home-btn home-btn-primary px-5 py-2"
+              className="home-btn home-btn-primary inline-flex min-h-11 items-center px-5"
             >
               instagram @{HOME_INFO.instagramHandle}
             </a>
