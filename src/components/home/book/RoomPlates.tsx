@@ -24,6 +24,7 @@ export function RoomPlates({
           <button
             type="button"
             className="home-book-plate"
+            data-room={room.id}
             onClick={() => onSelect(room.id)}
             aria-label={`${room.label} — ${room.title} 들어가기`}
           >

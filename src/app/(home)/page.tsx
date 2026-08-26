@@ -1,7 +1,7 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { CalendarSection } from "@/components/home/CalendarSection";
-import { DeskHero } from "@/components/home/DeskHero";
-import { PopupBookDev } from "@/components/home/book/PopupBookDev";
+import { PopupBookLoader } from "@/components/home/book/PopupBookLoader";
 import { buildMonthGrid } from "@/lib/homeCalendar";
 import { HOME_INFO } from "@/lib/homeConfig";
 import { getKstParts } from "@/lib/market";
@@ -51,10 +51,59 @@ export default async function HomePage({
     (daySchedule[entry.workDate] ??= []).push(entry);
   }
 
+  // 방 패널 내용은 서버에서 채운다 — 클라이언트 번들엔 문안·목록이 실리지 않는다
+  const todayEntries = daySchedule[today] ?? [];
+  const staffById = new Map(staff.map((s) => [s.id, s]));
+  const panels: Record<string, ReactNode> = {
+    office: (
+      <p>
+        마녀 사장이 이력서 세 장을 심사합니다. 지원자들은 전부 사고를 치고 붙잡혀 감옥에 갇히는데 — 그게 바로 채용이었습니다.
+      </p>
+    ),
+    vault: <p>강시가 훔치려던 돈자루가 있던 곳. 요즘은 요괴 주식 이벤트가 열립니다.</p>,
+    street: <p>밤마다 「나라카」 간판이 깜빡입니다. 릴스로 만든 채용 설화를 볼 수 있습니다.</p>,
+    house: <p>{HOME_INFO.hoursNote}</p>,
+    field: <p>{HOME_INFO.addressLine}</p>,
+    jail: (
+      <ul className="flex flex-col gap-1">
+        {todayEntries.map((e) => {
+          const s = staffById.get(e.staffId);
+          return s ? <li key={e.id}>{s.name}</li> : null;
+        })}
+        {todayEntries.length === 0 && (
+          <li className="text-[var(--home-sheet-muted)]">오늘 출근표는 아직 안 나왔습니다.</li>
+        )}
+      </ul>
+    ),
+    cafe: <p>걸레질·먼지떨이·설거지를 마친 요괴들이 내는 메뉴입니다.</p>,
+    plaza: (
+      <ul className="flex flex-col gap-1">
+        {latest.slice(0, 3).map((p) => (
+          <li key={p.id}>
+            <Link
+              href={p.type === "event" ? `/events/${p.id}` : `/notice/${p.id}`}
+              className="underline underline-offset-2"
+            >
+              {p.title}
+            </Link>
+          </li>
+        ))}
+        {latest.length === 0 && (
+          <li className="text-[var(--home-sheet-muted)]">아직 전할 소식이 없습니다.</li>
+        )}
+      </ul>
+    ),
+  };
+
   return (
     <main>
-      <DeskHero />
-      <PopupBookDev />
+      {/* 팝업북 — 표지 정지 이미지를 먼저 그려 LCP 확보, 캔버스는 그 위에 */}
+      <div className="home-book-hero">
+        <PopupBookLoader panels={panels} />
+      </div>
+      <p className="mx-auto max-w-3xl px-4 pt-6 text-center text-sm text-[var(--home-muted)]">
+        {HOME_INFO.tagline}
+      </p>
       <CalendarSection
         month={month}
         weeks={weeks}

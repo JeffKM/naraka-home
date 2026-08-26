@@ -354,3 +354,11 @@
     padding: 0;
   }
 }
+
+.home-book-hero {
+  position: relative;
+}
+.home-book-fallback {
+  background: var(--home-void);
+  padding-bottom: 1rem;
+}

@@ -62,8 +62,8 @@ export function PopupBook({
   // 마운트 1회 효과가 낡은 콜백을 붙잡지 않도록 최신값을 ref로 들고 있는다.
   // (렌더 중 ref 쓰기는 금지라 커밋 뒤에 맞춘다 — 해시 효과보다 먼저 선언해 순서를 보장)
   const onRoomChangeRef = useRef(onRoomChange);
-  // 우리가 히스토리 항목을 밀어 넣었는지 — 나갈 때 그 항목을 되돌리기 위해
-  const pushed = useRef(false);
+  // 우리가 밀어 넣은 히스토리 항목의 해시 — 나갈 때 그 항목이 아직 맨 위일 때만 되돌린다
+  const pushed = useRef("");
 
   useEffect(() => {
     onRoomChangeRef.current = onRoomChange;
@@ -94,7 +94,7 @@ export function PopupBook({
       const m = ROOM_HASH.exec(window.location.hash);
       const id = m && findRoom(m[1]) ? m[1] : null;
       // 방이 없는 해시로 돌아왔다 = 사용자가 직접 뒤로 갔다. 되돌릴 항목도 사라졌다.
-      if (!id) pushed.current = false;
+      if (!id) pushed.current = "";
       onRoomChangeRef.current(id);
     };
     fromHash();
@@ -107,12 +107,14 @@ export function PopupBook({
     if (window.location.hash === want) return;
     if (want) {
       history.pushState(null, "", want);
-      pushed.current = true;
-    } else if (pushed.current) {
-      // 우리가 넣은 항목을 되돌린다 — hashchange가 나고 fromHash가 null을 다시 세팅(무동작)
-      pushed.current = false;
+      pushed.current = want;
+    } else if (pushed.current && window.location.hash === pushed.current) {
+      // 우리가 넣은 항목이 아직 맨 위다 — 되돌린다(hashchange가 나고 fromHash가 null을 다시 세팅, 무동작)
+      pushed.current = "";
       history.back();
     } else {
+      // 그 사이 다른 항목이 쌓였으면 뒤로 가기가 엉뚱한 곳으로 간다 — 해시만 지운다
+      pushed.current = "";
       history.replaceState(null, "", window.location.pathname + window.location.search);
     }
   }, [activeRoom]);
