@@ -30,24 +30,25 @@ export function CalendarSection({ month, weeks, staff, daySchedule }: Props) {
   return (
     <section id="calendar" className="mx-auto max-w-3xl px-4 py-10">
       <div className="home-paper p-4 sm:p-6">
-      <div className="flex items-center justify-between">
-        <h2 className="home-plate flex items-baseline gap-2 text-xl font-semibold">
+      {/* 390px에서 명패가 단어 중간에 끊기고 월 이동이 세로로 쌓여, 줄바꿈은 두 덩어리 사이에서만 */}
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+        <h2 className="home-plate flex items-baseline gap-2 whitespace-nowrap text-xl font-semibold">
           이번 달의 나라카
           <span className="home-tally text-sm" aria-hidden>
             {"////"}
           </span>
         </h2>
-        <div className="home-ui flex items-center gap-3 text-sm">
+        <div className="home-ui flex items-center gap-3 text-sm whitespace-nowrap">
           <Link
             href={`/?month=${shiftMonth(month, -1)}#calendar`}
-            className="flex min-h-11 items-center px-1 hover:text-[var(--home-red)]"
+            className="flex min-h-11 items-center whitespace-nowrap px-1 hover:text-[var(--home-red)]"
           >
             이전 달
           </Link>
           <span className="tabular-nums">{month.replace("-", ".")}</span>
           <Link
             href={`/?month=${shiftMonth(month, 1)}#calendar`}
-            className="flex min-h-11 items-center px-1 hover:text-[var(--home-red)]"
+            className="flex min-h-11 items-center whitespace-nowrap px-1 hover:text-[var(--home-red)]"
           >
             다음 달
           </Link>
