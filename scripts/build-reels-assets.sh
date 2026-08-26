@@ -3,7 +3,7 @@
 # 주의: 로컬 ffmpeg에 libwebp가 없어 PNG 중간 산출 후 PIL로 WebP 변환한다.
 set -euo pipefail
 
-SRC="${REELS_SRC:-$HOME/Desktop/naraka/reels/07-ae/naraka_reels_final_v2.mp4}"
+SRC="${REELS_SRC:-$HOME/Desktop/naraka/reels/07-ae/naraka_reels_fianl.mp4}"
 FRAME_PNG="${INSTA_FRAME_SRC:-$HOME/Desktop/naraka/reels/06-ae-assets/insta-frame.png}"
 COMIC_DIR="${COMIC_SRC:-$HOME/Desktop/naraka/story}"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
