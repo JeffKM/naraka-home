@@ -12,6 +12,9 @@ import { useBookScroll } from "./useBookScroll";
 const AUTO_OPEN_MS = 1200;
 const DOLLY_IN_MS = 900;
 const DOLLY_OUT_MS = 600;
+/** SSR·측정 전 기본 화면 비율 (가로 데스크톱 가정) */
+const DEFAULT_ASPECT = 1.6;
+const ROOM_HASH = /^#room=([\w-]+)$/;
 
 // 카메라 리그 — 목표 자세로 시간 기반 보간(스크롤·클릭 모두 같은 경로)
 function CameraRig({ pose, durationMs }: { pose: CameraPose; durationMs: number }) {
@@ -50,19 +53,27 @@ export function PopupBook({
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const scroll = useBookScroll(containerRef, BOOK_PAGES.length);
-  const [portrait, setPortrait] = useState(
-    // 첫 프레임부터 세로 거리로 그리도록 지연 초기화 (SSR에서는 window가 없다)
-    () => typeof window !== "undefined" && window.matchMedia("(orientation: portrait)").matches
+  const [aspect, setAspect] = useState(
+    // 첫 프레임부터 제 거리로 그리도록 지연 초기화 (SSR에서는 window가 없다)
+    () => (typeof window === "undefined" ? DEFAULT_ASPECT : window.innerWidth / window.innerHeight)
   );
   // 자동 1회 열림 — 시간 기반. 면 0의 open은 스크롤과 무관하게 이 값이 상한.
   const [autoOpen, setAutoOpen] = useState(0);
+  // 마운트 1회 효과가 낡은 콜백을 붙잡지 않도록 최신값을 ref로 들고 있는다.
+  // (렌더 중 ref 쓰기는 금지라 커밋 뒤에 맞춘다 — 해시 효과보다 먼저 선언해 순서를 보장)
+  const onRoomChangeRef = useRef(onRoomChange);
+  // 우리가 히스토리 항목을 밀어 넣었는지 — 나갈 때 그 항목을 되돌리기 위해
+  const pushed = useRef(false);
 
   useEffect(() => {
-    const mq = window.matchMedia("(orientation: portrait)");
-    const sync = () => setPortrait(mq.matches);
+    onRoomChangeRef.current = onRoomChange;
+  }, [onRoomChange]);
+
+  useEffect(() => {
+    const sync = () => setAspect(window.innerWidth / window.innerHeight);
     sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
+    window.addEventListener("resize", sync, { passive: true });
+    return () => window.removeEventListener("resize", sync);
   }, []);
 
   useEffect(() => {
@@ -80,20 +91,30 @@ export function PopupBook({
   // URL 해시 — 방 진입을 뒤로 가기·공유에 남긴다 (#room=office)
   useEffect(() => {
     const fromHash = () => {
-      const m = /room=([a-z]+)/.exec(window.location.hash);
-      onRoomChange(m && findRoom(m[1]) ? m[1] : null);
+      const m = ROOM_HASH.exec(window.location.hash);
+      const id = m && findRoom(m[1]) ? m[1] : null;
+      // 방이 없는 해시로 돌아왔다 = 사용자가 직접 뒤로 갔다. 되돌릴 항목도 사라졌다.
+      if (!id) pushed.current = false;
+      onRoomChangeRef.current(id);
     };
     fromHash();
     window.addEventListener("hashchange", fromHash);
     return () => window.removeEventListener("hashchange", fromHash);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- 마운트 1회
   }, []);
 
   useEffect(() => {
     const want = activeRoom ? `#room=${activeRoom}` : "";
     if (window.location.hash === want) return;
-    if (want) history.pushState(null, "", want);
-    else history.replaceState(null, "", window.location.pathname + window.location.search);
+    if (want) {
+      history.pushState(null, "", want);
+      pushed.current = true;
+    } else if (pushed.current) {
+      // 우리가 넣은 항목을 되돌린다 — hashchange가 나고 fromHash가 null을 다시 세팅(무동작)
+      pushed.current = false;
+      history.back();
+    } else {
+      history.replaceState(null, "", window.location.pathname + window.location.search);
+    }
   }, [activeRoom]);
 
   // 방에 들어가 있으면 스크롤은 무시하고 방 카메라 유지. Esc로 나감.
@@ -110,9 +131,9 @@ export function PopupBook({
   const roomPageIndex = room ? BOOK_PAGES.findIndex((p) => p.id === room.pageId) : -1;
   const { pose, durationMs } = useMemo(() => {
     if (room && roomPageIndex >= 0) return { pose: roomCamera(room, roomPageIndex), durationMs: DOLLY_IN_MS };
-    return { pose: pageCamera(scroll.page, portrait), durationMs: activeRoom === null ? DOLLY_OUT_MS : 0 };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- scroll.page·portrait·room만 의존
-  }, [room, roomPageIndex, scroll.page, portrait]);
+    return { pose: pageCamera(scroll.page, aspect), durationMs: activeRoom === null ? DOLLY_OUT_MS : 0 };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- scroll.page·aspect·room만 의존
+  }, [room, roomPageIndex, scroll.page, aspect]);
 
   return (
     <div ref={containerRef} className="home-book" style={{ height: `${BOOK_PAGES.length * 100}vh` }}>
@@ -122,7 +143,7 @@ export function PopupBook({
           // 장식인 canvas 요소에만 직접 건다.
           onCreated={({ gl }) => gl.domElement.setAttribute("aria-hidden", "true")}
           dpr={[1, 1.5]}
-          camera={{ fov: 40, near: 0.1, far: 200, position: pageCamera(0, false).position }}
+          camera={{ fov: 40, near: 0.1, far: 200, position: pageCamera(0, aspect).position }}
           gl={{ antialias: true, alpha: true, powerPreference: "low-power" }}
         >
           <CameraRig pose={pose} durationMs={durationMs} />

@@ -348,7 +348,7 @@
   .home-book-panel {
     inset: 0 24px 0 auto;
     display: flex;
-    align-items: center;
+    align-items: safe center;
     max-height: none;
     width: 22rem;
     padding: 0;

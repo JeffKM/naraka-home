@@ -2,10 +2,12 @@
 import { PAGE_H, PAGE_W, type BookRoomDef } from "./homeBook";
 
 export const PAGE_GAP = 2;
-/** 정면 카메라 거리 — 가로 화면. FOV 40°에서 면 폭이 화면에 들어오는 거리 */
-const PAGE_DIST_LANDSCAPE = 19;
-/** 세로 화면 — 폭을 맞추려면 더 멀리 */
-const PAGE_DIST_PORTRAIT = 30;
+/** 캔버스 세로 화각(도) — Canvas의 camera.fov와 반드시 같아야 한다 */
+const FOV_DEG = 40;
+/** 면 폭 바깥으로 두는 여백 비율 */
+const FIT_MARGIN = 1.12;
+/** 가로 화면 기준 최소 거리 (너무 가까우면 위아래 여백이 사라진다) */
+const MIN_DIST = 19;
 
 export interface CameraPose {
   position: [number, number, number];
@@ -16,11 +18,21 @@ export function pageOffsetX(pageIndex: number): number {
   return pageIndex * (PAGE_W + PAGE_GAP);
 }
 
-export function pageCamera(pageIndex: number, portrait: boolean): CameraPose {
+/**
+ * 화면 비율(가로/세로)에 맞춰 면 폭이 다 들어오는 카메라 거리.
+ * 세로 화각은 고정이므로 좁은 화면일수록 가로 화각이 줄어 더 멀리 물러나야 한다.
+ */
+export function pageDistance(aspect: number): number {
+  const halfFov = (FOV_DEG / 2) * (Math.PI / 180);
+  const fitWidth = ((PAGE_W / 2) / (Math.tan(halfFov) * Math.max(0.2, aspect))) * FIT_MARGIN;
+  return Math.max(MIN_DIST, fitWidth);
+}
+
+export function pageCamera(pageIndex: number, aspect: number): CameraPose {
   const x = pageOffsetX(pageIndex);
   const y = PAGE_H / 2;
   return {
-    position: [x, y + 1.2, portrait ? PAGE_DIST_PORTRAIT : PAGE_DIST_LANDSCAPE],
+    position: [x, y + 1.2, pageDistance(aspect)],
     target: [x, y, 0],
   };
 }
