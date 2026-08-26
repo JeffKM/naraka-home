@@ -1,11 +1,31 @@
-# 나라카 지도 히어로 — 구도 초안 + 생성 프롬프트
+# 나라카 지도 히어로 — 3D 돌하우스 구도 초안 + 생성 프롬프트
 
-2026-08-27. 홈 첫 화면을 "지도(내비) + 아래 풀블리드 섹션(본문)"으로 재구성하기 위한 지도 원화 사양.
-생성은 사장님이 Gemini로 진행, 결과물은 `public/home/map/` 에 넣는다.
+2026-08-27. 홈 첫 화면 = **3D 돌하우스 건물**. 방을 누르면 카메라가 그 방 안으로 날아 들어가고(빨려들어감), 도착하면 그 방의 정보가 뜬다. 2D 이미지 크롭·줌이 아니다(8/27 결정).
+
+## 0. 3D 파이프라인
+
+```
+① Gemini 2D 콘셉트(§4)  →  ② 이미지→3D (higgsfield generate_3d / Tripo / hunyuan3d)
+→  ③ Blender 정리·재조립·텍스처 베이크 (blender MCP)  →  ④ glTF(.glb, Draco) 내보내기
+→  ⑤ Next 홈에 React Three Fiber 캔버스 — 방 클릭 → 카메라 경로 이동 → HTML 정보 패널
+```
+
+- ②는 건물 통째 1회가 아니라 **방 8개를 각각 디오라마로 생성**해 Blender에서 격자로 조립한다. 단면 건물을 한 번에 넣으면 실내가 뭉개진다.
+- ③에서 반드시 손을 댄다 — AI 3D 그대로는 "AI 느낌" 반려 전례(치비 장식)와 같은 길이다. 방 경계 기둥·바닥판은 Blender에서 새로 세워 격자를 정확히 맞춘다.
+- ⑤ 카메라: 방마다 "정면 멀리 → 방 문턱 → 방 안" 3점 경로. 클릭하면 경로를 따라 들어가고, 이후 스크롤은 경로의 마지막 구간 + 정보 패널 등장에 연결. 뒤로 가기·다른 방 명패 클릭으로 빠져나온다.
+- 성능 가드: 총 50k 삼각형·텍스처 2048² 4장 이내, 홈에서만 dynamic import, `prefers-reduced-motion`·WebGL 불가 시 정면 렌더 정지 이미지 + 명패 목록으로 폴백.
+- 예산: three + R3F + drei ≈ 150KB gz, glb 목표 3~5MB.
+
+## 0-1. 사장님이 뽑아 올 것
+
+1. §4 프롬프트로 **정면 단면 콘셉트 1장** (전체 구도·팔레트 확정용, 그대로 폴백 이미지로도 씀)
+2. §4-4 프롬프트로 **방별 디오라마 8장** (이미지→3D 입력. 배경 없는 단독 오브젝트여야 3D 변환이 깨끗함)
+
+결과물은 `~/Desktop/naraka/map/` 에 두면 내가 ②~⑤를 진행한다.
 
 ## 1. 지도 형식: 카페 건물 단면도(돌하우스 뷰)
 
-평면 지도가 아니라 **건물을 세로로 잘라 방마다 들여다보는 단면도**를 쓴다.
+평면 지도가 아니라 **건물을 세로로 잘라 방마다 들여다보는 단면도**를 쓴다. 3D에서도 같은 구도 — 앞벽이 없는 돌하우스라 카메라가 방 안으로 곧장 들어갈 수 있다.
 
 - 이유 ①: "카페 = 감옥 = 직장"이 한 건물 안에 층·방으로 다 들어간다. 지도 자체가 농담을 설명한다.
 - 이유 ②: 방 하나 = 홈 섹션 하나. 방을 누르면 그 방으로 살짝 당겨지며 아래 섹션으로 내려간다. 방이 직사각형이라 확대·크롭이 쉽다.
@@ -97,7 +117,28 @@ No text anywhere except the two signs described. No watermark, no border, no UI.
 위에 적은 간판 둘 외에 글자 없음. 워터마크·테두리·UI 없음. 최고 해상도.
 ```
 
-### 4-3. 리테이크 때 덧붙일 문장
+### 4-3. 방별 디오라마 프롬프트 (이미지→3D 입력용, 8장)
+
+공통 머리말 뒤에 방 한 줄을 바꿔 8번 뽑는다. **배경은 단색 회색, 그림자 없이, 방 하나만** — 3D 변환기가 오브젝트 경계를 잡기 위한 조건이다.
+
+```
+A single isolated miniature diorama room, an open-front dollhouse box with three walls, a floor and a ceiling, seen straight-on from slightly above (15 degrees). Antique retro storybook style, ink outlines with warm painted fills, aged wood and parchment textures, palette dark oak #1A0F07, antique gold #C8B16B, parchment #EBDFB6, lacquer red #A41010, warm orange candle light inside. Plain flat mid-grey background, no cast shadow outside the box, no text, no border. Props are chunky and readable, small characters at most one-fifth of the room height. Ultra high resolution, product-shot clarity.
+
+Room: <아래 한 줄>
+```
+
+| # | Room 줄 |
+|---|---|
+| ② 사장실 | `an owner's office: a witch in a wide-brim hat at a heavy rosewood desk with three resumes and a red seal stamp, one fat cat and one normal cat sleeping, cluttered shelves` |
+| ⑤ 게시판 | `a staff notice wall room: walls covered in tally marks in groups of five, a pinned calendar and papers, three small lockers, a bench` |
+| ③ 주방 | `a kitchen: a large iron cauldron on fire, a kitchen yokai cooking, a nine-tailed fox girl washing a mountain of dishes at the sink, a cat watching, a water cannon in the corner` |
+| ④ 홀 | `a cafe hall: three small round tables with a few guests, a jiangshi girl with a paper talisman mopping, a small vampire girl dusting with a feather duster, a wooden front door in the back wall` |
+| ⑥ 휴게실 | `a jail cell used as a break room: iron bars along one side, a senior staff playing cards on the floor, a new recruit crying in the corner, two small dogs, a kettle` |
+| ⑧ 우편실 | `a mail room: a brass nameplate on the wall, a pile of letters, an old rotary phone on a small desk, a wall mailbox` |
+| ⑦ 옥상 | `a rooftop terrace: a chimney, a crescent moon lamp, a few small bats, a railing, distant neon signs painted on the back wall` |
+| ① 정문 | `a building entrance facade: a wooden sign above a double door, two lanterns, a doormat, a small window with warm light` |
+
+### 4-4. 리테이크 때 덧붙일 문장
 
 - 방이 기울어 나오면: `Keep every room a perfect front-facing rectangle. No perspective tilt on room walls.`
 - 캐릭터가 크게 나오면: `Characters at most one-fifth of a room's height.`
@@ -106,9 +147,9 @@ No text anywhere except the two signs described. No watermark, no border, no UI.
 
 ## 5. 뽑은 뒤 확인할 것
 
-1. 8개 방이 각각 직사각형으로 잘리는가 (크롭 좌표를 잡아야 한다)
-2. 방마다 왼쪽 위에 명패 놓을 빈 벽이 있는가
+1. 콘셉트 1장: 8개 방이 직사각형 격자로 읽히는가, 팔레트가 앤틱 목업과 맞는가
+2. 디오라마 8장: 배경이 단색인가, 방 앞면이 열려 있는가(앞벽이 있으면 카메라가 못 들어간다), 캐릭터가 작은가
 3. 캐논 밖 인물이 섞여 있지 않은가 (특히 왕·신·저승사자류)
-4. 가로 3840px 이상인가 — 아니면 업스케일
+4. 8장의 결이 서로 맞는가 — 한 장만 다른 결이면 그 방만 리테이크
 
-받으면 `public/home/map/naraka-map.webp`로 넣고, 방별 크롭 좌표(%)를 `src/lib/homeMap.ts`에 잡는다.
+받으면 `~/Desktop/naraka/map/` 에 두고 알려 주면 이미지→3D부터 진행한다.
