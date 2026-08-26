@@ -69,7 +69,7 @@ export default async function HomePage({
           <h2 className="home-plate text-xl font-semibold">새 소식</h2>
           <Link
             href="/notice"
-            className="home-ui text-sm hover:text-[var(--home-red)]"
+            className="home-ui inline-flex min-h-11 items-center text-sm hover:text-[var(--home-red)]"
           >
             전체 보기
           </Link>
@@ -79,13 +79,13 @@ export default async function HomePage({
             <li key={p.id}>
               <Link
                 href={p.type === "event" ? `/events/${p.id}` : `/notice/${p.id}`}
-                className="home-card flex items-baseline gap-2 px-3 py-2 hover:bg-[var(--home-cream)]"
+                className="home-card flex min-h-11 items-center gap-2 px-3 py-2 hover:bg-[var(--home-cream)]"
               >
                 <span
                   className={[
                     "home-tag shrink-0 px-2 text-xs",
                     p.type === "event"
-                      ? "bg-[var(--home-red)] text-[var(--home-surface)]"
+                      ? "bg-[var(--home-red)] text-[var(--home-on-red)]"
                       : "bg-[var(--home-chalk)] text-[var(--home-ink)]",
                   ].join(" ")}
                 >
@@ -115,7 +115,7 @@ export default async function HomePage({
         </p>
         <Link
           href="/location"
-          className="home-btn mt-3 inline-block px-4 py-1.5 text-sm"
+          className="home-btn mt-3 inline-flex min-h-11 items-center px-4 text-sm"
         >
           자세히 보기
         </Link>

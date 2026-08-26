@@ -40,14 +40,14 @@ export function CalendarSection({ month, weeks, staff, daySchedule }: Props) {
         <div className="home-ui flex items-center gap-3 text-sm">
           <Link
             href={`/?month=${shiftMonth(month, -1)}#calendar`}
-            className="hover:text-[var(--home-red)]"
+            className="flex min-h-11 items-center px-1 hover:text-[var(--home-red)]"
           >
             이전 달
           </Link>
           <span className="tabular-nums">{month.replace("-", ".")}</span>
           <Link
             href={`/?month=${shiftMonth(month, 1)}#calendar`}
-            className="hover:text-[var(--home-red)]"
+            className="flex min-h-11 items-center px-1 hover:text-[var(--home-red)]"
           >
             다음 달
           </Link>
@@ -86,7 +86,7 @@ export function CalendarSection({ month, weeks, staff, daySchedule }: Props) {
               <span
                 className={[
                   "home-ui text-xs tabular-nums",
-                  cell.isToday ? "text-[var(--home-red)]" : "",
+                  cell.isToday ? "text-[var(--home-red-deep)] font-bold" : "",
                 ].join(" ")}
               >
                 {Number(cell.date.slice(8))}
@@ -122,7 +122,7 @@ export function CalendarSection({ month, weeks, staff, daySchedule }: Props) {
               <Link
                 key={ev.id}
                 href={`/events/${ev.id}`}
-                className="text-[var(--home-red)] underline underline-offset-2"
+                className="inline-flex min-h-11 w-fit items-center text-[var(--home-red-deep)] underline underline-offset-2"
               >
                 {ev.title}
               </Link>

@@ -45,10 +45,10 @@ export function DeskHero() {
           </h1>
           <p className="mt-3 text-base text-[var(--home-muted)] sm:text-lg">{HOME_INFO.tagline}</p>
           <div className="mt-6 flex flex-wrap justify-center gap-3 md:justify-start">
-            <Link href="#calendar" className="home-btn home-btn-primary px-5 py-2 text-sm">
+            <Link href="#calendar" className="home-btn home-btn-primary inline-flex min-h-11 items-center px-5 text-sm">
               달력·출근표 보기
             </Link>
-            <Link href="/about" className="home-btn px-5 py-2 text-sm">
+            <Link href="/about" className="home-btn inline-flex min-h-11 items-center px-5 text-sm">
               나라카 이야기
             </Link>
           </div>

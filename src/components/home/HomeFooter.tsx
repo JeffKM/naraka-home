@@ -42,7 +42,7 @@ export function HomeFooter() {
           href={HOME_INFO.instagramUrl}
           target="_blank"
           rel="noreferrer"
-          className="underline underline-offset-2"
+          className="inline-flex min-h-11 w-fit items-center underline underline-offset-2"
         >
           instagram @{HOME_INFO.instagramHandle}
         </a>

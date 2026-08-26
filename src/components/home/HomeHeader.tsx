@@ -18,7 +18,7 @@ export function HomeHeader() {
   return (
     <header className="home-chrome sticky top-0 z-40 border-b">
       <div className="mx-auto flex max-w-3xl items-center gap-4 px-4 py-1.5">
-        <Link href="/" className="home-serif shrink-0 text-xl font-extrabold text-[var(--home-chalk)]">
+        <Link href="/" className="home-serif flex min-h-11 shrink-0 items-center text-xl font-extrabold text-[var(--home-chalk)]">
           {HOME_INFO.name}
           <span className="text-[var(--home-heart)]">.</span>
         </Link>

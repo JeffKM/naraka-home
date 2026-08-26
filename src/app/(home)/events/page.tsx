@@ -28,7 +28,7 @@ export default async function EventsPage() {
 
       {/* 나라카증권 상설 카드 — /event 주식앱 진입점 */}
       <Link href="/event" className="home-card relative mt-8 block p-5">
-        <span className="home-tag absolute -top-3 left-4 bg-[var(--home-red)] px-2 text-xs text-[var(--home-surface)]">
+        <span className="home-tag absolute -top-3 left-4 bg-[var(--home-red)] px-2 text-xs text-[var(--home-on-red)]">
           상설
         </span>
         <p className="home-ui mt-1 text-lg">나라카증권 — 모의 주식 거래</p>
