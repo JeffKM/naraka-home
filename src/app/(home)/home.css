@@ -355,8 +355,10 @@
   }
 }
 
+/* 폴백 → 3D 무대 교체 시 아래 내용이 한 화면만큼 밀리지 않도록 높이를 미리 잡는다 */
 .home-book-hero {
   position: relative;
+  min-height: 100dvh;
 }
 .home-book-fallback {
   background: var(--home-void);

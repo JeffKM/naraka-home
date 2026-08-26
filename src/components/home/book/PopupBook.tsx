@@ -129,6 +129,16 @@ export function PopupBook({
     return () => window.removeEventListener("keydown", onKey);
   }, [activeRoom, onRoomChange]);
 
+  // 방에 들어가면 무대 상단을 뷰포트 맨 위에 맞춘다 — 스크롤 0에서 sticky 헤더에 무대가
+  // 잘려 패널 CTA가 화면 밖으로 밀리는 것을 막고, 해시 딥링크 진입도 무대를 시야에 넣는다
+  useEffect(() => {
+    if (!activeRoom) return;
+    const top = containerRef.current?.getBoundingClientRect().top ?? 0;
+    if (top <= 0) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: window.scrollY + top, behavior: reduce ? "auto" : "smooth" });
+  }, [activeRoom]);
+
   const room = activeRoom ? findRoom(activeRoom) : undefined;
   const roomPageIndex = room ? BOOK_PAGES.findIndex((p) => p.id === room.pageId) : -1;
   const { pose, durationMs } = useMemo(() => {

@@ -14,6 +14,9 @@ const PopupBook = dynamic(() => import("./PopupBook").then((m) => m.PopupBook), 
 
 type Nav = Navigator & { deviceMemory?: number; connection?: { saveData?: boolean } };
 
+// 구독할 외부 스토어가 없다 — 렌더마다 새 함수를 넘기지 않도록 모듈 상수로 둔다
+const noopSubscribe = () => () => {};
+
 // 감지는 한 번이면 충분하다 — canvas 생성 비용을 렌더마다 치르지 않도록 모듈 수준에 캐시한다
 let cached: boolean | undefined;
 function canRun3dOnce(): boolean {
@@ -36,11 +39,7 @@ function canRun3d(): boolean {
 export function PopupBookLoader({ panels }: { panels: Record<string, ReactNode> }) {
   // 서버·하이드레이션 시점엔 브라우저 능력을 알 수 없다 — 그때는 폴백을 그리고, 붙은 뒤 판정한다
   // (useEffect + setState는 캐스케이딩 렌더를 만들어 react-hooks/set-state-in-effect에 걸린다)
-  const can3d = useSyncExternalStore(
-    () => () => {},
-    canRun3dOnce,
-    () => false
-  );
+  const can3d = useSyncExternalStore(noopSubscribe, canRun3dOnce, () => false);
   const [room, setRoom] = useState<string | null>(null);
   // 방을 닫았을 때 포커스를 돌려줄 명패 — 마지막으로 연 방
   const lastRoom = useRef<string | null>(null);
