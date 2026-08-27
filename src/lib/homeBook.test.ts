@@ -33,6 +33,18 @@ describe("homeBook 데이터", () => {
     }
   });
 
+  it("모든 판에 비어 있지 않은 라벨이 있다", () => {
+    const all = [
+      ...BOOK_PAGES.flatMap((p) => p.layers),
+      ...BOOK_ROOMS.flatMap((r) => r.layers),
+    ];
+    expect(all.length).toBeGreaterThan(0);
+    for (const l of all) {
+      expect(l.label, l.id).toBeTruthy();
+      expect((l.label ?? "").trim().length, l.id).toBeGreaterThan(0);
+    }
+  });
+
   it("findRoom은 없는 id에 undefined", () => {
     expect(findRoom("office")?.label).toBe("사무소");
     expect(findRoom("nope")).toBeUndefined();

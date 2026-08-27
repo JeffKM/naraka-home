@@ -24,6 +24,8 @@ export interface PaperLayerDef {
   duration: number;
   /** 임시 판 색 (src null일 때) */
   tint?: string;
+  /** 와이어프레임 판에 새길 한국어 이름 (src null일 때만 쓰인다) */
+  label?: string;
 }
 
 export interface BookRoomDef {
@@ -67,12 +69,13 @@ const layer = (
 });
 
 // 방 내부 겹 5종 공통 배치 — 뒤(창밖)부터 앞(문틀)까지
-const roomLayers = (roomId: string, tint: string): PaperLayerDef[] => [
-  layer(`${roomId}-window`, { w: 6, h: 4, x: 0, y: 0, z: -2.4, open: 0, duration: 0.01, tint: "#131117" }),
-  layer(`${roomId}-wall`, { w: 6.4, h: 4.4, x: 0, y: 0, z: -1.8, open: 0, duration: 0.01, tint }),
-  layer(`${roomId}-furniture`, { w: 5, h: 3, x: 0, y: 0, z: -1.0, open: 0.5, duration: 0.3, tint: "#3a2a26" }),
-  layer(`${roomId}-figure`, { w: 2.2, h: 2.6, x: -0.8, y: 0, z: -0.4, open: 0.7, duration: 0.3, tint: "#d1b89d" }),
-  layer(`${roomId}-frame`, { w: 7, h: 5, x: 0, y: 0, z: 0, open: 0.3, duration: 0.3, tint: "#6b4a44" }),
+// name: 방의 한국어 이름 (라벨 접두사로 쓴다)
+const roomLayers = (roomId: string, name: string, tint: string): PaperLayerDef[] => [
+  layer(`${roomId}-window`, { w: 6, h: 4, x: 0, y: 0, z: -2.4, open: 0, duration: 0.01, tint: "#131117", label: `${name} · 창밖` }),
+  layer(`${roomId}-wall`, { w: 6.4, h: 4.4, x: 0, y: 0, z: -1.8, open: 0, duration: 0.01, tint, label: `${name} · 뒷벽` }),
+  layer(`${roomId}-furniture`, { w: 5, h: 3, x: 0, y: 0, z: -1.0, open: 0.5, duration: 0.3, tint: "#3a2a26", label: `${name} · 가구` }),
+  layer(`${roomId}-figure`, { w: 2.2, h: 2.6, x: -0.8, y: 0, z: -0.4, open: 0.7, duration: 0.3, tint: "#d1b89d", label: `${name} · 인물` }),
+  layer(`${roomId}-frame`, { w: 7, h: 5, x: 0, y: 0, z: 0, open: 0.3, duration: 0.3, tint: "#6b4a44", label: `${name} · 문틀` }),
 ];
 
 export const BOOK_PAGES: BookPageDef[] = [
@@ -81,11 +84,11 @@ export const BOOK_PAGES: BookPageDef[] = [
     act: "프롤로그·1막",
     jailTally: 5,
     layers: [
-      layer("p1-sky", { w: PAGE_W, h: PAGE_H, x: 0, y: 0, z: -3, open: 0, duration: 0.01, tint: "#0d0c11" }),
-      layer("p1-ground", { w: PAGE_W, h: 4, x: 0, y: 0, z: -2.5, hinge: "bottom", open: 0.05, duration: 0.2, tint: "#3a2a26" }),
-      layer("p1-office", { w: 5.5, h: 5, x: -4.2, y: 0, z: -1.5, open: 0.3, duration: 0.3, tint: "#6b4a44" }),
-      layer("p1-vault", { w: 4.5, h: 4.2, x: 4, y: 0, z: -1.5, open: 0.4, duration: 0.3, tint: "#515151" }),
-      layer("p1-props", { w: 3, h: 2, x: 0.5, y: 0, z: -0.8, open: 0.6, duration: 0.3, tint: "#757f70" }),
+      layer("p1-sky", { w: PAGE_W, h: PAGE_H, x: 0, y: 0, z: -3, open: 0, duration: 0.01, tint: "#0d0c11", label: "밤하늘" }),
+      layer("p1-ground", { w: PAGE_W, h: 4, x: 0, y: 0, z: -2.5, hinge: "bottom", open: 0.05, duration: 0.2, tint: "#3a2a26", label: "돌길" }),
+      layer("p1-office", { w: 5.5, h: 5, x: -4.2, y: 0, z: -1.5, open: 0.3, duration: 0.3, tint: "#6b4a44", label: "마녀 사무소" }),
+      layer("p1-vault", { w: 4.5, h: 4.2, x: 4, y: 0, z: -1.5, open: 0.4, duration: 0.3, tint: "#515151", label: "금고" }),
+      layer("p1-props", { w: 3, h: 2, x: 0.5, y: 0, z: -0.8, open: 0.6, duration: 0.3, tint: "#757f70", label: "소품(가로등·상자)" }),
     ],
   },
   {
@@ -93,11 +96,11 @@ export const BOOK_PAGES: BookPageDef[] = [
     act: "2막",
     jailTally: 10,
     layers: [
-      layer("p2-sky", { w: PAGE_W, h: PAGE_H, x: 0, y: 0, z: -3, open: 0, duration: 0.01, tint: "#0d0c11" }),
-      layer("p2-ground", { w: PAGE_W, h: 4, x: 0, y: 0, z: -2.5, open: 0.05, duration: 0.2, tint: "#3a2a26" }),
-      layer("p2-street", { w: 7, h: 5.5, x: -3.5, y: 0, z: -1.5, open: 0.3, duration: 0.3, tint: "#16151c" }),
-      layer("p2-house", { w: 5, h: 4.8, x: 4.2, y: 0, z: -1.5, open: 0.4, duration: 0.3, tint: "#6b4a44" }),
-      layer("p2-props", { w: 3, h: 2, x: 0.5, y: 0, z: -0.8, open: 0.6, duration: 0.3, tint: "#757f70" }),
+      layer("p2-sky", { w: PAGE_W, h: PAGE_H, x: 0, y: 0, z: -3, open: 0, duration: 0.01, tint: "#0d0c11", label: "밤하늘(박쥐)" }),
+      layer("p2-ground", { w: PAGE_W, h: 4, x: 0, y: 0, z: -2.5, open: 0.05, duration: 0.2, tint: "#3a2a26", label: "돌길(물웅덩이)" }),
+      layer("p2-street", { w: 7, h: 5.5, x: -3.5, y: 0, z: -1.5, open: 0.3, duration: 0.3, tint: "#16151c", label: "간판 거리" }),
+      layer("p2-house", { w: 5, h: 4.8, x: 4.2, y: 0, z: -1.5, open: 0.4, duration: 0.3, tint: "#6b4a44", label: "마녀의 집" }),
+      layer("p2-props", { w: 3, h: 2, x: 0.5, y: 0, z: -0.8, open: 0.6, duration: 0.3, tint: "#757f70", label: "소품(울타리·우편함)" }),
     ],
   },
   {
@@ -105,33 +108,33 @@ export const BOOK_PAGES: BookPageDef[] = [
     act: "3막·피날레",
     jailTally: 15,
     layers: [
-      layer("p3-sky", { w: PAGE_W, h: PAGE_H, x: 0, y: 0, z: -3, open: 0, duration: 0.01, tint: "#0d0c11" }),
-      layer("p3-ground", { w: PAGE_W, h: 4, x: 0, y: 0, z: -2.5, open: 0.05, duration: 0.2, tint: "#3a2a26" }),
-      layer("p3-field", { w: 5, h: 3.5, x: -5.5, y: 0, z: -1.6, open: 0.3, duration: 0.3, tint: "#757f70" }),
-      layer("p3-jail", { w: 3, h: 4, x: -1.5, y: 0, z: -1.4, open: 0.4, duration: 0.3, tint: "#515151" }),
-      layer("p3-cafe", { w: 5, h: 5.2, x: 2.5, y: 0, z: -1.5, open: 0.5, duration: 0.3, tint: "#6b4a44" }),
-      layer("p3-plaza", { w: 3, h: 3.5, x: 6.2, y: 0, z: -1.2, open: 0.6, duration: 0.3, tint: "#d1b89d" }),
+      layer("p3-sky", { w: PAGE_W, h: PAGE_H, x: 0, y: 0, z: -3, open: 0, duration: 0.01, tint: "#0d0c11", label: "노을 하늘" }),
+      layer("p3-ground", { w: PAGE_W, h: 4, x: 0, y: 0, z: -2.5, open: 0.05, duration: 0.2, tint: "#3a2a26", label: "흙길·호박 덩굴" }),
+      layer("p3-field", { w: 5, h: 3.5, x: -5.5, y: 0, z: -1.6, open: 0.3, duration: 0.3, tint: "#757f70", label: "호박밭" }),
+      layer("p3-jail", { w: 3, h: 4, x: -1.5, y: 0, z: -1.4, open: 0.4, duration: 0.3, tint: "#515151", label: "감옥(빗금 15)" }),
+      layer("p3-cafe", { w: 5, h: 5.2, x: 2.5, y: 0, z: -1.5, open: 0.5, duration: 0.3, tint: "#6b4a44", label: "카페 본관" }),
+      layer("p3-plaza", { w: 3, h: 3.5, x: 6.2, y: 0, z: -1.2, open: 0.6, duration: 0.3, tint: "#d1b89d", label: "광장(액자)" }),
     ],
   },
 ];
 
 export const BOOK_ROOMS: BookRoomDef[] = [
   { id: "office", pageId: "p1", label: "사무소", title: "마녀의 사무소", href: "/about", hrefLabel: "나라카 이야기 보기",
-    plate: { x: -4.2, y: 5.4 }, cameraIn: { x: -4.2, y: 2.2, z: 2.2 }, layers: roomLayers("office", "#6b4a44") },
+    plate: { x: -4.2, y: 5.4 }, cameraIn: { x: -4.2, y: 2.2, z: 2.2 }, layers: roomLayers("office", "사무소", "#6b4a44") },
   { id: "vault", pageId: "p1", label: "금고", title: "금고", href: "/games", hrefLabel: "놀거리 보기",
-    plate: { x: 4, y: 4.6 }, cameraIn: { x: 4, y: 2, z: 2.2 }, layers: roomLayers("vault", "#515151") },
+    plate: { x: 4, y: 4.6 }, cameraIn: { x: 4, y: 2, z: 2.2 }, layers: roomLayers("vault", "금고", "#515151") },
   { id: "street", pageId: "p2", label: "간판 거리", title: "「나라카」 간판 거리", href: "/about", hrefLabel: "릴스 보기",
-    plate: { x: -3.5, y: 5.9 }, cameraIn: { x: -3.5, y: 2.4, z: 2.2 }, layers: roomLayers("street", "#16151c") },
+    plate: { x: -3.5, y: 5.9 }, cameraIn: { x: -3.5, y: 2.4, z: 2.2 }, layers: roomLayers("street", "간판 거리", "#16151c") },
   { id: "house", pageId: "p2", label: "마녀의 집", title: "마녀의 집", href: "https://instagram.com/naraka_concafe", hrefLabel: "영업시간은 인스타그램에서",
-    plate: { x: 4.2, y: 5.2 }, cameraIn: { x: 4.2, y: 2.1, z: 2.2 }, layers: roomLayers("house", "#6b4a44") },
+    plate: { x: 4.2, y: 5.2 }, cameraIn: { x: 4.2, y: 2.1, z: 2.2 }, layers: roomLayers("house", "마녀의 집", "#6b4a44") },
   { id: "field", pageId: "p3", label: "호박밭", title: "호박밭", href: "/location", hrefLabel: "오시는 길",
-    plate: { x: -5.5, y: 3.9 }, cameraIn: { x: -5.5, y: 1.6, z: 2.2 }, layers: roomLayers("field", "#757f70") },
+    plate: { x: -5.5, y: 3.9 }, cameraIn: { x: -5.5, y: 1.6, z: 2.2 }, layers: roomLayers("field", "호박밭", "#757f70") },
   { id: "jail", pageId: "p3", label: "휴게실", title: "감옥, 아니 휴게실", href: "/staff", hrefLabel: "출근 요괴 보기",
-    plate: { x: -1.5, y: 4.4 }, cameraIn: { x: -1.5, y: 1.8, z: 2.2 }, layers: roomLayers("jail", "#515151") },
+    plate: { x: -1.5, y: 4.4 }, cameraIn: { x: -1.5, y: 1.8, z: 2.2 }, layers: roomLayers("jail", "휴게실", "#515151") },
   { id: "cafe", pageId: "p3", label: "카페 본관", title: "홀과 주방", href: "/menu", hrefLabel: "메뉴 보기",
-    plate: { x: 2.5, y: 5.6 }, cameraIn: { x: 2.5, y: 2.3, z: 2.2 }, layers: roomLayers("cafe", "#6b4a44") },
+    plate: { x: 2.5, y: 5.6 }, cameraIn: { x: 2.5, y: 2.3, z: 2.2 }, layers: roomLayers("cafe", "카페 본관", "#6b4a44") },
   { id: "plaza", pageId: "p3", label: "광장", title: "단체사진 광장", href: "/notice", hrefLabel: "공지 보기",
-    plate: { x: 6.2, y: 3.9 }, cameraIn: { x: 6.2, y: 1.6, z: 2.2 }, layers: roomLayers("plaza", "#d1b89d") },
+    plate: { x: 6.2, y: 3.9 }, cameraIn: { x: 6.2, y: 1.6, z: 2.2 }, layers: roomLayers("plaza", "광장", "#d1b89d") },
 ];
 
 /** 면 열림 진행도(0~1)에 대한 판의 일어섬 진행도(0~1) */

@@ -23,6 +23,7 @@ export function Jail({ tally, open, x }: { tally: 5 | 10 | 15; open: number; x: 
     open: 0.45,
     duration: 0.3,
     tint: "#515151",
+    label: `감옥 · 빗금 ${tally}`,
   };
   return <PaperLayer def={def} open={open} />;
 }
