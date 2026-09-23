@@ -82,9 +82,7 @@ export function SwapSequence({ from, to, arrived, fast, reducedMotion, onDone }:
       <div className="swap-hand swap-hand-pull">
         <ArtPlate art="hand-pull" className="size-full object-contain" />
       </div>
-      <div className="swap-hand swap-hand-open">
-        <ArtPlate art="hand-open" className="size-full object-contain" />
-      </div>
+      {/* hand-open(펼치는 손)은 리테이크 대기 — 인트로와 같은 이유로 뺀다 */}
     </div>
   );
 }

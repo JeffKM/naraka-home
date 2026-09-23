@@ -332,6 +332,10 @@
 }
 .swap-book { width: min(42vw, 340px); aspect-ratio: 3 / 4; transform-origin: left center; }
 .swap-hand { width: min(28vw, 220px); aspect-ratio: 1; opacity: 0; }
+/* 손 그림(hand-pull)엔 손에 쥔 갈색 책이 함께 있다 — 표지 뒤로 깔아 그 책은 가리고
+   표지 오른쪽 가장자리를 쥔 손·소매만 보이게 한다 */
+.swap-book { z-index: 2; }
+.swap-hand { z-index: 1; }
 
 /* 덮기: 표지가 책 위로 닫힌다 */
 .swap-book-from { transform: translate(-50%, -50%); animation: swap-close 300ms ease both; }
@@ -354,8 +358,6 @@
 .swap-layer[data-phase="pull"] .swap-hand-pull,
 .swap-layer[data-phase="wait"] .swap-hand-pull { opacity: 1; transform: translate(20%, -50%); }
 /* 펼치기 — 표지가 왼쪽으로 열리며 연출 전체가 걷힌다 */
-.swap-hand-open { transform: translate(40%, -30%); }
-.swap-layer[data-phase="open"] .swap-hand-open { opacity: 1; }
 .swap-layer[data-phase="open"] .swap-book-to { animation: swap-open 350ms ease both; }
 @keyframes swap-open {
   from { transform: translate(-50%, -50%) scale(1) rotateY(0deg); opacity: 1; }
@@ -419,6 +421,10 @@
   transition: opacity 400ms ease, transform 800ms ease;
 }
 .intro-layer[data-phase="shelf"] .intro-hand-pull { opacity: 1; transform: none; }
+/* 세로 화면에선 책장이 좌우로 잘려 병 선반 위에 손이 겹친다 → 아래 장식장 앞으로 내리고 키운다 */
+@media (max-width: 767px) {
+  .intro-hand-pull { right: 2%; top: 42%; width: 44vw; }
+}
 
 /* 책상에서 표지가 열리고 인트로 전체가 걷힌다 */
 .intro-layer[data-phase="open"] .intro-desk { opacity: 1; transition-duration: 200ms; }
@@ -439,16 +445,6 @@
   from { transform: translate(0, -50%) rotateY(0deg); }
   to { transform: translate(0, -50%) rotateY(-180deg); opacity: 0.2; }
 }
-.intro-hand-open {
-  position: absolute;
-  left: calc(50% + min(34vw, 290px));
-  top: 48%;
-  width: min(24vw, 200px);
-  aspect-ratio: 1;
-  opacity: 0;
-  transition: opacity 200ms ease;
-}
-.intro-layer[data-phase="open"] .intro-hand-open { opacity: 1; }
 .intro-layer[data-phase="open"] { animation: intro-out 1050ms ease both; }
 @keyframes intro-out { 0%, 70% { opacity: 1; } 100% { opacity: 0; } }
 
