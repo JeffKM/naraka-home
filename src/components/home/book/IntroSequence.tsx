@@ -6,6 +6,7 @@ import { INTRO_VIDEO, type ArtKey } from "@/lib/book/art";
 import { useBookStore } from "@/lib/book/bookStore";
 import { INTRO_VISITED_KEY, introMode, isHomeRoot } from "@/lib/book/intro";
 import { ArtPlate } from "./ArtPlate";
+import { ShelfScene } from "./ShelfScene";
 
 type Phase = "hold" | "video" | "gate" | "office" | "shelf" | "open" | "done";
 
@@ -59,13 +60,16 @@ export function IntroSequence({ reducedMotion }: { reducedMotion: boolean }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const skipRef = useRef<HTMLButtonElement>(null);
   const skipFocused = useRef(false);
-  // 인트로가 끝나는 순간 포커스가 인트로 레이어 안에 있었는지 — 있었을 때만 책 쪽으로 옮긴다
+  // 인트로가 끝나는 순간 포커스가 인트로 레이어 안이거나 아무 데도 없었는지(body) — 그때만 책 쪽으로 옮긴다
   const restoreFocus = useRef(false);
 
   // 인트로를 끝낸다 — 끝나는 순간 포커스가 어디 있었는지 먼저 기록해 둔다. 뒤 요소(상단 바·책
-  // 무대)는 아직 inert라 지금 바로 옮길 순 없고, 스토어 반영 뒤(포커스 복원 이펙트)에 옮긴다
+  // 무대)는 아직 inert라 지금 바로 옮길 순 없고, 스토어 반영 뒤(포커스 복원 이펙트)에 옮긴다.
+  // 오버레이의 빈 곳을 클릭하면 포커스가 body로 빠지므로 body도 "인트로 안"과 같이 본다
   const finish = useCallback(() => {
-    restoreFocus.current = rootRef.current?.contains(document.activeElement) ?? false;
+    const active = document.activeElement;
+    restoreFocus.current =
+      active === null || active === document.body || (rootRef.current?.contains(active) ?? false);
     setPhase("done");
   }, []);
 
@@ -120,6 +124,9 @@ export function IntroSequence({ reducedMotion }: { reducedMotion: boolean }) {
     return () => window.clearTimeout(t);
   }, [phase, setIntroActive]);
 
+  // 인트로가 도중에 언마운트되면(책 밖 경로로 레이아웃이 바뀜 등) inert가 남지 않게 되돌린다
+  useEffect(() => () => setIntroActive(false), [setIntroActive]);
+
   // 건너뛰기 버튼이 처음 나타나면 포커스를 옮긴다 — Tab이 뒤 요소로 새지 않고 바로 건너뛰기로
   useEffect(() => {
     if (phase === "hold" || phase === "done" || skipFocused.current) return;
@@ -145,12 +152,8 @@ export function IntroSequence({ reducedMotion }: { reducedMotion: boolean }) {
       <div className="intro-scene intro-office">
         <ScenePair desktop="office" mobile="office-m" />
       </div>
-      <div className="intro-scene intro-shelf">
-        <ArtPlate art="shelf" className="intro-fill" />
-        <div className="intro-hand-pull">
-          <ArtPlate art="hand-pull" className="size-full object-contain" />
-        </div>
-      </div>
+      {/* 책장 — 책등 8권 중 홈 책(첫 칸)을 손이 뽑는다 */}
+      <ShelfScene className="intro-scene intro-shelf" pull="home" />
       <div className="intro-scene intro-desk">
         <ScenePair desktop="desk" mobile="desk-m" />
         <div className="intro-cover">
