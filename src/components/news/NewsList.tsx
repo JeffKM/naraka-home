@@ -231,14 +231,14 @@ export function NewsList({
                     정식 뉴스는 매체명을 해당 매체 모아보기 페이지로 링크 */}
                 {stockAccount && !compact ? (
                   <Link
-                    href={`/stocks/${n.stockCode}`}
+                    href={`/event/stocks/${n.stockCode}`}
                     className="font-semibold text-foreground hover:underline"
                   >
                     {author.name}
                   </Link>
                 ) : author.outletSlug && !compact ? (
                   <Link
-                    href={`/news/outlet/${author.outletSlug}`}
+                    href={`/event/news/outlet/${author.outletSlug}`}
                     className="font-semibold text-foreground hover:underline"
                   >
                     {author.name}
@@ -272,7 +272,7 @@ export function NewsList({
               {!compact && !stockAccount && n.stockCode && n.stockName && (
                 <div className="mt-2 text-xs">
                   <Link
-                    href={`/stocks/${n.stockCode}`}
+                    href={`/event/stocks/${n.stockCode}`}
                     className="font-medium text-primary-accent hover:underline"
                   >
                     ${n.stockName}

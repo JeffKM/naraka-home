@@ -53,7 +53,7 @@ export function TradePanel({ quote, marketHalted = false }: TradePanelProps) {
       <Card>
         <CardContent className="py-3">
           <Button asChild className="w-full">
-            <Link href="/login">로그인하고 거래하기</Link>
+            <Link href="/event/login">로그인하고 거래하기</Link>
           </Button>
         </CardContent>
       </Card>

@@ -29,6 +29,19 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  // 주식앱 /event 편입에 따른 구 URL 리다이렉트 (참가자 북마크·홈화면 바로가기 보존)
+  async redirects() {
+    return [
+      { source: "/stocks/:path*", destination: "/event/stocks/:path*", permanent: false },
+      { source: "/news/:path*", destination: "/event/news/:path*", permanent: false },
+      { source: "/portfolio", destination: "/event/portfolio", permanent: false },
+      { source: "/history", destination: "/event/history", permanent: false },
+      { source: "/guide", destination: "/event/guide", permanent: false },
+      { source: "/support", destination: "/event/support", permanent: false },
+      { source: "/login", destination: "/event/login", permanent: false },
+      { source: "/signup", destination: "/event/signup", permanent: false },
+    ];
+  },
 };
 
 export default nextConfig;

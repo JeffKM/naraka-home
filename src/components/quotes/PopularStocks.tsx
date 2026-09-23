@@ -42,7 +42,7 @@ export function PopularStocks() {
             return (
               <Link
                 key={s.code}
-                href={`/stocks/${s.code}`}
+                href={`/event/stocks/${s.code}`}
                 className="flex items-center justify-between py-2.5 transition-colors hover:bg-muted/40"
               >
                 <div className="flex items-center gap-3">

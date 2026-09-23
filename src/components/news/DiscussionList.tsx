@@ -87,7 +87,7 @@ export function DiscussionList() {
               </>
             )}
             <span>{relativeTime(c.createdAt)}</span>
-            <Link href={`/stocks/${c.stockCode}`} className="ml-auto">
+            <Link href={`/event/stocks/${c.stockCode}`} className="ml-auto">
               <Badge className="cursor-pointer bg-muted text-muted-foreground hover:bg-muted/70 hover:text-foreground">
                 {c.stockName}
               </Badge>
@@ -125,7 +125,7 @@ export function DiscussionList() {
             )}
             {c.replyCount > 0 && (
               <Link
-                href={`/stocks/${c.stockCode}`}
+                href={`/event/stocks/${c.stockCode}`}
                 className="inline-flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
               >
                 <MessageCircle className="size-3.5" />

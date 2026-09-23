@@ -6,6 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DashboardSection } from "@/components/admin/DashboardSection";
 import { EventSection } from "@/components/admin/EventSection";
+import { HomeMenuSection } from "@/components/admin/home/HomeMenuSection";
+import { HomePostsSection } from "@/components/admin/home/HomePostsSection";
+import { HomeScheduleSection } from "@/components/admin/home/HomeScheduleSection";
+import { HomeStaffSection } from "@/components/admin/home/HomeStaffSection";
 import { ManualNewsSection } from "@/components/admin/ManualNewsSection";
 import { MarketSection } from "@/components/admin/MarketSection";
 import { RankingSection } from "@/components/admin/RankingSection";
@@ -21,7 +25,7 @@ import { VisitCodeSection } from "@/components/admin/VisitCodeSection";
 import { getJson } from "@/lib/api/client";
 import type { AdminSignupRequest, AdminSupportPost, Me } from "@/types/domain";
 
-const TAB_VALUES = ["status", "ops", "users", "manage", "support"] as const;
+const TAB_VALUES = ["status", "ops", "users", "manage", "support", "home"] as const;
 type AdminTab = (typeof TAB_VALUES)[number];
 
 function isAdminTab(value: string): value is AdminTab {
@@ -86,7 +90,7 @@ export default function AdminPage() {
       <h1 className="text-xl font-bold">운영자 콘솔</h1>
 
       <Tabs value={tab} onValueChange={setTab}>
-        <TabsList className="w-full">
+        <TabsList className="w-full overflow-x-auto">
           <TabsTrigger value="status">현황</TabsTrigger>
           <TabsTrigger value="ops">운영</TabsTrigger>
           <TabsTrigger value="users">
@@ -106,6 +110,7 @@ export default function AdminPage() {
               </Badge>
             )}
           </TabsTrigger>
+          <TabsTrigger value="home">홈페이지</TabsTrigger>
         </TabsList>
 
         <TabsContent value="status" className="flex flex-col gap-4">
@@ -152,6 +157,21 @@ export default function AdminPage() {
 
         <TabsContent value="support" className="flex flex-col gap-4">
           <SupportSection />
+        </TabsContent>
+
+        <TabsContent value="home">
+          <Tabs defaultValue="posts">
+            <TabsList className="w-full">
+              <TabsTrigger value="posts">공지·이벤트</TabsTrigger>
+              <TabsTrigger value="schedule">출근표</TabsTrigger>
+              <TabsTrigger value="staff">스태프</TabsTrigger>
+              <TabsTrigger value="menu">메뉴</TabsTrigger>
+            </TabsList>
+            <TabsContent value="posts"><HomePostsSection /></TabsContent>
+            <TabsContent value="schedule"><HomeScheduleSection /></TabsContent>
+            <TabsContent value="staff"><HomeStaffSection /></TabsContent>
+            <TabsContent value="menu"><HomeMenuSection /></TabsContent>
+          </Tabs>
         </TabsContent>
       </Tabs>
     </div>
