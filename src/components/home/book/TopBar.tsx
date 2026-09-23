@@ -25,6 +25,7 @@ export function TopBar() {
           className="home-btn home-btn-primary inline-flex min-h-11 items-center px-4 text-sm"
         >
           예약하기
+          <span className="sr-only"> (새 창)</span>
         </a>
         <button
           type="button"

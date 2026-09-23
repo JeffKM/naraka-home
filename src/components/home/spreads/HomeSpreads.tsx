@@ -181,6 +181,7 @@ export function VisitSpread() {
               className="home-btn home-btn-primary inline-flex min-h-11 items-center px-5"
             >
               예약하기
+              <span className="sr-only"> (새 창)</span>
             </a>
             <Link href="/location" scroll={false} className="home-btn inline-flex min-h-11 items-center px-4">
               오시는 길 책 펼치기

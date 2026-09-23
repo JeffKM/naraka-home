@@ -95,6 +95,7 @@ export default async function AboutPage({ searchParams }: { searchParams: Promis
                 className="home-btn home-btn-primary inline-flex min-h-11 w-fit items-center px-5"
               >
                 instagram @{HOME_INFO.instagramHandle}
+                <span className="sr-only"> (새 창)</span>
               </a>
             )}
             {rest.length === 0 && <p className="leading-7 text-[var(--home-sheet-muted)]">다음 장을 넘기면 1막이 시작됩니다.</p>}

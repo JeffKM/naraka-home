@@ -38,6 +38,7 @@ export default async function LocationPage({ searchParams }: { searchParams: Pro
                 className="home-btn inline-flex min-h-11 w-fit items-center px-4"
               >
                 instagram @{HOME_INFO.instagramHandle}
+                <span className="sr-only"> (새 창)</span>
               </a>
             </div>
           }
@@ -66,6 +67,7 @@ export default async function LocationPage({ searchParams }: { searchParams: Pro
                 className="home-btn home-btn-primary inline-flex min-h-11 w-fit items-center px-5"
               >
                 인스타그램으로 예약·문의하기
+                <span className="sr-only"> (새 창)</span>
               </a>
               <p className="text-sm text-[var(--home-sheet-muted)]">
                 {HOME_INFO.name} · {HOME_INFO.addressLine}
