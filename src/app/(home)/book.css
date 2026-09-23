@@ -356,10 +356,10 @@
 /* 펼치기 — 표지가 왼쪽으로 열리며 연출 전체가 걷힌다 */
 .swap-hand-open { transform: translate(40%, -30%); }
 .swap-layer[data-phase="open"] .swap-hand-open { opacity: 1; }
-.swap-layer[data-phase="open"] .swap-book-to { animation: swap-open 400ms ease both; }
+.swap-layer[data-phase="open"] .swap-book-to { animation: swap-open 350ms ease both; }
 @keyframes swap-open {
   from { transform: translate(-50%, -50%) scale(1) rotateY(0deg); opacity: 1; }
   to { transform: translate(-50%, -50%) scale(1) rotateY(-100deg); opacity: 0; }
 }
-.swap-layer[data-phase="open"] { animation: swap-fade 400ms ease both; }
+.swap-layer[data-phase="open"] { animation: swap-fade 350ms ease both; }
 @keyframes swap-fade { 0%, 50% { opacity: 1; } 100% { opacity: 0; } }

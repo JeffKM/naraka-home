@@ -10,8 +10,11 @@ const PHASE_MS: Record<"close" | "shelf" | "pull" | "open", number> = {
   close: 300,
   shelf: 400,
   pull: 400,
-  open: 400,
+  open: 350,
 };
+
+// 도착 대기 안전장치 — 이동이 취소·실패해 새 책이 끝내 오지 않아도 연출을 걷는다
+export const SWAP_WAIT_TIMEOUT_MS = 8000;
 
 interface Props {
   from: BookId;
@@ -55,6 +58,13 @@ export function SwapSequence({ from, to, arrived, fast, reducedMotion, onDone }:
       return () => window.clearTimeout(t);
     }
   }, [phase, arrived, reducedMotion, onDone]);
+
+  // 도착 대기가 너무 길면 포기 — arrived는 의존성에서 빼서 대기 시작부터 잰다
+  useEffect(() => {
+    if (!reducedMotion && phase !== "wait") return;
+    const t = window.setTimeout(onDone, SWAP_WAIT_TIMEOUT_MS);
+    return () => window.clearTimeout(t);
+  }, [phase, reducedMotion, onDone]);
 
   if (reducedMotion) return null;
 

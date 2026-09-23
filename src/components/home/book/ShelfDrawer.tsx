@@ -52,8 +52,10 @@ export function ShelfDrawer() {
     setOpen(false);
     const root = getBook(to).root;
     const from = current?.book;
-    // 같은 책이면 첫 쪽으로 넘기기만, 다른 책이면 교체 연출을 먼저 요청하고 이동
-    if (from && from !== to) requestSwap(from, to);
+    // 같은 책이면 첫 쪽으로 넘기기만, 다른 책이면 교체 연출을 먼저 요청하고 이동.
+    // 교체 연출 도중이면 지금 펼친 책을 다시 골라도 요청을 바꾼다 — 안 바꾸면 이전 목적지를 영영 기다린다
+    const pending = useBookStore.getState().swapRequest;
+    if (from && (from !== to || pending)) requestSwap(from, to);
     router.push(root, { scroll: false });
   };
 

@@ -10,7 +10,8 @@ export function TopBar() {
   const setOpen = useBookStore((s) => s.setDrawerOpen);
   return (
     <header className="book-topbar">
-      <Link href="/" scroll={false} className="book-logo home-serif">
+      {/* 서랍(모달)이 열리면 서랍 밖 링크는 Tab으로 닿지 않게 — 닫기 토글만 남긴다 */}
+      <Link href="/" scroll={false} inert={open} className="book-logo home-serif">
         {HOME_INFO.name}
       </Link>
       <div className="flex items-center gap-2">
@@ -18,6 +19,7 @@ export function TopBar() {
           href={HOME_INFO.reserveUrl}
           target="_blank"
           rel="noreferrer"
+          inert={open}
           className="home-btn home-btn-primary inline-flex min-h-11 items-center px-4 text-sm"
         >
           예약하기

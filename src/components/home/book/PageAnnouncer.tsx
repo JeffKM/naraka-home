@@ -11,7 +11,7 @@ export function PageAnnouncer() {
   const message =
     current && i !== -1 ? `${getBook(current.book).title} 책, ${i + 1}쪽 / ${current.manifest.length}쪽` : "";
   return (
-    <p aria-live="polite" className="sr-only">
+    <p aria-live="polite" aria-atomic="true" className="sr-only">
       {message}
     </p>
   );
