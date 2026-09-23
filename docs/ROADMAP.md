@@ -174,7 +174,7 @@
 > 2026-09-23~. 3D 팝업북 폐기 → 책 8권(홈·소개·오시는 길·메뉴·요괴·공지·이벤트·게임) 재설계. 메뉴 = 책 교체, 스크롤 = 쪽 넘김, 화면 고정. 인트로 = 지옥문 → 옥자 사무실 → 책장 → 책상에서 펼침(옥자는 그림자·손 흔적만). 스펙 `docs/superpowers/specs/2026-09-23-book-home-design.md`, 계획 `docs/superpowers/plans/2026-09-23-book-home.md`(+ PR#80 전환 계획 `…/2026-09-23-pr80-cutover.md`), 그림 원장 `docs/book-art/PROMPTS.md`. 브랜치 `feat/book-home`(PR#80 미머지라 `feat/naraka-home`에서 분기). 서브에이전트 구현 + 태스크별 리뷰.
 
 - [x] **T-1601** (PR#80 전환 Task 1) 팝업북·three 계열 제거, 홈을 책상 위 히어로(`8d88a8e`)로 복원. 커밋 `53565fb`
-- [ ] **T-1602** (PR#80 전환 Task 2) PR#80 머지·prod 배포 — **사장님 승인 대기**
+- [x] **T-1602** (PR#80 전환 Task 2) PR#80 머지(2026-09-24, `5909747`) → Vercel prod 배포 → prod `supabase db push`(마이그 `20260824000000_home_content`, 사장님 실행). 마이그 전 홈·DB 쪽 500 → 적용 후 `/`·`/about`·`/location`·`/menu`·`/staff`·`/notice`·`/events`·`/games`·`/event` 전부 200, `/login`→`/event/login`. CI 의존성 스캔 실패(next critical 등 14건, main도 동일 — 신규 권고)는 별도 의존성 갱신 PR로
 - [x] **T-1603** (Task 1~3) 순수 로직: 책 정의·쪽 키·넘김 계획, 휠·스와이프·키 입력 판정·인트로 조건, 책 순서표 빌더·게임 목록·달력 로더. 커밋 `559f113`·`ad99dbe`·`0fb2427`
 - [x] **T-1604** (Task 4) 책 뼈대: 스토어·그림 판(자리 판)·Spread·셸, (home) 레이아웃 교체. 커밋 `b8a95fc`·`5649cfb`
 - [x] **T-1605** (Task 5) 홈·소개·오시는 길 책. 커밋 `1174acf`
