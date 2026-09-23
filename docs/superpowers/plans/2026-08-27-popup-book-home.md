@@ -1,5 +1,7 @@
 # 나라카 팝업북 홈 구현 계획
 
+> **폐기됨 (2026-09-23)** — `2026-09-23-book-home.md`로 대체.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** 카페 홈 첫 화면을 "접힌 동화책 마을"(표지 + 면 3 + 경첩 감옥, 종이 컷아웃 팝업, 명패 클릭 시 방 안으로 돌리 인)로 교체한다.
