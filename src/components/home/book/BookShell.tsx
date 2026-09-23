@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { useMediaQuery } from "@/lib/book/useMediaQuery";
 import { ArtPlate } from "./ArtPlate";
 import { BookStage } from "./BookStage";
+import { IntroSequence } from "./IntroSequence";
 import { PageAnnouncer } from "./PageAnnouncer";
 import { ShelfDrawer } from "./ShelfDrawer";
 import { TopBar } from "./TopBar";
@@ -21,6 +22,7 @@ export function BookShell({ children }: { children: ReactNode }) {
       <ShelfDrawer />
       <BookStage reducedMotion={reducedMotion}>{children}</BookStage>
       <PageAnnouncer />
+      <IntroSequence reducedMotion={reducedMotion} />
     </div>
   );
 }
