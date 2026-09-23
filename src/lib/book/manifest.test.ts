@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { HomeMenuItem, HomePost, HomeStaff } from "@/types/home";
 import {
-  buildEventManifest, buildGamesManifest, buildMenuManifest, buildNoticeManifest,
+  buildErrorPage, buildEventManifest, buildGamesManifest, buildMenuManifest, buildNoticeManifest,
   buildStaffManifest, clampPage, eventPhase, listPageOf, orderEvents,
 } from "./manifest";
 
@@ -82,5 +82,31 @@ describe("쪽 번호", () => {
     expect(listPageOf(0)).toBe(1);
     expect(listPageOf(7)).toBe(1);
     expect(listPageOf(8)).toBe(2);
+  });
+});
+
+describe("buildErrorPage", () => {
+  it("책 첫 쪽 오류는 한 쪽짜리 순서표", () => {
+    expect(buildErrorPage("/staff", "")).toEqual({
+      book: "staff",
+      key: "/staff",
+      manifest: [{ key: "/staff", href: "/staff", tab: "이 쪽", kind: "content" }],
+    });
+  });
+  it("안쪽 쪽 오류는 그 책 첫 쪽 + 이 쪽 — 다른 책으로 넘기지 않는다", () => {
+    const page = buildErrorPage("/notice/7", "");
+    expect(page?.book).toBe("notice");
+    expect(page?.key).toBe("/notice/7");
+    expect(page?.manifest.map((r) => r.key)).toEqual(["/notice", "/notice/7"]);
+  });
+  it("쪽을 가르는 쿼리는 키에 남기고 쪽 안 상태 쿼리는 버린다", () => {
+    const page = buildErrorPage("/", "p=calendar&month=2026-09");
+    expect(page?.book).toBe("home");
+    expect(page?.key).toBe("/?p=calendar");
+    expect(page?.manifest[0].key).toBe("/");
+    expect(page?.manifest[1].href).toBe("/?p=calendar&month=2026-09");
+  });
+  it("책 밖 경로는 null", () => {
+    expect(buildErrorPage("/event/stocks", "")).toBeNull();
   });
 });

@@ -1,7 +1,8 @@
 import type { HomeMenuItem, HomePost, HomeStaff } from "@/types/home";
+import { bookOf, getBook, type BookId } from "./books";
 import { GAMES } from "./games";
 import type { BookPageRef, PageKind } from "./navigation";
-import { pageKeyOfHref } from "./pageKey";
+import { pageKeyOf, pageKeyOfHref } from "./pageKey";
 
 // 책별 쪽 순서표 — 페이지가 이미 읽어 온 데이터로 만든다 (DB 이중 조회 없음)
 export const LIST_PAGE_SIZE = 8;
@@ -113,4 +114,19 @@ export function buildEventManifest(ordered: readonly HomePost[]): BookPageRef[] 
 
 export function buildGamesManifest(): BookPageRef[] {
   return [ref("/games", "목차", "toc"), ...GAMES.map((g) => ref(`/games/${g.id}`, g.title, "detail"))];
+}
+
+// 쪽 데이터 오류 화면의 순서표 — 진짜 순서표는 못 읽었으니 "책 첫 쪽 + 이 쪽"만 둔다.
+// 이걸 등록해야 발치 번호·탭·서랍의 "펼쳐 둔 책"이 직전 쪽(다른 책일 수도)에 머물지 않고, 휠이 엉뚱한 책으로 넘기지 않는다
+export function buildErrorPage(
+  pathname: string,
+  search: string
+): { book: BookId; key: string; manifest: BookPageRef[] } | null {
+  const book = bookOf(pathname);
+  if (!book) return null;
+  const key = pageKeyOf(pathname, search);
+  const query = search.startsWith("?") ? search.slice(1) : search;
+  const self: BookPageRef = { key, href: query ? `${pathname}?${query}` : pathname, tab: "이 쪽", kind: "content" };
+  const root = ref(getBook(book).root, "첫 쪽", "toc");
+  return { book, key, manifest: root.key === key ? [self] : [root, self] };
 }
