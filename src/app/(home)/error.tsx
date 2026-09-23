@@ -9,7 +9,13 @@ import { buildErrorPage } from "@/lib/book/manifest";
 
 // 쪽 데이터 오류 — 그 쪽만 빈 상태로, 책·메뉴는 그대로 동작
 // 오류 쪽도 자기 책·쪽을 무대에 등록한다 — 안 하면 직전 쪽의 책·순서표가 남아 발치·탭·서랍·휠이 엉뚱한 쪽을 가리킨다
-export default function HomeError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
+// 다시 펼치기는 unstable_retry — reset()은 다시 그리기만 해서 서버 데이터 오류는 복구되지 않는다
+export default function HomeError({
+  unstable_retry,
+}: {
+  error: Error & { digest?: string };
+  unstable_retry: () => void;
+}) {
   const pathname = usePathname();
   const search = useSearchParams().toString();
   const page = useMemo(() => buildErrorPage(pathname, search), [pathname, search]);
@@ -28,7 +34,7 @@ export default function HomeError({ reset }: { error: Error & { digest?: string 
             <p className="leading-7">잠깐 문제가 생겼어요. 잠시 후 다시 펼쳐 주세요.</p>
             <button
               type="button"
-              onClick={reset}
+              onClick={() => unstable_retry()}
               className="home-btn home-btn-primary inline-flex min-h-11 w-fit items-center px-5"
             >
               다시 펼치기
