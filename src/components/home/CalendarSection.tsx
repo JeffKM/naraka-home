@@ -17,10 +17,11 @@ interface Props {
   weeks: CalendarDayCell[][];
   staff: HomeStaff[];
   daySchedule: Record<string, HomeScheduleEntry[]>;
+  monthHrefBase: string; // 예: "/?p=calendar&month=" — 뒤에 YYYY-MM을 붙인다
 }
 
 // 이벤트 달력 + 요괴 출근표 (여정의 종착지이자 홈 핵심 정보)
-export function CalendarSection({ month, weeks, staff, daySchedule }: Props) {
+export function CalendarSection({ month, weeks, staff, daySchedule, monthHrefBase }: Props) {
   const staffById = new Map(staff.map((s) => [s.id, s]));
   const today = weeks.flat().find((c) => c.isToday);
   const [selected, setSelected] = useState<string | null>(today?.date ?? null);
@@ -28,8 +29,7 @@ export function CalendarSection({ month, weeks, staff, daySchedule }: Props) {
   const selectedEntries = selected ? (daySchedule[selected] ?? []) : [];
 
   return (
-    <section id="calendar" className="mx-auto max-w-3xl px-4 py-10">
-      <div className="home-paper p-4 sm:p-6">
+    <section aria-label="이달 달력과 출근표">
         {/* 390px에서 명패가 단어 중간에 끊기고 월 이동이 세로로 쌓여, 줄바꿈은 두 덩어리 사이에서만 */}
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <h2 className="home-plate flex items-baseline gap-2 whitespace-nowrap text-xl font-semibold">
@@ -40,14 +40,16 @@ export function CalendarSection({ month, weeks, staff, daySchedule }: Props) {
         </h2>
         <div className="home-ui flex items-center gap-3 text-sm whitespace-nowrap">
           <Link
-            href={`/?month=${shiftMonth(month, -1)}#calendar`}
+            href={`${monthHrefBase}${shiftMonth(month, -1)}`}
+            scroll={false}
             className="flex min-h-11 items-center whitespace-nowrap px-1 hover:text-[var(--home-red)]"
           >
             이전 달
           </Link>
           <span className="tabular-nums">{month.replace("-", ".")}</span>
           <Link
-            href={`/?month=${shiftMonth(month, 1)}#calendar`}
+            href={`${monthHrefBase}${shiftMonth(month, 1)}`}
+            scroll={false}
             className="flex min-h-11 items-center whitespace-nowrap px-1 hover:text-[var(--home-red)]"
           >
             다음 달
@@ -179,7 +181,6 @@ export function CalendarSection({ month, weeks, staff, daySchedule }: Props) {
           </div>
         </div>
       )}
-      </div>
     </section>
   );
 }
