@@ -14,6 +14,7 @@ import { useMediaQuery } from "@/lib/book/useMediaQuery";
 import { FlipLayer } from "./FlipLayer";
 import { IndexTabs } from "./IndexTabs";
 import { PageFooter } from "./PageFooter";
+import { SwapSequence } from "./SwapSequence";
 
 export const FLIP_MS = 600;
 export const RUSH_TOTAL_MS = 800;
@@ -46,6 +47,10 @@ export function BookStage({ children, reducedMotion }: { children: ReactNode; re
 
   const [shown, setShown] = useState<Shown>({ key, book, node: children });
   const [leaving, setLeaving] = useState<Leaving | null>(null);
+  const swapRequest = useBookStore((s) => s.swapRequest);
+  const clearSwap = useBookStore((s) => s.clearSwap);
+  // 서랍 밖에서 생긴 책 교체(로고·본문 링크·뒤로가기) — 이미 도착한 뒤 연출
+  const [navSwap, setNavSwap] = useState<{ id: string; from: BookId; to: BookId } | null>(null);
 
   // 쪽이 바뀌면 직전 쪽의 순서표로 연출을 정한다 (새 쪽의 BookMeta는 아직 등록 전 — 렌더 중 파생 상태)
   if (shown.key !== key) {
@@ -70,10 +75,25 @@ export function BookStage({ children, reducedMotion }: { children: ReactNode; re
           }
         : null
     );
+    if (plan?.kind === "swap" && swapRequest?.to !== plan.to) {
+      setNavSwap({ id: `${shown.key}->${key}`, from: plan.from, to: plan.to });
+    }
   } else if (shown.node !== children) {
     // 같은 쪽의 데이터 갱신 (달력 월 이동 등) — 연출 없음
     setShown({ key, book, node: children });
   }
+
+  // 진행할 교체 연출 — 서랍 요청이 우선, 없으면 경로 변화로 감지한 교체
+  const activeSwap = swapRequest
+    ? { id: `r${swapRequest.id}`, from: swapRequest.from, to: swapRequest.to, fast: swapRequest.fast }
+    : navSwap
+      ? { ...navSwap, fast: false }
+      : null;
+  // onDone이 렌더마다 바뀌면 SwapSequence 이펙트가 다시 돌아 단계 타이머가 초기화된다 → 고정
+  const finishSwap = useCallback(() => {
+    if (swapRequest) clearSwap(swapRequest.id);
+    setNavSwap(null);
+  }, [swapRequest, clearSwap, setNavSwap]);
 
   const stageRef = useRef<HTMLDivElement>(null);
   const liveRef = useRef<HTMLDivElement>(null);
@@ -202,7 +222,17 @@ export function BookStage({ children, reducedMotion }: { children: ReactNode; re
         <IndexTabs />
       </div>
       <PageFooter onGo={go} />
-      {/* Task 9: SwapSequence */}
+      {activeSwap && (
+        <SwapSequence
+          key={activeSwap.id}
+          from={activeSwap.from}
+          to={activeSwap.to}
+          arrived={book === activeSwap.to}
+          fast={activeSwap.fast}
+          reducedMotion={reducedMotion}
+          onDone={finishSwap}
+        />
+      )}
     </div>
   );
 }
