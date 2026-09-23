@@ -169,7 +169,7 @@
 
 ---
 
-## Phase 16 — 카페 정식 홈 "책 8권" (13/15)
+## Phase 16 — 카페 정식 홈 "책 8권" (15/15 — 후속: hand-open 재촬영·예약 URL)
 
 > 2026-09-23~. 3D 팝업북 폐기 → 책 8권(홈·소개·오시는 길·메뉴·요괴·공지·이벤트·게임) 재설계. 메뉴 = 책 교체, 스크롤 = 쪽 넘김, 화면 고정. 인트로 = 지옥문 → 옥자 사무실 → 책장 → 책상에서 펼침(옥자는 그림자·손 흔적만). 스펙 `docs/superpowers/specs/2026-09-23-book-home-design.md`, 계획 `docs/superpowers/plans/2026-09-23-book-home.md`(+ PR#80 전환 계획 `…/2026-09-23-pr80-cutover.md`), 그림 원장 `docs/book-art/PROMPTS.md`. 브랜치 `feat/book-home`(PR#80 미머지라 `feat/naraka-home`에서 분기). 서브에이전트 구현 + 태스크별 리뷰.
 
@@ -188,7 +188,9 @@
 - [x] **T-1613** (Task 13) 마감 검증: 금지어·이모지 0건, 키보드 순회 통과, 상세 쪽 탭 제목(generateMetadata), 모바일 쪽 번호 띠, CLS 0.245→0(그림 크기 지정), 홈 폰트 preload 해제(1.2MB→0.49MB). Lighthouse 모바일 a11y 1.0·CLS 0, LCP 기본 7.3s/devtools 2.9s/실측 Slow4G 2.0s. 사장님 확인용 스크린샷 20장 `docs/design-refs/book-home/`. 커밋 `47ee77e`~`e7b3057`
 - [x] **T-1614** 전체 브랜치 최종 리뷰(판정: 수정 후 머지 가능) + 수정 9건: 이웃 쪽 full prefetch·이동 중 입력 잠금(중복 히스토리 방지), 에러 쪽이 실제 책 기준으로 쪽 번호·탭·서랍 표시, 넘김 animationend 백스톱, 서랍 뒤로가기 시 닫힘·레이아웃 이탈 시 상태 정리, 서랍 열림 중 무대 inert, 상세 메타데이터 DB 실패 폴백, 새 창 링크 안내. 커밋 `edfc90e`~`bc45876` (vitest 84)
 - [x] **T-1614b** 오류 쪽 "다시 펼치기"를 `unstable_retry`로 교체(reset은 서버 데이터 재요청 없음). 커밋 `0c73619`. push 후 PR #83 생성(base `feat/naraka-home`, #80 스택)
-- [ ] **T-1615** 머지·배포 — 사장님 승인 필요 (PR #80 머지 → PR #83 머지, LCP 기준·그림 재촬영 컨펌)
+- [x] **T-1615** PR #83 머지(2026-09-24, `dd4db21`) → Vercel prod 배포. LCP는 실측(Slow 4G 2.0s) 기준으로 사장님 OK. prod 실브라우저 확인: 1440 홈 펼침·390 공지 목록 렌더, 콘솔 에러 0, 전 경로 200
+- [x] **T-1616** 보안 의존성 갱신 PR #84: next·eslint-config-next 16.2.10→16.3.6, `npm audit fix`로 취약점 14→0, 16.3 신규 lint 규칙은 로그아웃 하드 내비 2곳 사유 주석 예외. CI 통과, 로컬 `next start` 전 경로 200·쪽 넘김 정상 — 머지는 사장님 승인 대기
+- [ ] 후속: `15-hand-open` 재촬영(손만, #00FF00) → 펼치기 단계 투입 / `HOME_INFO.reserveUrl` 실제 예약 URL / prod 공지·이벤트 콘텐츠 입력(어드민) / 배치 1회 성공 확인(사장님)
 
 ---
 
