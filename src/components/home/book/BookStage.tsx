@@ -12,6 +12,8 @@ import { neighborOf, planTransition } from "@/lib/book/navigation";
 import { pageKeyOf } from "@/lib/book/pageKey";
 import { useMediaQuery } from "@/lib/book/useMediaQuery";
 import { FlipLayer } from "./FlipLayer";
+import { IndexTabs } from "./IndexTabs";
+import { PageFooter } from "./PageFooter";
 
 export const FLIP_MS = 600;
 export const RUSH_TOTAL_MS = 800;
@@ -197,9 +199,9 @@ export function BookStage({ children, reducedMotion }: { children: ReactNode; re
             onDone={() => setLeaving(null)}
           />
         )}
-        {/* Task 8: IndexTabs */}
+        <IndexTabs />
       </div>
-      {/* Task 8: PageFooter go={go} */}
+      <PageFooter onGo={go} />
       {/* Task 9: SwapSequence */}
     </div>
   );

@@ -187,3 +187,135 @@
   animation: book-fade-out 150ms ease both;
 }
 @keyframes book-fade-out { to { opacity: 0; } }
+
+/* ── 상단 바 · 서랍 · 탭 · 쪽 번호 ─────────── */
+.book-topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 45; /* 서랍(40) 위 — 닫기 버튼이 보이게 */
+  height: calc(var(--topbar-h) + env(safe-area-inset-top, 0px));
+  padding: env(safe-area-inset-top, 0px) 16px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(var(--home-void), transparent);
+}
+.book-logo {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--home-chalk);
+}
+.book-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  color: var(--home-chalk);
+}
+.book-icon-btn:disabled { opacity: 0.35; }
+.book-icon-btn:focus-visible,
+.book-drawer-item:focus-visible,
+.book-tab:focus-visible,
+.book-logo:focus-visible {
+  outline: 2px solid var(--home-wisp);
+  outline-offset: 2px;
+}
+
+.book-drawer-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 39;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.book-drawer-scrim.is-open { opacity: 1; pointer-events: auto; }
+.book-drawer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  width: min(320px, 86vw);
+  padding: calc(var(--topbar-h) + env(safe-area-inset-top, 0px)) 16px 24px;
+  overflow-y: auto;
+  background: var(--home-bg);
+  border-left: 2px solid var(--home-rosewood);
+  transform: translateX(100%);
+  transition: transform 0.25s ease;
+}
+.book-drawer.is-open { transform: none; }
+.book-drawer-title { margin-bottom: 12px; font-weight: 800; color: var(--home-chalk); }
+.book-drawer-list { display: flex; flex-direction: column; gap: 6px; }
+.book-drawer-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 52px;
+  padding: 4px 8px;
+  border-radius: 10px;
+  color: var(--home-chalk);
+  text-align: left;
+}
+.book-drawer-item:hover { background: var(--home-rosewood-deep); }
+.book-spine { width: 22px; height: 44px; flex-shrink: 0; overflow: hidden; border-radius: 3px; }
+.book-spine.is-out { opacity: 0.25; outline: 1px dashed var(--home-muted); }
+.book-drawer-note { margin-left: auto; font-size: 0.75rem; color: var(--home-muted); }
+
+.book-tabs { display: none; }
+@media (min-width: 768px) {
+  .book-tabs {
+    position: absolute;
+    top: 24px;
+    left: 100%;
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .book-tab {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    max-width: 104px;
+    padding: 0 12px 0 10px;
+    overflow: hidden;
+    border-radius: 0 10px 10px 0;
+    background: var(--home-rosewood);
+    color: var(--home-chalk);
+    font-size: 0.8125rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.35);
+  }
+  .book-tab[aria-current="page"] { background: var(--home-red); color: var(--home-on-red); }
+}
+
+.book-footer {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+  z-index: 10;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--home-chalk);
+}
+.book-footer-toc { display: inline-flex; align-items: center; min-height: 44px; padding: 0 8px; text-decoration: underline; }
+@media (min-width: 768px) { .book-footer { display: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .book-drawer, .book-drawer-scrim { transition: none; }
+}
