@@ -117,3 +117,10 @@ export function shiftMonth(month: string, delta: number): string {
   const d = new Date(Date.UTC(y, m - 1 + delta, 1));
   return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
 }
+
+// ?month= 쿼리 정규화 — 올바른 YYYY-MM(01~12)만 받고, 아니면 오늘의 달
+export function normalizeMonth(raw: string | undefined, today: string): string {
+  const match = /^\d{4}-(\d{2})$/.exec(raw ?? "");
+  const valid = match !== null && Number(match[1]) >= 1 && Number(match[1]) <= 12;
+  return valid ? (raw as string) : today.slice(0, 7);
+}
