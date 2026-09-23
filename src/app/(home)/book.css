@@ -11,7 +11,7 @@
 .book-shell { position: absolute; inset: 0; }
 
 .book-desk { position: absolute; inset: 0; }
-.book-desk-art { width: 100%; height: 100%; object-fit: cover; }
+.book-desk-art { display: block; width: 100%; height: 100%; object-fit: cover; }
 
 .book-stage {
   position: absolute;

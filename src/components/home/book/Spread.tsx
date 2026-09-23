@@ -36,10 +36,12 @@ export function PageTitle({ children }: { children: ReactNode }) {
   );
 }
 
+// 쪽 삽화 — 모바일에선 첫 화면 맨 위(LCP)라 지연 로딩하지 않고, 크기(원화 840 정사각)를 적어
+// 그림이 도착할 때 아래 글이 밀려 내려가지 않게 자리를 미리 잡는다
 export function PageIllust({ src, alt }: { src: string; alt: string }) {
   return (
     // eslint-disable-next-line @next/next/no-img-element -- 스토리 원화 정적 WebP
-    <img src={src} alt={alt} className="book-illust" loading="lazy" />
+    <img src={src} alt={alt} width={840} height={840} className="book-illust" />
   );
 }
 

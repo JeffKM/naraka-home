@@ -3,7 +3,7 @@
 import { useEffect, type ReactNode } from "react";
 import { preloadArt } from "@/lib/book/art";
 import { useMediaQuery } from "@/lib/book/useMediaQuery";
-import { ArtPlate } from "./ArtPlate";
+import { ArtPicture } from "./ArtPlate";
 import { BookStage } from "./BookStage";
 import { IntroSequence } from "./IntroSequence";
 import { PageAnnouncer } from "./PageAnnouncer";
@@ -21,8 +21,7 @@ export function BookShell({ children }: { children: ReactNode }) {
   return (
     <div className="book-shell">
       <div className="book-desk" aria-hidden>
-        <ArtPlate art="desk" className="book-desk-art hidden md:flex" />
-        <ArtPlate art="desk-m" className="book-desk-art md:hidden" />
+        <ArtPicture desktop="desk" mobile="desk-m" className="book-desk-art" />
       </div>
       <TopBar />
       <ShelfDrawer />
