@@ -11,16 +11,18 @@ PUB="$ROOT/public"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
-# 1) 히어로 하이라이트 루프 — 4컷 12초(발차기 18~22 / 물대포 59~62 / 종신 도장 66.5~68.5 / 단체샷 72.5~75.5)
-#    540×960 무음, 인스타 프레임 소품 창 안에서 음소거 자동 루프 (DeskHero)
-mkdir -p "$PUB/home" "$PUB/story/comic" "$TMP/stills"
-ffmpeg -v error -y -i "$SRC" -filter_complex \
-  "[0:v]trim=18:22,setpts=PTS-STARTPTS[a];[0:v]trim=59:62,setpts=PTS-STARTPTS[b];[0:v]trim=66.5:68.5,setpts=PTS-STARTPTS[c];[0:v]trim=72.5:75.5,setpts=PTS-STARTPTS[d];[a][b][c][d]concat=n=4:v=1:a=0,scale=540:960[v]" \
-  -map "[v]" -an -c:v libx264 -preset slow -crf 26 -maxrate 1500k -bufsize 3000k -pix_fmt yuv420p \
-  -movflags +faststart "$PUB/home/hero-loop.mp4"
+# 1) 히어로 하이라이트 루프 — 책 홈 전환으로 미사용 (DeskHero 폐기, PR #80)
+#    540×960 무음, 인스타 프레임 소품 창 안에서 음소거 자동 루프
+# mkdir -p "$PUB/home" "$TMP/stills"
+# ffmpeg -v error -y -i "$SRC" -filter_complex \
+#   "[0:v]trim=18:22,setpts=PTS-STARTPTS[a];[0:v]trim=59:62,setpts=PTS-STARTPTS[b];[0:v]trim=66.5:68.5,setpts=PTS-STARTPTS[c];[0:v]trim=72.5:75.5,setpts=PTS-STARTPTS[d];[a][b][c][d]concat=n=4:v=1:a=0,scale=540:960[v]" \
+#   -map "[v]" -an -c:v libx264 -preset slow -crf 26 -maxrate 1500k -bufsize 3000k -pix_fmt yuv420p \
+#   -movflags +faststart "$PUB/home/hero-loop.mp4"
+mkdir -p "$PUB/story/comic" "$TMP/stills"
 
-# 2) 스틸 — 히어로 포스터(단체샷 72.8초, 540×960) + /story 포스터(단체샷 74.0초)
-ffmpeg -v error -y -ss 72.8 -i "$SRC" -frames:v 1 -vf scale=540:960 "$TMP/stills/hero.png"
+# 2) 스틸 — /story 포스터(단체샷 74.0초)
+# 히어로 포스터(단체샷 72.8초, 540×960)는 책 홈 전환으로 미사용
+# ffmpeg -v error -y -ss 72.8 -i "$SRC" -frames:v 1 -vf scale=540:960 "$TMP/stills/hero.png"
 ffmpeg -v error -y -ss 74.0 -i "$SRC" -frames:v 1 -vf scale=-2:1080 "$TMP/stills/group.png"
 
 # 3) 스토리 영상 웹용 재인코딩(+faststart)
@@ -37,8 +39,8 @@ from PIL import Image, ImageDraw
 
 tmp, frame_png, comic_dir, pub = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
 
-# 포스터 2종 — 히어로(540×960) / 스토리(단체샷)
-Image.open(f"{tmp}/stills/hero.png").convert("RGB").save(f"{pub}/home/hero-poster.webp", "WEBP", quality=85)
+# 포스터 — 스토리(단체샷). 히어로 포스터는 책 홈 전환으로 미사용
+# Image.open(f"{tmp}/stills/hero.png").convert("RGB").save(f"{pub}/home/hero-poster.webp", "WEBP", quality=85)
 Image.open(f"{tmp}/stills/group.png").convert("RGB").save(f"{pub}/story/poster.webp", "WEBP", quality=82)
 
 # 인스타 프레임 (알파 유지 540×960) — 원본은 폰 바깥에 인스타 다크 배경(#0e0d11)이 불투명으로 남아 있어
@@ -67,5 +69,5 @@ for i in range(1, 18):
     src.resize((w, h), Image.LANCZOS).save(f"{pub}/story/comic/{i:02d}.webp", "WEBP", quality=85)
 PY
 
-ls -la "$PUB/home/hero-loop.mp4" "$PUB/home/hero-poster.webp"
+# 히어로 루프·포스터는 책 홈 전환으로 미사용이라 목록에서 제외
 du -sh "$PUB/story"

@@ -1,0 +1,104 @@
+/* 책 홈 — 화면 고정 무대. 팔레트는 home.css 토큰만 */
+.book-root {
+  --topbar-h: 56px;
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--home-void);
+  color: var(--home-ink);
+}
+.book-fallback { position: absolute; inset: 0; overflow-y: auto; }
+.book-shell { position: absolute; inset: 0; }
+
+.book-desk { position: absolute; inset: 0; }
+.book-desk-art { width: 100%; height: 100%; object-fit: cover; }
+
+.book-stage {
+  position: absolute;
+  top: calc(var(--topbar-h) + env(safe-area-inset-top, 0px));
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  place-items: center;
+  padding: 8px 16px calc(64px + env(safe-area-inset-bottom, 0px));
+}
+.book { position: relative; width: 100%; height: 100%; perspective: 2400px; }
+.book-live {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 6px;
+  background: var(--home-parchment);
+  color: var(--home-sheet-ink);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+}
+
+@media (min-width: 768px) {
+  .book-stage { padding: 16px 112px 32px 48px; }
+  .book {
+    height: auto;
+    width: min(100%, calc((100dvh - var(--topbar-h) - 48px) * 1.5));
+    aspect-ratio: 3 / 2;
+  }
+  /* 제본선 그림자 */
+  .book-live::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 36px;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.25), transparent);
+    pointer-events: none;
+  }
+}
+
+/* 쪽 — 모바일은 한 쪽 전체가 스크롤, 데스크톱은 오른쪽 면만 스크롤 */
+.book-spread {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--home-parchment);
+  color: var(--home-sheet-ink);
+}
+.book-page { padding: 20px 18px; }
+.book-page-left { display: flex; flex-direction: column; gap: 12px; }
+@media (min-width: 768px) {
+  .book-spread { display: grid; grid-template-columns: 1fr 1fr; overflow: hidden; }
+  .book-page { padding: 32px 36px; min-height: 0; }
+  .book-page-left { overflow: hidden; }
+  .book-page-right { overflow-y: auto; overscroll-behavior: contain; }
+}
+
+.book-illust { display: block; width: 100%; border-radius: 10px; object-fit: contain; }
+@media (min-width: 768px) {
+  .book-page-left .book-illust { flex: 1 1 0; min-height: 0; height: 100%; }
+}
+.book-comics { display: flex; flex-direction: column; gap: 12px; }
+.book-comics img { width: 100%; aspect-ratio: 1; object-fit: contain; border-radius: 10px; }
+.book-stamp {
+  display: inline-block;
+  padding: 4px 12px;
+  border: 3px solid var(--home-red);
+  border-radius: 6px;
+  color: var(--home-red);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  transform: rotate(-8deg);
+}
+
+/* 그림 도착 전 자리 판 */
+.book-art-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border: 1px dashed var(--home-muted);
+  background: repeating-linear-gradient(135deg, var(--home-rosewood-deep) 0 12px, var(--home-bg) 12px 24px);
+  color: var(--home-chalk);
+  font-size: 0.75rem;
+  text-align: center;
+}
