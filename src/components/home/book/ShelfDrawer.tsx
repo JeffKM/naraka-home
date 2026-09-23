@@ -12,6 +12,8 @@ export function ShelfDrawer() {
   const setOpen = useBookStore((s) => s.setDrawerOpen);
   const current = useBookStore((s) => s.current);
   const requestSwap = useBookStore((s) => s.requestSwap);
+  // 인트로 재생 중엔 닫혀 있든 열려 있든 서랍도 inert — 뒤 요소로 취급
+  const introActive = useBookStore((s) => s.introActive);
   const router = useRouter();
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -69,7 +71,7 @@ export function ShelfDrawer() {
         aria-modal="true"
         aria-label="책장"
         className={`book-drawer ${open ? "is-open" : ""}`}
-        inert={!open}
+        inert={!open || introActive}
       >
         <p className="book-drawer-title home-serif">책장</p>
         <ul className="book-drawer-list">

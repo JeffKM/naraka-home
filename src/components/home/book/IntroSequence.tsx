@@ -1,8 +1,9 @@
 "use client";
 
 import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { INTRO_VIDEO, type ArtKey } from "@/lib/book/art";
+import { useBookStore } from "@/lib/book/bookStore";
 import { INTRO_VISITED_KEY, introMode, isHomeRoot } from "@/lib/book/intro";
 import { ArtPlate } from "./ArtPlate";
 
@@ -49,10 +50,24 @@ export function IntroSequence({ reducedMotion }: { reducedMotion: boolean }) {
   const [phase, setPhase] = useState<Phase>(() =>
     isHomeRoot(pathname, searchParams.toString()) ? "hold" : "done"
   );
+  const setIntroActive = useBookStore((s) => s.setIntroActive);
+  const introActive = useBookStore((s) => s.introActive);
   // sessionStorage 읽기(부수효과)만 한 번 캐싱 — 개발 모드 이펙트 이중 실행에도
   // 두 번 읽지 않게. undefined = 아직 안 읽음(null/false와 구분)
   const visited = useRef<boolean | null | undefined>(undefined);
   const playing = useRef(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const skipRef = useRef<HTMLButtonElement>(null);
+  const skipFocused = useRef(false);
+  // 인트로가 끝나는 순간 포커스가 인트로 레이어 안에 있었는지 — 있었을 때만 책 쪽으로 옮긴다
+  const restoreFocus = useRef(false);
+
+  // 인트로를 끝낸다 — 끝나는 순간 포커스가 어디 있었는지 먼저 기록해 둔다. 뒤 요소(상단 바·책
+  // 무대)는 아직 inert라 지금 바로 옮길 순 없고, 스토어 반영 뒤(포커스 복원 이펙트)에 옮긴다
+  const finish = useCallback(() => {
+    restoreFocus.current = rootRef.current?.contains(document.activeElement) ?? false;
+    setPhase("done");
+  }, []);
 
   // 모드 결정 — reducedMotion은 하이드레이션 안전을 위해 useMediaQuery가 첫 페인트엔
   // false를 주고 뒤이은 이펙트에서 실제 값으로 맞춘다. 여기서 순수 계산(introMode)까지
@@ -82,14 +97,47 @@ export function IntroSequence({ reducedMotion }: { reducedMotion: boolean }) {
       }, VIDEO_START_TIMEOUT_MS);
       return () => window.clearTimeout(t);
     }
-    const t = window.setTimeout(() => setPhase(NEXT[phase]), PHASE_MS[phase]);
+    const t = window.setTimeout(() => {
+      const next = NEXT[phase];
+      if (next === "done") finish();
+      else setPhase(next);
+    }, PHASE_MS[phase]);
     return () => window.clearTimeout(t);
+  }, [phase, finish]);
+
+  // 인트로 도중(뒤로가기 등으로) 경로가 바뀌면 더는 홈 첫 쪽이 아니므로 즉시 끝낸다
+  useEffect(() => {
+    if (phase === "hold" || phase === "done") return;
+    if (isHomeRoot(pathname, searchParams.toString())) return;
+    const t = window.setTimeout(finish, 0);
+    return () => window.clearTimeout(t);
+  }, [phase, pathname, searchParams, finish]);
+
+  // 인트로 활성 상태를 스토어에 반영 — 상단 바·책 무대가 이 값으로 inert 여부를 정한다
+  useEffect(() => {
+    const active = phase !== "hold" && phase !== "done";
+    const t = window.setTimeout(() => setIntroActive(active), 0);
+    return () => window.clearTimeout(t);
+  }, [phase, setIntroActive]);
+
+  // 건너뛰기 버튼이 처음 나타나면 포커스를 옮긴다 — Tab이 뒤 요소로 새지 않고 바로 건너뛰기로
+  useEffect(() => {
+    if (phase === "hold" || phase === "done" || skipFocused.current) return;
+    skipFocused.current = true;
+    skipRef.current?.focus();
   }, [phase]);
+
+  // 인트로가 물러나 뒤 요소의 inert가 실제로 풀린 뒤 — body에 포커스를 남기지 않고 책 쪽 제목으로
+  useEffect(() => {
+    if (introActive || !restoreFocus.current) return;
+    restoreFocus.current = false;
+    document.querySelector<HTMLElement>("[data-book-title]")?.focus({ preventScroll: true });
+  }, [introActive]);
 
   if (phase === "done") return null;
 
   return (
-    <div className="intro-layer" data-phase={phase}>
+    <div ref={rootRef} className="intro-layer" data-phase={phase}>
       {/* JS가 없으면 인트로를 건너뛴다 */}
       <noscript>
         <style>{".intro-layer{display:none}"}</style>
@@ -141,7 +189,7 @@ export function IntroSequence({ reducedMotion }: { reducedMotion: boolean }) {
         </video>
       )}
       {phase !== "hold" && (
-        <button type="button" className="intro-skip" onClick={() => setPhase("done")}>
+        <button type="button" ref={skipRef} className="intro-skip" onClick={finish}>
           건너뛰기
         </button>
       )}

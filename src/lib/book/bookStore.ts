@@ -22,10 +22,13 @@ interface BookState {
   current: CurrentPage | null;
   drawerOpen: boolean;
   swapRequest: SwapRequest | null;
+  // 인트로(정지 그림 판) 재생 중 — 참이면 뒤 요소(상단 바·책 무대)를 inert 처리
+  introActive: boolean;
   register: (page: CurrentPage) => void;
   setDrawerOpen: (open: boolean) => void;
   requestSwap: (from: BookId, to: BookId) => void;
   clearSwap: (id: number) => void;
+  setIntroActive: (active: boolean) => void;
 }
 
 let swapSeq = 0;
@@ -34,6 +37,7 @@ export const useBookStore = create<BookState>()((set) => ({
   current: null,
   drawerOpen: false,
   swapRequest: null,
+  introActive: false,
   register: (current) => set({ current }),
   setDrawerOpen: (drawerOpen) => set({ drawerOpen }),
   requestSwap: (from, to) =>
@@ -46,4 +50,5 @@ export const useBookStore = create<BookState>()((set) => ({
       },
     })),
   clearSwap: (id) => set((s) => (s.swapRequest?.id === id ? { swapRequest: null } : {})),
+  setIntroActive: (introActive) => set({ introActive }),
 }));

@@ -49,6 +49,8 @@ export function BookStage({ children, reducedMotion }: { children: ReactNode; re
   const [leaving, setLeaving] = useState<Leaving | null>(null);
   const swapRequest = useBookStore((s) => s.swapRequest);
   const clearSwap = useBookStore((s) => s.clearSwap);
+  // 인트로 재생 중엔 책 무대 전체(쪽·탭·발치 버튼)를 inert 처리 — Tab·클릭으로 못 닿게
+  const introActive = useBookStore((s) => s.introActive);
   // 서랍 밖에서 생긴 책 교체(로고·본문 링크·뒤로가기) — 이미 도착한 뒤 연출
   const [navSwap, setNavSwap] = useState<{ id: string; from: BookId; to: BookId } | null>(null);
   // 서랍 요청과 다른 곳에 도착한 요청(뒤로가기·로고로 가로챔) — 연출에서 빼고 이펙트에서 지운다
@@ -212,7 +214,7 @@ export function BookStage({ children, reducedMotion }: { children: ReactNode; re
   }, [shown.key, leaving]);
 
   return (
-    <div ref={stageRef} className="book-stage">
+    <div ref={stageRef} className="book-stage" inert={introActive}>
       <div className="book">
         <div ref={liveRef} className="book-live" data-book-live="">
           {shown.node}
