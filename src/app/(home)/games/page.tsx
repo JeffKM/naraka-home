@@ -1,42 +1,42 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ArtPlate } from "@/components/home/book/ArtPlate";
+import { BookMeta } from "@/components/home/book/BookMeta";
+import { MissingNote, PageTitle, Spread } from "@/components/home/book/Spread";
+import { GAMES } from "@/lib/book/games";
+import { buildGamesManifest } from "@/lib/book/manifest";
 
 export const metadata: Metadata = { title: "게임" };
 
-// 웹게임 허브 — 게임이 준비되면 이 배열에 추가한다
-const GAMES: { href: string; title: string; desc: string }[] = [];
-
-export default function GamesPage() {
+export default async function GamesPage({ searchParams }: { searchParams: Promise<{ missing?: string }> }) {
+  const { missing } = await searchParams;
   return (
-    <main className="mx-auto max-w-3xl px-4 py-10">
-      <div className="home-paper p-5 sm:p-8">
-    <h1 className="text-2xl font-bold">나라카 게임</h1>
-    {GAMES.length === 0 ? (
-      <div className="mt-10 rounded-[14px] border-2 border-dashed border-[var(--home-muted)] p-10 text-center text-[var(--home-muted)]">
-        <p className="home-ui text-base text-[var(--home-ink)]">아직 만드는 중이에요</p>
-        <p className="mt-2 text-sm">
-          요괴들이 새 게임을 짜고 있어요. 그동안은{" "}
-          <Link href="/events" className="underline underline-offset-2">
-            이벤트 탭
-          </Link>
-          의 나라카증권을 즐겨주세요.
-        </p>
-      </div>
-    ) : (
-      <div className="mt-6 grid gap-3 sm:grid-cols-2">
-        {GAMES.map((g) => (
-          <Link
-            key={g.href}
-            href={g.href}
-            className="rounded-lg border border-[var(--home-line)] bg-[var(--home-surface)] p-4"
-          >
-            <p className="font-semibold">{g.title}</p>
-            <p className="mt-1 text-sm text-[var(--home-muted)]">{g.desc}</p>
-          </Link>
-        ))}
-      </div>
-    )}
-      </div>
-    </main>
+    <>
+      <BookMeta book="games" pageKey="/games" manifest={buildGamesManifest()} />
+      <Spread
+        left={
+          <>
+            <PageTitle>나라카 게임</PageTitle>
+            <p className="leading-7">휴게실 탁자에 판이 벌어져 있어요.</p>
+            <ArtPlate art="mahjong" className="book-illust" />
+          </>
+        }
+        right={
+          <div>
+            {missing === "1" && <MissingNote>찾는 게임이 없어서 목차를 펼쳤어요.</MissingNote>}
+            <ul className="flex flex-col gap-2">
+              {GAMES.map((g) => (
+                <li key={g.id}>
+                  <Link href={`/games/${g.id}`} scroll={false} className="home-card block min-h-11 px-4 py-3">
+                    <p className="font-semibold">{g.title}</p>
+                    <p className="mt-1 text-sm text-[var(--home-sheet-muted)]">{g.summary}</p>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        }
+      />
+    </>
   );
 }

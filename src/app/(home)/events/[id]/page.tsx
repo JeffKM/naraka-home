@@ -1,38 +1,51 @@
-import { notFound } from "next/navigation";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { BookMeta } from "@/components/home/book/BookMeta";
+import { PageTitle, Spread } from "@/components/home/book/Spread";
 import { PostBody } from "@/components/home/PostBody";
-import { getPost } from "@/services/homeContentService";
+import { buildEventManifest, eventListHref, listPageOf, orderEvents } from "@/lib/book/manifest";
+import { getKstParts } from "@/lib/market";
+import { listPosts } from "@/services/homeContentService";
 
 export const dynamic = "force-dynamic";
 
-export default async function EventDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function EventDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const numId = Number(id);
-  if (!Number.isInteger(numId) || numId <= 0) notFound();
-  const post = await getPost(numId);
-  if (!post || post.type !== "event") notFound();
+  const ordered = orderEvents(await listPosts({ type: "event" }), getKstParts().date);
+  const index = ordered.findIndex((p) => String(p.id) === id);
+  if (index === -1) redirect("/events?missing=1");
+  const post = ordered[index];
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-10">
-      <div className="home-paper p-5 sm:p-8">
-    <p className="text-xs text-[var(--home-red)]">
-      {post.eventStartDate}
-      {post.eventEndDate ? ` ~ ${post.eventEndDate}` : ""}
-    </p>
-    <h1 className="mt-1 text-2xl font-bold">{post.title}</h1>
-    {post.coverImageUrl && (
-      // eslint-disable-next-line @next/next/no-img-element -- Supabase Storage 공개 URL
-      <img
-        src={post.coverImageUrl}
-        alt=""
-        className="mt-4 w-full rounded-lg object-cover"
+    <>
+      <BookMeta book="events" pageKey={`/events/${post.id}`} manifest={buildEventManifest(ordered)} />
+      <Spread
+        left={
+          <>
+            <p className="text-xs tabular-nums text-[var(--home-red)]">
+              {post.eventStartDate}
+              {post.eventEndDate ? ` ~ ${post.eventEndDate}` : ""}
+            </p>
+            <PageTitle>{post.title}</PageTitle>
+            {post.coverImageUrl && (
+              // eslint-disable-next-line @next/next/no-img-element -- Supabase Storage 공개 URL
+              <img src={post.coverImageUrl} alt="" className="book-illust object-cover" />
+            )}
+          </>
+        }
+        right={
+          <div className="flex flex-col gap-4">
+            <PostBody markdown={post.bodyMd} />
+            <Link
+              href={eventListHref(listPageOf(index))}
+              scroll={false}
+              className="home-btn inline-flex min-h-11 w-fit items-center px-4 text-sm"
+            >
+              목록으로
+            </Link>
+          </div>
+        }
       />
-    )}
-    <PostBody markdown={post.bodyMd} />
-      </div>
-    </main>
+    </>
   );
 }
