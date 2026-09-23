@@ -24,6 +24,23 @@ export const MIN_RUSH_LEAVES = 3;
 export const MAX_RUSH_LEAVES = 5;
 export const MAX_TABS = 8;
 
+// 넘김 연출 시간 — book.css와 맞춘다 (보통 600ms, 후루룩이면 장마다 70ms 지연 + 450ms, 동작 줄이기면 150ms 페이드)
+export const FLIP_CSS_MS = 600;
+export const RUSH_FLIP_CSS_MS = 450;
+export const RUSH_LEAF_DELAY_MS = 70;
+export const FADE_CSS_MS = 150;
+export const FLIP_BACKSTOP_SLACK_MS = 400;
+
+// animationend가 끝내 오지 않을 때(탭 숨김·애니메이션 취소 등) 연출을 강제로 끝낼 시각
+export function flipBackstopMs(leaves: number, reducedMotion: boolean): number {
+  const run = reducedMotion
+    ? FADE_CSS_MS
+    : leaves > 0
+      ? leaves * RUSH_LEAF_DELAY_MS + RUSH_FLIP_CSS_MS
+      : FLIP_CSS_MS;
+  return run + FLIP_BACKSTOP_SLACK_MS;
+}
+
 export function indexOfKey(manifest: readonly BookPageRef[], key: string): number {
   return manifest.findIndex((r) => r.key === key);
 }

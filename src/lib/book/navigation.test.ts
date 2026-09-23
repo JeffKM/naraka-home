@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { neighborOf, planTransition, tabRefs, type BookPageRef } from "./navigation";
+import { flipBackstopMs, neighborOf, planTransition, tabRefs, type BookPageRef } from "./navigation";
 
 const M: BookPageRef[] = [
   "/notice", "/notice?page=2", "/notice/9", "/notice/8", "/notice/7", "/notice/6", "/notice/5",
@@ -58,5 +58,17 @@ describe("tabRefs", () => {
       ...[4, 3, 2].map((n) => ({ key: `/notice/${n}`, href: `/notice/${n}`, tab: `${n}`, kind: "detail" as const })),
     ];
     expect(tabRefs(many).map((r) => r.key)).toEqual(["/notice", "/notice?page=2"]);
+  });
+});
+
+describe("flipBackstopMs", () => {
+  it("보통 넘김은 600ms + 여유", () => {
+    expect(flipBackstopMs(0, false)).toBe(1000);
+  });
+  it("후루룩은 마지막 장 지연까지 더한다", () => {
+    expect(flipBackstopMs(5, false)).toBe(5 * 70 + 450 + 400);
+  });
+  it("동작 줄이기는 페이드 시간 + 여유", () => {
+    expect(flipBackstopMs(3, true)).toBe(550);
   });
 });

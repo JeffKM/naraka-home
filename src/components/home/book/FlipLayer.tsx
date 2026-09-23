@@ -1,8 +1,9 @@
 "use client";
 
-import { useLayoutEffect, useRef, type CSSProperties, type ReactNode, type RefObject } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, type CSSProperties, type ReactNode, type RefObject } from "react";
 import { applyScrollTops } from "@/lib/book/dom";
 import type { FlipDir } from "@/lib/book/input";
+import { flipBackstopMs } from "@/lib/book/navigation";
 import { BookCopyContext } from "./bookCopyContext";
 
 interface Props {
@@ -24,6 +25,23 @@ export function FlipLayer({ oldNode, newNode, dir, leaves, spread, reducedMotion
   const fwd = dir === 1;
   const frontIsOld = spread || fwd;
 
+  // 끝 알림은 한 번만 — animationend와 안전 타이머 중 먼저 온 쪽
+  const onDoneRef = useRef(onDone);
+  const doneRef = useRef(false);
+  useLayoutEffect(() => {
+    onDoneRef.current = onDone;
+  }, [onDone]);
+  const finish = useCallback(() => {
+    if (doneRef.current) return;
+    doneRef.current = true;
+    onDoneRef.current();
+  }, []);
+  // animationend가 끝내 안 오면(탭 숨김·애니메이션 취소) 연출 시간 + 여유 뒤 강제로 끝낸다
+  useEffect(() => {
+    const t = window.setTimeout(finish, flipBackstopMs(leaves, reducedMotion));
+    return () => window.clearTimeout(t);
+  }, [finish, leaves, reducedMotion]);
+
   // 복제본도 직전 쪽의 스크롤 위치에서 넘어가게
   useLayoutEffect(() => {
     const tops = oldScrollTops.current ?? [];
@@ -35,7 +53,7 @@ export function FlipLayer({ oldNode, newNode, dir, leaves, spread, reducedMotion
     return (
       <BookCopyContext value={true}>
         <div className="flip-layer" aria-hidden inert>
-          <div ref={underRef} className="flip-fade book-paper" onAnimationEnd={onDone}>
+          <div ref={underRef} className="flip-fade book-paper" onAnimationEnd={finish}>
             {oldNode}
           </div>
         </div>
@@ -74,7 +92,7 @@ export function FlipLayer({ oldNode, newNode, dir, leaves, spread, reducedMotion
           className="flip-leaf flip-leaf-main"
           style={{ "--i": leaves } as CSSProperties}
           onAnimationEnd={(e) => {
-            if (e.target === e.currentTarget) onDone();
+            if (e.target === e.currentTarget) finish();
           }}
         >
           <div className="flip-face flip-front book-paper">
