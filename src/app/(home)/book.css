@@ -91,14 +91,17 @@
 }
 
 /* 그림 도착 전 자리 판 */
-.book-art-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  border: 1px dashed var(--home-muted);
-  background: repeating-linear-gradient(135deg, var(--home-rosewood-deep) 0 12px, var(--home-bg) 12px 24px);
-  color: var(--home-chalk);
-  font-size: 0.75rem;
-  text-align: center;
+/* Tailwind 유틸(hidden·md:*)이 이기도록 components 레이어에 둔다 */
+@layer components {
+  .book-art-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border: 1px dashed var(--home-muted);
+    background: repeating-linear-gradient(135deg, var(--home-rosewood-deep) 0 12px, var(--home-bg) 12px 24px);
+    color: var(--home-chalk);
+    font-size: 0.75rem;
+    text-align: center;
+  }
 }
