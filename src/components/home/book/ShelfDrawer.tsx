@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { BOOKS, getBook, type BookId } from "@/lib/book/books";
 import { useBookStore } from "@/lib/book/bookStore";
@@ -16,6 +16,17 @@ export function ShelfDrawer() {
   const introActive = useBookStore((s) => s.introActive);
   const router = useRouter();
   const panelRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+  const search = useSearchParams().toString();
+
+  // 뒤로·앞으로 가기 등 서랍 밖에서 쪽이 바뀌면 닫는다 (스토어 갱신은 렌더·이펙트 본문 밖 타이머에서)
+  const routeKey = `${pathname}?${search}`;
+  useEffect(() => {
+    const t = window.setTimeout(() => {
+      if (useBookStore.getState().drawerOpen) setOpen(false);
+    }, 0);
+    return () => window.clearTimeout(t);
+  }, [routeKey, setOpen]);
 
   useEffect(() => {
     if (!open) return;

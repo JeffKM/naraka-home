@@ -29,6 +29,8 @@ interface BookState {
   requestSwap: (from: BookId, to: BookId) => void;
   clearSwap: (id: number) => void;
   setIntroActive: (active: boolean) => void;
+  // 책 레이아웃을 떠날 때 — 모듈 전역 스토어라 서랍·교체 요청이 다음 방문까지 남지 않게
+  resetUi: () => void;
 }
 
 let swapSeq = 0;
@@ -51,4 +53,5 @@ export const useBookStore = create<BookState>()((set) => ({
     })),
   clearSwap: (id) => set((s) => (s.swapRequest?.id === id ? { swapRequest: null } : {})),
   setIntroActive: (introActive) => set({ introActive }),
+  resetUi: () => set({ drawerOpen: false, swapRequest: null }),
 }));

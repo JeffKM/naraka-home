@@ -2,6 +2,7 @@
 
 import { useEffect, type ReactNode } from "react";
 import { preloadArt } from "@/lib/book/art";
+import { useBookStore } from "@/lib/book/bookStore";
 import { useMediaQuery } from "@/lib/book/useMediaQuery";
 import { ArtPicture } from "./ArtPlate";
 import { BookStage } from "./BookStage";
@@ -18,6 +19,8 @@ export function BookShell({ children }: { children: ReactNode }) {
     const t = window.setTimeout(preloadArt, 1500);
     return () => window.clearTimeout(t);
   }, []);
+  // 책 밖(주식앱·어드민)으로 나가면 서랍·교체 요청을 비운다 — 돌아왔을 때 서랍이 열려 있거나 연출이 멈춰 있지 않게
+  useEffect(() => () => useBookStore.getState().resetUi(), []);
   return (
     <div className="book-shell">
       <div className="book-desk" aria-hidden>
