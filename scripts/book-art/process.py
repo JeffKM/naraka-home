@@ -185,7 +185,8 @@ def _fill_ring(px, cx: int, cy: int, amap: dict) -> None:
 
 
 def tint_gray_flame(im: Image.Image) -> Image.Image:
-    """05-cover-home 전용 — ✦ 자리의 푸른 불꽃 속이 회색으로 그려져 나왔다(생성 잔재).
+    """05-cover-home 전용 임시 보정 — 리테이크(불꽃 네 개 같은 색)가 도착하면 이 함수와 호출부를 지운다.
+    ✦ 자리의 푸른 불꽃 속이 회색으로 그려져 나왔다(생성 잔재).
     불꽃 속 회색 혀(검은 윤곽선 안쪽)만 채우기로 찾아, 밝기를 살려 불꽃 청록으로 물들인다."""
     w, h = im.size
     px = im.load()
@@ -285,14 +286,25 @@ def components(
 # ── 개별 그림 ─────────────────────────────────
 # 책등 시트 경계 (원본 2752px 폭 기준 x) — 책 몇 권이 맞닿거나 겹쳐 있어 조각 찾기로는 못 가른다.
 # 원본을 확대해 책마다 바깥 윤곽선 바로 바깥을 경계로 잡았다 (검정 책 옆면·집게 고리 뒤 적갈 책 옆면 포함)
+# 04-spines.png(2752x1536) 원본을 눈으로 재서 잡은 책 경계 (BOOK_IDS 순서).
+# 리테이크로 원본이 바뀌면 경계를 반드시 다시 잰다 — 크기가 다르면 do_spines가 멈춘다
+SPINE_SOURCE_SIZE = (2752, 1536)
 SPINE_CUTS = [0, 446, 805, 1101, 1340, 1745, 2000, 2337, 2752]
 
 
 def do_spines(im: Image.Image) -> None:
+    if im.size != SPINE_SOURCE_SIZE:
+        # 다른 원본을 옛 경계로 조용히 자르면 책등이 엉뚱하게 잘린다 → 경고하고 멈춘다
+        print(
+            f"  경고: 04-spines 원본 크기 {im.size[0]}x{im.size[1]} ≠ "
+            f"{SPINE_SOURCE_SIZE[0]}x{SPINE_SOURCE_SIZE[1]} — SPINE_CUTS를 다시 재고 SPINE_SOURCE_SIZE를 고친 뒤 실행하세요",
+            file=sys.stderr,
+        )
+        sys.exit(1)
     # 책 8권 아래에 책상 소품(잉크병·종이) 잔상이 깔려 있어 밑단 바로 아래에서 자른다
     im = im.crop((0, 0, im.width, round(im.height * 0.885)))
     sheet = chroma_key(im)
-    k = sheet.width / 2752
+    k = sheet.width / SPINE_SOURCE_SIZE[0]
     for book, x1, x2 in zip(BOOK_IDS, SPINE_CUTS, SPINE_CUTS[1:]):
         part = sheet.crop((round(x1 * k), 0, round(x2 * k), sheet.height))
         save(fit(part.crop(part.getbbox()), 400), f"spine-{book}")

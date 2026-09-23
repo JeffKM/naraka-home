@@ -29,7 +29,6 @@
   inset: 0;
   overflow: hidden;
   border-radius: 6px;
-  background: var(--home-parchment);
   color: var(--home-sheet-ink);
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
 }
@@ -55,26 +54,86 @@
   }
 }
 
-/* 쪽 — 모바일은 한 쪽 전체가 스크롤, 데스크톱은 오른쪽 면만 스크롤 */
+/* 쪽 — 모바일은 한 쪽 전체가 스크롤, 데스크톱은 오른쪽 면만 스크롤.
+   바깥 판(book-spread)은 스크롤하지 않고 종이 질감·모서리 장식을 쥔다, 안쪽 칸(book-spread-body)이 스크롤 */
 .book-spread {
   position: absolute;
   inset: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  background: var(--home-parchment);
+  overflow: hidden;
+  container-type: size;
   color: var(--home-sheet-ink);
   /* 종이 위 — 하위 컴포넌트가 쓰는 잉크 변수를 시트 잉크로 */
   --home-ink: var(--home-sheet-ink);
   --home-muted: var(--home-sheet-muted);
   --home-red: #a34c37;
+  /* 모서리 장식 크기 — 쪽 짧은 변의 약 9% (모바일 한 쪽 = 폭) */
+  --corner-size: clamp(40px, 9cqmin, 96px);
 }
-.book-page { padding: 20px 18px; }
+.book-spread-body { position: absolute; inset: 0; overflow-y: auto; overscroll-behavior: contain; }
+/* 모서리 장식이 글을 가리지 않게 여백을 장식 크기에 맞춘다 */
+.book-page { padding: calc(var(--corner-size) * 0.55 + 6px) calc(var(--corner-size) * 0.5 + 6px); }
 .book-page-left { display: flex; flex-direction: column; gap: 12px; }
 @media (min-width: 768px) {
-  .book-spread { display: grid; grid-template-columns: 1fr 1fr; overflow: hidden; }
-  .book-page { padding: 32px 36px; min-height: 0; }
+  /* 양면 한 쪽 = 폭 절반 × 높이 → 짧은 변 = 폭 절반(높이의 0.75) */
+  .book-spread { --corner-size: clamp(40px, 6.75cqh, 96px); }
+  .book-spread-body { display: grid; grid-template-columns: 1fr 1fr; overflow: hidden; }
+  .book-page { padding: max(32px, calc(var(--corner-size) * 0.6 + 8px)) max(36px, calc(var(--corner-size) * 0.6 + 12px)); min-height: 0; }
   .book-page-left { overflow: hidden; }
   .book-page-right { overflow-y: auto; overscroll-behavior: contain; }
+}
+
+/* 종이 질감 — 외부 그림 없이 CSS만. 가운데는 원래 종이색(글자 대비 유지), 가장자리로 갈수록 어둡게,
+   옅은 얼룩 셋(불투명도 ≤ 0.06). 양면에선 비네팅을 쪽마다(폭 50%씩) 반복한다.
+   넘김 복제본(flip-face·flip-under·flip-fade)도 같은 질감을 쓴다 */
+.book-paper {
+  --paper-vignette-size: 100% 100%;
+  background-color: var(--home-parchment);
+  background-image:
+    radial-gradient(circle at 84% 11%, color-mix(in srgb, var(--home-rosewood) 6%, transparent) 0 4%, transparent 8%),
+    radial-gradient(ellipse 22% 14% at 14% 86%, color-mix(in srgb, var(--home-rosewood-deep) 5%, transparent), transparent 70%),
+    radial-gradient(ellipse 30% 20% at 58% 64%, color-mix(in srgb, var(--home-rosewood) 3%, transparent), transparent 70%),
+    radial-gradient(ellipse at 50% 50%, transparent 60%, color-mix(in srgb, var(--home-rosewood-deep) 24%, transparent) 100%);
+  background-size: 100% 100%, 100% 100%, 100% 100%, var(--paper-vignette-size);
+  background-repeat: no-repeat, no-repeat, no-repeat, repeat-x;
+}
+@media (min-width: 768px) {
+  .book-spread.book-paper,
+  .book-live.book-paper,
+  .flip-under.book-paper,
+  .flip-fade.book-paper { --paper-vignette-size: 50% 100%; }
+}
+
+/* 모서리 장식 — 좌상단 원본, 나머지는 뒤집기 */
+.book-corner {
+  position: absolute;
+  z-index: 1;
+  width: var(--corner-size);
+  height: var(--corner-size);
+  object-fit: contain;
+  pointer-events: none;
+  opacity: 0.85;
+}
+.book-corner-tl { top: 6px; left: 6px; }
+.book-corner-tr { top: 6px; right: 6px; transform: scale(-1, 1); }
+.book-corner-bl { bottom: 6px; left: 6px; transform: scale(1, -1); }
+.book-corner-br { bottom: 6px; right: 6px; transform: scale(-1, -1); }
+
+/* 책갈피 리본 — 오른쪽 쪽 윗가장자리에 걸쳐 아래로 늘어진다(위로 살짝 삐져나옴).
+   책 틀(.book)에 붙어 쪽 넘김 층(z 5) 아래에 깔린다 — 넘기는 장이 리본 위를 지나간다 */
+.book-ribbon {
+  position: absolute;
+  z-index: 3;
+  /* 대부분 윗여백 안에 머물러 글·목록을 덮지 않는 길이 */
+  top: -20px;
+  right: 14%;
+  width: clamp(24px, 2.2vw, 32px);
+  aspect-ratio: 303 / 566;
+  pointer-events: none;
+  filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.35));
+}
+.book-ribbon img { width: 100%; height: 100%; }
+@media (max-width: 767px) {
+  .book-ribbon { right: 12%; width: 26px; top: -16px; }
 }
 
 .book-illust { display: block; width: 100%; border-radius: 10px; object-fit: contain; }
@@ -125,7 +184,6 @@
   inset: 0;
   overflow: hidden;
   border-radius: 6px;
-  background: var(--home-parchment);
 }
 .flip-leaf {
   position: absolute;
@@ -183,7 +241,6 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
-  background: var(--home-parchment);
   animation: book-fade-out 150ms ease both;
 }
 @keyframes book-fade-out { to { opacity: 0; } }
@@ -320,22 +377,81 @@
   .book-drawer, .book-drawer-scrim { transition: none; }
 }
 
-/* ── 책 교체 ─────────────────────────────── */
-.swap-layer { position: absolute; inset: 0; z-index: 20; perspective: 1800px; }
-.swap-shelf { position: absolute; inset: 0; opacity: 0; transition: opacity 400ms ease; }
-.swap-book,
-.swap-hand {
+/* ── 책장 장면 (책 교체·인트로 공용) ───────── */
+/* 책장 그림(1128x1400 세로)을 비율 그대로 화면 높이에 맞춰 가운데 두고 양옆은 흐린 집무실.
+   세로 화면은 책 줄(그림 가로 14~86%)이 꽉 차게 폭 기준으로 조금 키운다 */
+.shelf-scene { position: absolute; inset: 0; overflow: hidden; background: var(--home-void); }
+.shelf-backdrop { position: absolute; inset: 0; }
+.shelf-backdrop-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(8px) brightness(0.42) saturate(0.85);
+  transform: scale(1.06);
+}
+.shelf-frame {
   position: absolute;
   left: 50%;
   top: 50%;
-  transition: transform 400ms cubic-bezier(0.45, 0.05, 0.3, 1), opacity 300ms ease;
+  height: min(100%, calc(100vw * 1.17 * 1400 / 1128));
+  aspect-ratio: 1128 / 1400;
+  transform: translate(-50%, -50%);
+  container-type: size;
 }
-.swap-book { width: min(42vw, 340px); aspect-ratio: 3 / 4; transform-origin: left center; }
-.swap-hand { width: min(28vw, 220px); aspect-ratio: 1; opacity: 0; }
-/* 손 그림(hand-pull)엔 손에 쥔 갈색 책이 함께 있다 — 표지 뒤로 깔아 그 책은 가리고
-   표지 오른쪽 가장자리를 쥔 손·소매만 보이게 한다 */
-.swap-book { z-index: 2; }
-.swap-hand { z-index: 1; }
+.shelf-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 40px rgba(0, 0, 0, 0.6));
+}
+.shelf-spine,
+.shelf-pull { position: absolute; }
+.shelf-spine-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: bottom;
+  filter: drop-shadow(2px 0 2px rgba(0, 0, 0, 0.45));
+}
+.shelf-pull { z-index: 2; container-type: size; }
+/* 손 — 오려 낸 손가락 틈(그림 가로 33~46%, 세로 19~35%)이 책등 윗부분을 쥐게 놓는다.
+   크기는 책등 폭 기준(cqw)이라 화면이 바뀌어도 쥔 모양이 같다 */
+.shelf-hand {
+  position: absolute;
+  width: 650cqw;
+  aspect-ratio: 700 / 591;
+  left: calc(50cqw - 650cqw * 0.39);
+  top: calc(12cqh - 650cqw * 591 / 700 * 0.27);
+  clip-path: polygon(
+    32% 15.6%, 33.1% 10.5%, 42.9% 7.1%, 100% 0%, 100% 100%, 56% 100%, 53.1% 50.8%, 45.4% 47%,
+    40% 45.3%, 35% 44%, 32.7% 41.3%, 34% 36.9%, 43.3% 35.5%, 46% 27.9%, 44.9% 24%, 39.3% 18.3%, 33.1% 18.6%
+  );
+  /* 소매 끝이 허공에서 끊기지 않게 오른쪽 끝은 그늘로 사라지게 */
+  mask-image: linear-gradient(90deg, #000 70%, transparent 98%);
+  opacity: 0;
+  transform: translateX(40%);
+  transition: opacity 250ms ease, transform 300ms cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+/* ── 책 교체 ─────────────────────────────── */
+.swap-layer { position: absolute; inset: 0; z-index: 20; }
+.swap-shelf { opacity: 0; transition: opacity 250ms ease; }
+.swap-covers { z-index: 3; perspective: 1800px; pointer-events: none; }
+.swap-book {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(42vw, 340px);
+  aspect-ratio: 3 / 4;
+  transform-origin: left center;
+  /* 칸 자리까지의 거리 — 틀 크기 기준 */
+  --slot-shift: translate(calc((var(--sx) - 50) * 1cqw), calc((var(--sy) - 50) * 1cqh));
+}
 
 /* 덮기: 표지가 책 위로 닫힌다 */
 .swap-book-from { transform: translate(-50%, -50%); animation: swap-close 300ms ease both; }
@@ -343,25 +459,51 @@
   from { transform: translate(-50%, -50%) rotateY(-120deg); opacity: 0; }
   to { transform: translate(-50%, -50%) rotateY(0deg); opacity: 1; }
 }
-/* 책장에 꽂기 */
+/* 책장에 꽂기: 덮은 책이 제 칸 앞으로 날아가 모로 돌고(책등이 보이게), 책등이 빈칸으로 미끄러져 들어간다 */
 .swap-layer:not([data-phase="close"]) .swap-shelf { opacity: 1; }
-.swap-layer:not([data-phase="close"]) .swap-book-from {
-  animation: none;
-  transform: translate(-50%, -80%) scale(0.22);
-  opacity: 0;
+.swap-layer:not([data-phase="close"]) .swap-book-from { opacity: 0; animation: none; }
+.swap-layer[data-phase="shelf"] .swap-book-from {
+  transform-origin: center;
+  animation: swap-tuck-cover 400ms cubic-bezier(0.45, 0.05, 0.3, 1) both;
 }
-/* 새 책 꺼내기 */
-.swap-book-to { opacity: 0; transform: translate(-50%, -80%) scale(0.22); }
-.swap-layer[data-phase="pull"] .swap-book-to,
-.swap-layer[data-phase="wait"] .swap-book-to { opacity: 1; transform: translate(-50%, -50%) scale(0.9); }
-.swap-hand-pull { transform: translate(10%, -40%); }
-.swap-layer[data-phase="pull"] .swap-hand-pull,
-.swap-layer[data-phase="wait"] .swap-hand-pull { opacity: 1; transform: translate(20%, -50%); }
+@keyframes swap-tuck-cover {
+  0% { transform: translate(-50%, -50%) rotateY(0deg) scale(1); opacity: 1; }
+  60% { transform: translate(-50%, -50%) var(--slot-shift) rotateY(84deg) scale(0.42); opacity: 1; }
+  100% { transform: translate(-50%, -50%) var(--slot-shift) rotateY(90deg) scale(0.4); opacity: 0; }
+}
+.shelf-spine.is-tuck { opacity: 0; }
+.swap-layer[data-phase="shelf"] .shelf-spine.is-tuck { animation: shelf-tuck 400ms ease-out both; }
+.swap-layer:is([data-phase="pull"], [data-phase="wait"], [data-phase="open"]) .shelf-spine.is-tuck { opacity: 1; }
+@keyframes shelf-tuck {
+  0%, 50% { transform: translateY(-22%) scale(1.14); opacity: 0; }
+  60% { opacity: 1; }
+  100% { transform: none; opacity: 1; }
+}
+/* 새 책 뽑기: 손이 책장 칸으로 뻗어(꽂는 동안) 책등을 쥐고 → 위·앞으로 뽑으며 → 표지가 돌아 나온다 */
+.swap-layer:not([data-phase="close"]) .shelf-hand { opacity: 1; transform: none; transition-delay: 150ms; }
+.swap-layer:is([data-phase="pull"], [data-phase="wait"]) .shelf-pull {
+  animation: shelf-pull-out 400ms cubic-bezier(0.45, 0.05, 0.3, 1) both;
+}
+@keyframes shelf-pull-out {
+  0% { transform: none; opacity: 1; }
+  55% { transform: translateY(-30%) scale(1.1); opacity: 1; }
+  100% { transform: translateY(-40%) scale(1.14); opacity: 0; }
+}
+.swap-layer[data-phase="open"] .shelf-pull { opacity: 0; }
+.swap-book-to { opacity: 0; transform-origin: center; }
+.swap-layer:is([data-phase="pull"], [data-phase="wait"]) .swap-book-to {
+  animation: swap-pull-cover 400ms cubic-bezier(0.45, 0.05, 0.3, 1) both;
+}
+@keyframes swap-pull-cover {
+  0%, 45% { transform: translate(-50%, -50%) var(--slot-shift) translateY(-8cqh) rotateY(-88deg) scale(0.42); opacity: 0; }
+  55% { opacity: 1; }
+  100% { transform: translate(-50%, -50%) rotateY(0deg) scale(1); opacity: 1; }
+}
 /* 펼치기 — 표지가 왼쪽으로 열리며 연출 전체가 걷힌다 */
-.swap-layer[data-phase="open"] .swap-book-to { animation: swap-open 350ms ease both; }
+.swap-layer[data-phase="open"] .swap-book-to { transform-origin: left center; animation: swap-open 350ms ease both; }
 @keyframes swap-open {
-  from { transform: translate(-50%, -50%) scale(1) rotateY(0deg); opacity: 1; }
-  to { transform: translate(-50%, -50%) scale(1) rotateY(-100deg); opacity: 0; }
+  from { transform: translate(-50%, -50%) rotateY(0deg); opacity: 1; }
+  to { transform: translate(-50%, -50%) rotateY(-100deg); opacity: 0; }
 }
 .swap-layer[data-phase="open"] { animation: swap-fade 350ms ease both; }
 @keyframes swap-fade { 0%, 50% { opacity: 1; } 100% { opacity: 0; } }
@@ -410,20 +552,12 @@
 .intro-layer[data-phase="gate"] .intro-office { opacity: 1; }
 .intro-layer[data-phase="office"] .intro-office { opacity: 1; transform: scale(1.8); transform-origin: 50% 45%; }
 .intro-layer[data-phase="shelf"] .intro-shelf { opacity: 1; }
-.intro-hand-pull {
-  position: absolute;
-  right: 12%;
-  top: 30%;
-  width: min(30vw, 260px);
-  aspect-ratio: 1;
-  opacity: 0;
-  transform: translateX(30%);
-  transition: opacity 400ms ease, transform 800ms ease;
-}
-.intro-layer[data-phase="shelf"] .intro-hand-pull { opacity: 1; transform: none; }
-/* 세로 화면에선 책장이 좌우로 잘려 병 선반 위에 손이 겹친다 → 아래 장식장 앞으로 내리고 키운다 */
-@media (max-width: 767px) {
-  .intro-hand-pull { right: 2%; top: 42%; width: 44vw; }
+/* 손이 뻗어 홈 책등을 쥐고 위·앞으로 뽑는다 */
+.intro-layer[data-phase="shelf"] .shelf-hand { opacity: 1; transform: none; transition-delay: 250ms; }
+.intro-layer[data-phase="shelf"] .shelf-pull { animation: intro-pull-out 450ms cubic-bezier(0.45, 0.05, 0.3, 1) 550ms both; }
+@keyframes intro-pull-out {
+  from { transform: none; }
+  to { transform: translateY(-34%) scale(1.12); }
 }
 
 /* 책상에서 표지가 열리고 인트로 전체가 걷힌다 */

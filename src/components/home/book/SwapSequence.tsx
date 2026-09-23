@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import type { BookId } from "@/lib/book/books";
+import { rectCenter, spineRect } from "@/lib/book/shelf";
 import { ArtPlate } from "./ArtPlate";
+import { ShelfScene } from "./ShelfScene";
 
 type Phase = "close" | "shelf" | "pull" | "wait" | "open" | "done";
 
@@ -23,6 +25,12 @@ interface Props {
   fast: boolean; // 연출 중 재선택 → 펼치기 직전으로 건너뜀
   reducedMotion: boolean;
   onDone: () => void;
+}
+
+// 표지가 칸에서 나오고 들어가는 자리 — 책등 가운데 (책장 판 기준 %)
+function slotVars(book: BookId): CSSProperties {
+  const c = rectCenter(spineRect(book));
+  return { "--sx": c.x, "--sy": c.y } as CSSProperties;
 }
 
 // 덮기 → 책장에 꽂기 → 새 책 꺼내기 → (도착 대기) → 펼치기. 총 ≤ 1.5초
@@ -70,17 +78,16 @@ export function SwapSequence({ from, to, arrived, fast, reducedMotion, onDone }:
 
   return (
     <div className="swap-layer" data-phase={phase} aria-hidden>
-      <div className="swap-shelf">
-        <ArtPlate art="shelf" className="size-full object-cover" />
-      </div>
-      <div className="swap-book swap-book-from">
-        <ArtPlate art={`cover-${from}`} className="size-full object-contain" />
-      </div>
-      <div className="swap-book swap-book-to">
-        <ArtPlate art={`cover-${to}`} className="size-full object-contain" />
-      </div>
-      <div className="swap-hand swap-hand-pull">
-        <ArtPlate art="hand-pull" className="size-full object-contain" />
+      <ShelfScene className="swap-shelf" tuck={from} pull={to} />
+      {/* 표지는 책장 판과 같은 틀에 둬서 칸 자리(cqw·cqh)에서 화면 가운데로 오간다.
+          책장 장면이 페이드 중이어도 표지는 따로 보이게 틀을 한 겹 더 둔다 */}
+      <div className="shelf-frame swap-covers">
+        <div className="swap-book swap-book-from" style={slotVars(from)}>
+          <ArtPlate art={`cover-${from}`} className="size-full object-contain" />
+        </div>
+        <div className="swap-book swap-book-to" style={slotVars(to)}>
+          <ArtPlate art={`cover-${to}`} className="size-full object-contain" />
+        </div>
       </div>
       {/* hand-open(펼치는 손)은 리테이크 대기 — 인트로와 같은 이유로 뺀다 */}
     </div>

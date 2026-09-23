@@ -11,6 +11,7 @@ import {
 import { neighborOf, planTransition } from "@/lib/book/navigation";
 import { pageKeyOf } from "@/lib/book/pageKey";
 import { useMediaQuery } from "@/lib/book/useMediaQuery";
+import { ArtPlate } from "./ArtPlate";
 import { FlipLayer } from "./FlipLayer";
 import { IndexTabs } from "./IndexTabs";
 import { PageFooter } from "./PageFooter";
@@ -216,8 +217,12 @@ export function BookStage({ children, reducedMotion }: { children: ReactNode; re
   return (
     <div ref={stageRef} className="book-stage" inert={introActive}>
       <div className="book">
-        <div ref={liveRef} className="book-live" data-book-live="">
+        <div ref={liveRef} className="book-live book-paper" data-book-live="">
           {shown.node}
+        </div>
+        {/* 책갈피 리본 — 쪽이 아니라 책에 달려 있어 넘겨도 제자리 */}
+        <div className="book-ribbon" aria-hidden>
+          <ArtPlate art="bookmark" />
         </div>
         {leaving && (
           <FlipLayer

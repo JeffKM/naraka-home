@@ -35,7 +35,7 @@ export function FlipLayer({ oldNode, newNode, dir, leaves, spread, reducedMotion
     return (
       <BookCopyContext value={true}>
         <div className="flip-layer" aria-hidden inert>
-          <div ref={underRef} className="flip-fade" onAnimationEnd={onDone}>
+          <div ref={underRef} className="flip-fade book-paper" onAnimationEnd={onDone}>
             {oldNode}
           </div>
         </div>
@@ -60,14 +60,14 @@ export function FlipLayer({ oldNode, newNode, dir, leaves, spread, reducedMotion
         style={style}
       >
         {underNode && (
-          <div ref={underRef} className="flip-under">
+          <div ref={underRef} className="flip-under book-paper">
             {underNode}
           </div>
         )}
         {Array.from({ length: leaves }, (_, i) => (
           <div key={i} className="flip-leaf flip-leaf-blank" style={{ "--i": i } as CSSProperties}>
-            <div className="flip-face flip-front" />
-            <div className="flip-face flip-back" />
+            <div className="flip-face flip-front book-paper" />
+            <div className="flip-face flip-back book-paper" />
           </div>
         ))}
         <div
@@ -77,12 +77,12 @@ export function FlipLayer({ oldNode, newNode, dir, leaves, spread, reducedMotion
             if (e.target === e.currentTarget) onDone();
           }}
         >
-          <div className="flip-face flip-front">
+          <div className="flip-face flip-front book-paper">
             <div ref={frontRef} className="flip-clip">
               {frontNode}
             </div>
           </div>
-          <div className="flip-face flip-back">
+          <div className="flip-face flip-back book-paper">
             {backNode && <div className="flip-clip">{backNode}</div>}
           </div>
         </div>

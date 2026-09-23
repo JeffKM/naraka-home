@@ -1,7 +1,7 @@
 import type { ScrollBox } from "./input";
 
 // 이벤트 대상에서 위로 올라가며 실제로 스크롤되는 data-book-scroll 칸을 찾는다
-// (데스크톱 왼쪽 면·모바일이 아닌 article은 overflow가 hidden이라 건너뛴다)
+// (데스크톱 왼쪽 면·데스크톱 book-spread-body는 overflow가 hidden이라 건너뛴다)
 export function findScrollBox(target: EventTarget | null, root: HTMLElement): ScrollBox | null {
   let el: Element | null = target instanceof Element ? target : null;
   while (el && el !== root) {
