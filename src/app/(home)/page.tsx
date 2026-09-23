@@ -1,8 +1,6 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
 import { CalendarSection } from "@/components/home/CalendarSection";
-import { HeroVideo } from "@/components/home/HeroVideo";
-import { PopupBookLoader } from "@/components/home/book/PopupBookLoader";
+import { DeskHero } from "@/components/home/DeskHero";
 import { buildMonthGrid } from "@/lib/homeCalendar";
 import { HOME_INFO } from "@/lib/homeConfig";
 import { getKstParts } from "@/lib/market";
@@ -29,11 +27,9 @@ export default async function HomePage({
 
   const [y, m] = month.split("-").map(Number);
   const lastDay = new Date(Date.UTC(y, m, 0)).getUTCDate();
-  const [events, schedule, todaySchedule, staff, latest] = await Promise.all([
+  const [events, schedule, staff, latest] = await Promise.all([
     getMonthEvents(month),
     listScheduleRange(`${month}-01`, `${month}-${String(lastDay).padStart(2, "0")}`),
-    // 휴게실 패널은 보고 있는 달과 무관하게 늘 "오늘" 출근표를 보여준다
-    listScheduleRange(today, today),
     listStaff(true),
     listPosts({ limit: 5 }),
   ]);
@@ -54,66 +50,9 @@ export default async function HomePage({
     (daySchedule[entry.workDate] ??= []).push(entry);
   }
 
-  // 방 패널 내용은 서버에서 채운다 — 클라이언트 번들엔 문안·목록이 실리지 않는다
-  const staffById = new Map(staff.map((s) => [s.id, s]));
-  // 비활성 직원은 staff 목록에 없다 — 걸러낸 뒤의 이름 목록이 빈 상태 판정 기준
-  const todayNames = todaySchedule
-    .map((e) => ({ id: e.id, name: staffById.get(e.staffId)?.name }))
-    .filter((e): e is { id: number; name: string } => e.name !== undefined);
-  const panels: Record<string, ReactNode> = {
-    office: (
-      <p>
-        마녀 사장이 이력서 세 장을 심사합니다. 지원자들은 전부 사고를 치고 붙잡혀 감옥에 갇히는데 — 그게 바로 채용이었습니다.
-      </p>
-    ),
-    vault: <p>강시가 훔치려던 돈자루가 있던 곳. 요즘은 요괴 주식 이벤트가 열립니다.</p>,
-    street: (
-      <>
-        <HeroVideo className="mx-auto aspect-[9/16] w-40 rounded-sm" />
-        <p className="mt-3">밤마다 「나라카」 간판이 깜빡입니다. 릴스로 만든 채용 설화를 볼 수 있습니다.</p>
-      </>
-    ),
-    house: <p>{HOME_INFO.hoursNote}</p>,
-    field: <p>{HOME_INFO.addressLine}</p>,
-    jail: (
-      <ul className="flex flex-col gap-1">
-        {todayNames.map((e) => (
-          <li key={e.id}>{e.name}</li>
-        ))}
-        {todayNames.length === 0 && (
-          <li className="text-[var(--home-sheet-muted)]">오늘 출근표는 아직 안 나왔습니다.</li>
-        )}
-      </ul>
-    ),
-    cafe: <p>걸레질·먼지떨이·설거지를 마친 요괴들이 내는 메뉴입니다.</p>,
-    plaza: (
-      <ul className="flex flex-col gap-1">
-        {latest.slice(0, 3).map((p) => (
-          <li key={p.id}>
-            <Link
-              href={p.type === "event" ? `/events/${p.id}` : `/notice/${p.id}`}
-              className="underline underline-offset-2"
-            >
-              {p.title}
-            </Link>
-          </li>
-        ))}
-        {latest.length === 0 && (
-          <li className="text-[var(--home-sheet-muted)]">아직 전할 소식이 없습니다.</li>
-        )}
-      </ul>
-    ),
-  };
-
   return (
     <main>
-      {/* 팝업북 — 표지 정지 이미지를 먼저 그려 LCP 확보, 캔버스는 그 위에 */}
-      <div className="home-book-hero">
-        <PopupBookLoader panels={panels} />
-      </div>
-      <p className="mx-auto max-w-3xl px-4 pt-6 text-center text-sm text-[var(--home-muted)]">
-        {HOME_INFO.tagline}
-      </p>
+      <DeskHero />
       <CalendarSection
         month={month}
         weeks={weeks}
