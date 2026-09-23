@@ -28,3 +28,32 @@ export function ArtPlate({
     </div>
   );
 }
+
+// 화면 폭에 따라 가로/세로 그림 중 한 벌만 받는다 — 숨긴 img 두 벌을 두면 둘 다 내려받으므로
+// <picture>의 media 분기로 고른다(768px 이상 = 가로). 그림이 아직 없으면 라벨 판 두 벌로 대신한다
+export function ArtPicture({
+  desktop,
+  mobile,
+  className = "",
+}: {
+  desktop: ArtKey;
+  mobile: ArtKey;
+  className?: string;
+}) {
+  const d = ART[desktop].src;
+  const m = ART[mobile].src;
+  if (d && m) {
+    return (
+      <picture className="contents">
+        <source media="(min-width: 768px)" srcSet={d} />
+        <img src={m} alt="" className={className} draggable={false} />
+      </picture>
+    );
+  }
+  return (
+    <>
+      <ArtPlate art={desktop} className={`${className} hidden md:flex`} />
+      <ArtPlate art={mobile} className={`${className} md:hidden`} />
+    </>
+  );
+}

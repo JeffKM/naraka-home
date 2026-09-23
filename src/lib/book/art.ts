@@ -55,13 +55,21 @@ export const INTRO_VIDEO: { desktop: string; mobile: string } | null = null;
 
 // 책 교체·인트로에 쓰는 그림을 뒤에서 미리 받는다 (브라우저 전용)
 const PRELOAD_KEYS: readonly ArtKey[] = [
-  "shelf", "hand-pull",
+  "shelf", "hand-pull", "office", "office-m",
   "cover-home", "cover-about", "cover-location", "cover-menu",
   "cover-staff", "cover-notice", "cover-events", "cover-games",
+  "spine-home", "spine-about", "spine-location", "spine-menu",
+  "spine-staff", "spine-notice", "spine-events", "spine-games",
 ];
 
+// 가로/세로 짝 그림 — 화면에 맞는 한 벌만 받는다 (ArtPicture의 768px 분기와 같은 기준)
+const DESKTOP_ONLY: ReadonlySet<ArtKey> = new Set<ArtKey>(["office"]);
+const MOBILE_ONLY: ReadonlySet<ArtKey> = new Set<ArtKey>(["office-m"]);
+
 export function preloadArt(): void {
+  const wide = window.matchMedia("(min-width: 768px)").matches;
   for (const key of PRELOAD_KEYS) {
+    if (wide ? MOBILE_ONLY.has(key) : DESKTOP_ONLY.has(key)) continue;
     const src = ART[key].src;
     if (!src) continue;
     const img = new Image();

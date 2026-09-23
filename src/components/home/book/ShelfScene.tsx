@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { BOOKS, type BookId } from "@/lib/book/books";
 import { spineRect, type PctRect } from "@/lib/book/shelf";
-import { ArtPlate } from "./ArtPlate";
+import { ArtPicture, ArtPlate } from "./ArtPlate";
 
 export function pctRectStyle(r: PctRect): CSSProperties {
   return { left: `${r.left}%`, top: `${r.top}%`, width: `${r.width}%`, height: `${r.height}%` };
@@ -19,8 +19,7 @@ export function ShelfScene({ pull, tuck, className = "" }: Props) {
   return (
     <div className={`shelf-scene ${className}`}>
       <div className="shelf-backdrop">
-        <ArtPlate art="office" className="shelf-backdrop-art hidden md:flex" />
-        <ArtPlate art="office-m" className="shelf-backdrop-art md:hidden" />
+        <ArtPicture desktop="office" mobile="office-m" className="shelf-backdrop-art" />
       </div>
       <div className="shelf-frame">
         <ArtPlate art="shelf" className="shelf-art" />

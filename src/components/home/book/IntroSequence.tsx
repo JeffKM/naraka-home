@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { INTRO_VIDEO, type ArtKey } from "@/lib/book/art";
 import { useBookStore } from "@/lib/book/bookStore";
 import { INTRO_VISITED_KEY, introMode, isHomeRoot } from "@/lib/book/intro";
-import { ArtPlate } from "./ArtPlate";
+import { ArtPicture, ArtPlate } from "./ArtPlate";
 import { ShelfScene } from "./ShelfScene";
 
 type Phase = "hold" | "video" | "gate" | "office" | "shelf" | "open" | "done";
@@ -36,10 +36,7 @@ function readVisited(): boolean | null {
 
 function ScenePair({ desktop, mobile }: { desktop: ArtKey; mobile: ArtKey }) {
   return (
-    <>
-      <ArtPlate art={desktop} className="intro-fill hidden md:flex" />
-      <ArtPlate art={mobile} className="intro-fill md:hidden" />
-    </>
+    <ArtPicture desktop={desktop} mobile={mobile} className="intro-fill" />
   );
 }
 

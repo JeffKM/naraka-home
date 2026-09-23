@@ -46,11 +46,16 @@ function round2(n: number): number {
   return Math.round(n * 100) / 100;
 }
 
-// 칸 전체 사각형
-export function shelfSlotRect(index: number): PctRect {
+// 칸 가로 범위 (그림 px) — 없는 칸이면 던진다. shelfSlotRect·spineRect가 같은 가드를 쓴다
+function slotX(index: number): readonly [number, number] {
   const slot = SHELF_SLOT_X[index];
   if (!slot) throw new Error(`없는 책장 칸: ${index}`);
-  const [x1, x2] = slot;
+  return slot;
+}
+
+// 칸 전체 사각형
+export function shelfSlotRect(index: number): PctRect {
+  const [x1, x2] = slotX(index);
   return {
     left: round2((x1 / SHELF_ART_SIZE.w) * 100),
     top: round2((SHELF_SLOT_Y.top / SHELF_ART_SIZE.h) * 100),
@@ -61,8 +66,7 @@ export function shelfSlotRect(index: number): PctRect {
 
 // 책등이 실제로 서는 사각형 — 칸 안에 contain으로 맞추고 가로 가운데·아래 정렬
 export function spineRect(book: BookId): PctRect {
-  const index = BOOKS.findIndex((b) => b.id === book);
-  const [x1, x2] = SHELF_SLOT_X[index];
+  const [x1, x2] = slotX(BOOKS.findIndex((b) => b.id === book));
   const slotW = x2 - x1;
   const slotH = SHELF_SLOT_Y.bottom - SHELF_SLOT_Y.top;
   const spine = SPINE_SIZE[book];
