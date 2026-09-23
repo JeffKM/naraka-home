@@ -1,5 +1,7 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { cache } from "react";
 import { BookMeta } from "@/components/home/book/BookMeta";
 import { PageTitle, Spread } from "@/components/home/book/Spread";
 import { PostBody } from "@/components/home/PostBody";
@@ -9,9 +11,19 @@ import { listPosts } from "@/services/homeContentService";
 
 export const dynamic = "force-dynamic";
 
+// 탭 제목(generateMetadata)과 본문이 같은 요청 안에서 목록을 한 번만 읽게
+const getEvents = cache(() => listPosts({ type: "event" }));
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const post = (await getEvents()).find((p) => String(p.id) === id);
+  // 없는 이벤트는 본문이 목록으로 돌려보낸다 — 제목은 목록 것을 쓴다
+  return { title: post ? `${post.title} — 이벤트` : "이벤트" };
+}
+
 export default async function EventDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const ordered = orderEvents(await listPosts({ type: "event" }), getKstParts().date);
+  const ordered = orderEvents(await getEvents(), getKstParts().date);
   const index = ordered.findIndex((p) => String(p.id) === id);
   if (index === -1) redirect("/events?missing=1");
   const post = ordered[index];

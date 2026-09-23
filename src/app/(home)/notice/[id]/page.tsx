@@ -1,5 +1,7 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { cache } from "react";
 import { BookMeta } from "@/components/home/book/BookMeta";
 import { PageTitle, Spread } from "@/components/home/book/Spread";
 import { PostBody } from "@/components/home/PostBody";
@@ -8,9 +10,19 @@ import { listPosts } from "@/services/homeContentService";
 
 export const dynamic = "force-dynamic";
 
+// 탭 제목(generateMetadata)과 본문이 같은 요청 안에서 목록을 한 번만 읽게
+const getNotices = cache(() => listPosts({ type: "notice" }));
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const post = (await getNotices()).find((p) => String(p.id) === id);
+  // 없는 글은 본문이 목록으로 돌려보낸다 — 제목은 목록 것을 쓴다
+  return { title: post ? `${post.title} — 공지사항` : "공지사항" };
+}
+
 export default async function NoticeDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const posts = await listPosts({ type: "notice" });
+  const posts = await getNotices();
   const index = posts.findIndex((p) => String(p.id) === id);
   if (index === -1) redirect("/notice?missing=1");
   const post = posts[index];

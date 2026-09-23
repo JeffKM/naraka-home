@@ -6,7 +6,12 @@ import { PageTitle, Spread } from "@/components/home/book/Spread";
 import { GAMES } from "@/lib/book/games";
 import { buildGamesManifest } from "@/lib/book/manifest";
 
-export const metadata: Metadata = { title: "게임" };
+// 게임 목록은 코드 상수라 조회 비용이 없다
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const game = GAMES.find((g) => g.id === id);
+  return { title: game ? `${game.title} — 게임` : "게임" };
+}
 
 export default async function GameDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

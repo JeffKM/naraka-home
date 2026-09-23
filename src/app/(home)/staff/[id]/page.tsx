@@ -1,18 +1,27 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { cache } from "react";
 import { BookMeta } from "@/components/home/book/BookMeta";
 import { PageTitle, Spread } from "@/components/home/book/Spread";
 import { buildStaffManifest } from "@/lib/book/manifest";
 import { listStaff } from "@/services/homeContentService";
 
-export const metadata: Metadata = { title: "요괴 이력서" };
 export const dynamic = "force-dynamic";
+
+// 탭 제목(generateMetadata)과 본문이 같은 요청 안에서 명단을 한 번만 읽게
+const getActiveStaff = cache(() => listStaff(true));
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const s = (await getActiveStaff()).find((x) => String(x.id) === id);
+  return { title: s ? `${s.name} — 요괴 이력서` : "요괴 이력서" };
+}
 
 // 요괴 한 명 = 이력서 한 장
 export default async function StaffDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const staff = await listStaff(true);
+  const staff = await getActiveStaff();
   const s = staff.find((x) => String(x.id) === id);
   if (!s) redirect("/staff?missing=1");
 
