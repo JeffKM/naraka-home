@@ -1,14 +1,15 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import type { PrefetchKind } from "next/dist/client/components/router-reducer/router-reducer-types";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { bookOf, type BookId } from "@/lib/book/books";
 import { useBookStore } from "@/lib/book/bookStore";
 import { applyScrollTops, findScrollBox, readScrollTops } from "@/lib/book/dom";
 import {
-  decideSwipe, decideWheel, keyToDir, type FlipDir, type SwipeStart, type WheelState,
+  decideSwipe, decideWheel, isNavPending, keyToDir, type FlipDir, type PendingNav, type SwipeStart, type WheelState,
 } from "@/lib/book/input";
-import { neighborOf, planTransition } from "@/lib/book/navigation";
+import { FLIP_CSS_MS, neighborOf, planTransition } from "@/lib/book/navigation";
 import { pageKeyOf } from "@/lib/book/pageKey";
 import { useMediaQuery } from "@/lib/book/useMediaQuery";
 import { ArtPlate } from "./ArtPlate";
@@ -17,8 +18,13 @@ import { IndexTabs } from "./IndexTabs";
 import { PageFooter } from "./PageFooter";
 import { SwapSequence } from "./SwapSequence";
 
-export const FLIP_MS = 600;
+export const FLIP_MS = FLIP_CSS_MS;
 export const RUSH_TOTAL_MS = 800;
+// 넘김을 요청한 뒤 새 쪽이 도착하기까지 기다리는 최대 시간 — 이 안에는 같은 쪽에서 다시 넘기지 않는다
+export const NAV_PENDING_MS = 8000;
+// 쪽은 전부 동적(DB 조회)이라 기본(auto) 미리 받기는 loading.js가 없으면 아무것도 받지 않는다 →
+// 쪽 전체를 받는 full 미리 받기. PrefetchKind는 런타임 값이 내부 경로에만 있어 타입만 가져와 값("full")을 단언한다
+const FULL_PREFETCH = "full" as PrefetchKind.FULL;
 
 interface Shown {
   key: string;
@@ -52,6 +58,8 @@ export function BookStage({ children, reducedMotion }: { children: ReactNode; re
   const clearSwap = useBookStore((s) => s.clearSwap);
   // 인트로 재생 중엔 책 무대 전체(쪽·탭·발치 버튼)를 inert 처리 — Tab·클릭으로 못 닿게
   const introActive = useBookStore((s) => s.introActive);
+  // 서랍(모달)이 열려 있는 동안도 무대는 inert — 서랍은 무대 밖 형제라 영향 없음
+  const drawerOpen = useBookStore((s) => s.drawerOpen);
   // 서랍 밖에서 생긴 책 교체(로고·본문 링크·뒤로가기) — 이미 도착한 뒤 연출
   const [navSwap, setNavSwap] = useState<{ id: string; from: BookId; to: BookId } | null>(null);
   // 서랍 요청과 다른 곳에 도착한 요청(뒤로가기·로고로 가로챔) — 연출에서 빼고 이펙트에서 지운다
@@ -113,18 +121,37 @@ export function BookStage({ children, reducedMotion }: { children: ReactNode; re
   const liveRef = useRef<HTMLDivElement>(null);
   const scrollTops = useRef<number[]>([]);
   const wheel = useRef<WheelState>({ armedDir: null, lastWheelAt: 0, lockedUntil: 0 });
+  // 넘김 요청 후 새 쪽 도착 전 — 그동안 current는 아직 직전 쪽이라 같은 목적지로 두 번 push되는 걸 막는다
+  const pendingNav = useRef<PendingNav | null>(null);
+  const navPending = useCallback(
+    () => isNavPending(pendingNav.current, useBookStore.getState().current?.key ?? null, performance.now()),
+    []
+  );
 
+  // 휠·키·스와이프·발치 버튼이 모두 여기로 — 대기 중이면 무시
   const go = useCallback(
     (dir: FlipDir) => {
       const current = useBookStore.getState().current;
-      if (!current) return;
+      if (!current || navPending()) return;
+      const now = performance.now();
       const target = neighborOf(current.manifest, current.key, dir);
       if (!target) return;
-      wheel.current.lockedUntil = performance.now() + FLIP_MS;
+      pendingNav.current = { from: current.key, until: now + NAV_PENDING_MS };
+      wheel.current.lockedUntil = now + FLIP_MS;
       router.push(target.href, { scroll: false });
     },
-    [router]
+    [router, navPending]
   );
+
+  // 새 쪽이 도착하면 대기를 푼다
+  useEffect(() => {
+    pendingNav.current = null;
+  }, [shown.key]);
+  // 넘김 연출이 시작되면 그때부터 FLIP_MS 동안 입력을 막는다 (느린 망에선 요청 시각의 잠금이 이미 풀려 있다)
+  useEffect(() => {
+    if (!leaving) return;
+    wheel.current.lockedUntil = Math.max(wheel.current.lockedUntil, performance.now() + FLIP_MS);
+  }, [leaving]);
 
   // 입력: 휠 · 스와이프 · 키보드
   useEffect(() => {
@@ -133,6 +160,12 @@ export function BookStage({ children, reducedMotion }: { children: ReactNode; re
     const onWheel = (e: WheelEvent) => {
       if (useBookStore.getState().drawerOpen || isBusy(stage)) return;
       const now = performance.now();
+      if (navPending()) {
+        // 도착 전 관성 이벤트도 "직전 휠"로 기록해 두어야 도착 직후 새 제스처로 오인하지 않는다
+        wheel.current.lastWheelAt = now;
+        wheel.current.armedDir = null;
+        return;
+      }
       const decision = decideWheel(e.deltaY, findScrollBox(e.target, stage), wheel.current, now);
       const state = wheel.current;
       state.lastWheelAt = now;
@@ -148,7 +181,7 @@ export function BookStage({ children, reducedMotion }: { children: ReactNode; re
       swipe = e.touches.length === 1 ? { y: e.touches[0].clientY, box: findScrollBox(e.target, stage) } : null;
     };
     const onTouchEnd = (e: TouchEvent) => {
-      if (!swipe || isBusy(stage) || performance.now() < wheel.current.lockedUntil) {
+      if (!swipe || isBusy(stage) || navPending() || performance.now() < wheel.current.lockedUntil) {
         swipe = null;
         return;
       }
@@ -162,6 +195,7 @@ export function BookStage({ children, reducedMotion }: { children: ReactNode; re
       const dir = keyToDir(e.key, target?.tagName ?? "", target?.isContentEditable ?? false);
       if (!dir || performance.now() < wheel.current.lockedUntil) return;
       e.preventDefault();
+      if (navPending()) return;
       go(dir);
     };
     stage.addEventListener("wheel", onWheel, { passive: true });
@@ -174,7 +208,7 @@ export function BookStage({ children, reducedMotion }: { children: ReactNode; re
       stage.removeEventListener("touchend", onTouchEnd);
       window.removeEventListener("keydown", onKey);
     };
-  }, [go]);
+  }, [go, navPending]);
 
   // 넘김 복제본이 직전 스크롤 위치에서 출발하도록 계속 기록
   useEffect(() => {
@@ -198,7 +232,7 @@ export function BookStage({ children, reducedMotion }: { children: ReactNode; re
     if (!current) return;
     for (const dir of [1, -1] as const) {
       const n = neighborOf(current.manifest, current.key, dir);
-      if (n) router.prefetch(n.href);
+      if (n) router.prefetch(n.href, { kind: FULL_PREFETCH });
     }
   }, [current, router]);
 
@@ -215,7 +249,7 @@ export function BookStage({ children, reducedMotion }: { children: ReactNode; re
   }, [shown.key, leaving]);
 
   return (
-    <div ref={stageRef} className="book-stage" inert={introActive}>
+    <div ref={stageRef} className="book-stage" inert={introActive || drawerOpen}>
       <div className="book">
         <div ref={liveRef} className="book-live book-paper" data-book-live="">
           {shown.node}

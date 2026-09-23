@@ -75,3 +75,13 @@ export function keyToDir(key: string, targetTag: string, isEditable: boolean): F
   if (key === "ArrowLeft" || key === "PageUp") return -1;
   return null;
 }
+
+// 넘김 요청 뒤 새 쪽이 도착하기 전인가 — 요청한 쪽(from)에 아직 머물러 있고 안전 시한 전이면 참
+export interface PendingNav {
+  from: string; // 요청 당시 쪽 키
+  until: number; // 안전 시한 (도착 신호가 끝내 안 와도 입력이 영영 막히지 않게)
+}
+
+export function isNavPending(pending: PendingNav | null, currentKey: string | null, now: number): boolean {
+  return pending !== null && pending.from === currentKey && now < pending.until;
+}

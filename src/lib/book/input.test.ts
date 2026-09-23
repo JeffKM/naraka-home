@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { decideSwipe, decideWheel, keyToDir, type ScrollBox, type WheelState } from "./input";
+import { decideSwipe, decideWheel, isNavPending, keyToDir, type ScrollBox, type WheelState } from "./input";
 
 const box = (scrollTop: number, scrollHeight = 1000, clientHeight = 400): ScrollBox => ({
   scrollTop, scrollHeight, clientHeight,
@@ -73,5 +73,21 @@ describe("keyToDir", () => {
   });
   it("다른 키는 무시", () => {
     expect(keyToDir("Enter", "DIV", false)).toBeNull();
+  });
+});
+
+describe("isNavPending", () => {
+  const pending = { from: "/about", until: 9000 };
+  it("요청한 쪽에 머물러 있고 시한 전이면 대기 중", () => {
+    expect(isNavPending(pending, "/about", 1000)).toBe(true);
+  });
+  it("대기가 없으면 거짓", () => {
+    expect(isNavPending(null, "/about", 1000)).toBe(false);
+  });
+  it("다른 쪽에 도착했으면 거짓", () => {
+    expect(isNavPending(pending, "/about?p=1", 1000)).toBe(false);
+  });
+  it("안전 시한이 지나면 거짓", () => {
+    expect(isNavPending(pending, "/about", 9000)).toBe(false);
   });
 });
