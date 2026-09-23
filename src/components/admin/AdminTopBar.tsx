@@ -9,6 +9,7 @@ import { postJson } from "@/lib/api/client";
 export function AdminTopBar() {
   async function logout() {
     await postJson("/api/auth/logout");
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- 로그아웃 후 세션·캐시를 완전히 비우려는 의도적 하드 내비게이션
     window.location.href = "/event/login";
   }
 

@@ -29,7 +29,8 @@ export function AuthButton() {
 
   async function logout() {
     await postJson("/api/auth/logout");
-    window.location.href = "/event/login"; // 세션·캐시 완전 초기화를 위해 전체 이동
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- 로그아웃 후 세션·캐시를 완전히 비우려는 의도적 하드 내비게이션
+    window.location.href = "/event/login";
   }
 
   return (
