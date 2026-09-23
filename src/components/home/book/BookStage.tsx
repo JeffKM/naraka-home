@@ -1,14 +1,204 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { bookOf, type BookId } from "@/lib/book/books";
+import { useBookStore } from "@/lib/book/bookStore";
+import { applyScrollTops, findScrollBox, readScrollTops } from "@/lib/book/dom";
+import {
+  decideSwipe, decideWheel, keyToDir, type FlipDir, type SwipeStart, type WheelState,
+} from "@/lib/book/input";
+import { neighborOf, planTransition } from "@/lib/book/navigation";
+import { pageKeyOf } from "@/lib/book/pageKey";
+import { useMediaQuery } from "@/lib/book/useMediaQuery";
+import { FlipLayer } from "./FlipLayer";
 
-// 임시 — 넘김 없이 현재 쪽만 보여준다
-export function BookStage({ children }: { children: ReactNode; reducedMotion: boolean }) {
+export const FLIP_MS = 600;
+export const RUSH_TOTAL_MS = 800;
+
+interface Shown {
+  key: string;
+  book: BookId | null;
+  node: ReactNode;
+}
+
+interface Leaving {
+  id: string;
+  node: ReactNode;
+  dir: FlipDir;
+  leaves: number;
+}
+
+// 연출 중(교체·인트로)이면 입력을 받지 않는다
+function isBusy(root: HTMLElement): boolean {
+  return root.querySelector(".swap-layer") !== null || document.querySelector(".intro-layer") !== null;
+}
+
+export function BookStage({ children, reducedMotion }: { children: ReactNode; reducedMotion: boolean }) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const key = pageKeyOf(pathname, searchParams.toString());
+  const book = bookOf(pathname);
+  const spread = useMediaQuery("(min-width: 768px)");
+
+  const [shown, setShown] = useState<Shown>({ key, book, node: children });
+  const [leaving, setLeaving] = useState<Leaving | null>(null);
+
+  // 쪽이 바뀌면 직전 쪽의 순서표로 연출을 정한다 (새 쪽의 BookMeta는 아직 등록 전 — 렌더 중 파생 상태)
+  if (shown.key !== key) {
+    const prev = useBookStore.getState().current;
+    const plan =
+      prev && book ? planTransition({ book: prev.book, key: prev.key }, prev.manifest, { book, key }) : null;
+    // 직전 쪽은 커밋 전 DOM을 떠서 붙잡는다 — 앱 라우터의 레이아웃 children은 항상 "현재 경로"를 그리는
+    // 슬롯이라, 예전 children(ReactNode)을 다시 그리면 새 쪽이 나온다
+    // (렌더 단계 = 커밋 전이라 book-live에는 아직 직전 쪽이 있다. 쪽 이동은 클라이언트에서만 일어난다)
+    const oldHtml =
+      plan?.kind === "flip" ? (document.querySelector("[data-book-live]")?.innerHTML ?? "") : "";
+    setShown({ key, book, node: children });
+    setLeaving(
+      plan?.kind === "flip"
+        ? {
+            id: `${shown.key}->${key}`,
+            node: <div className="flip-snapshot" dangerouslySetInnerHTML={{ __html: oldHtml }} />,
+            dir: plan.dir,
+            leaves: plan.leaves,
+          }
+        : null
+    );
+  } else if (shown.node !== children) {
+    // 같은 쪽의 데이터 갱신 (달력 월 이동 등) — 연출 없음
+    setShown({ key, book, node: children });
+  }
+
+  const stageRef = useRef<HTMLDivElement>(null);
+  const liveRef = useRef<HTMLDivElement>(null);
+  const scrollTops = useRef<number[]>([]);
+  const wheel = useRef<WheelState>({ armedDir: null, lastWheelAt: 0, lockedUntil: 0 });
+
+  const go = useCallback(
+    (dir: FlipDir) => {
+      const current = useBookStore.getState().current;
+      if (!current) return;
+      const target = neighborOf(current.manifest, current.key, dir);
+      if (!target) return;
+      wheel.current.lockedUntil = performance.now() + FLIP_MS;
+      router.push(target.href, { scroll: false });
+    },
+    [router]
+  );
+
+  // 입력: 휠 · 스와이프 · 키보드
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+    const onWheel = (e: WheelEvent) => {
+      if (useBookStore.getState().drawerOpen || isBusy(stage)) return;
+      const now = performance.now();
+      const decision = decideWheel(e.deltaY, findScrollBox(e.target, stage), wheel.current, now);
+      const state = wheel.current;
+      state.lastWheelAt = now;
+      if (decision.action === "scroll") state.armedDir = null;
+      else if (decision.action === "arm") state.armedDir = decision.dir;
+      else if (decision.action === "flip") {
+        state.armedDir = null;
+        go(decision.dir);
+      }
+    };
+    let swipe: SwipeStart | null = null;
+    const onTouchStart = (e: TouchEvent) => {
+      swipe = e.touches.length === 1 ? { y: e.touches[0].clientY, box: findScrollBox(e.target, stage) } : null;
+    };
+    const onTouchEnd = (e: TouchEvent) => {
+      if (!swipe || isBusy(stage) || performance.now() < wheel.current.lockedUntil) {
+        swipe = null;
+        return;
+      }
+      const dir = decideSwipe(swipe, e.changedTouches[0].clientY);
+      swipe = null;
+      if (dir) go(dir);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (useBookStore.getState().drawerOpen || isBusy(stage)) return;
+      const target = e.target instanceof HTMLElement ? e.target : null;
+      const dir = keyToDir(e.key, target?.tagName ?? "", target?.isContentEditable ?? false);
+      if (!dir || performance.now() < wheel.current.lockedUntil) return;
+      e.preventDefault();
+      go(dir);
+    };
+    stage.addEventListener("wheel", onWheel, { passive: true });
+    stage.addEventListener("touchstart", onTouchStart, { passive: true });
+    stage.addEventListener("touchend", onTouchEnd, { passive: true });
+    window.addEventListener("keydown", onKey);
+    return () => {
+      stage.removeEventListener("wheel", onWheel);
+      stage.removeEventListener("touchstart", onTouchStart);
+      stage.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [go]);
+
+  // 넘김 복제본이 직전 스크롤 위치에서 출발하도록 계속 기록
+  useEffect(() => {
+    const live = liveRef.current;
+    if (!live) return;
+    const onScroll = () => {
+      scrollTops.current = readScrollTops(live);
+    };
+    live.addEventListener("scroll", onScroll, { capture: true, passive: true });
+    return () => live.removeEventListener("scroll", onScroll, { capture: true });
+  }, []);
+
+  // 새 쪽은 맨 위에서 시작 — 쪽 구조(Spread)가 같으면 React가 스크롤 칸 DOM을 재사용해 직전 위치가 남는다
+  useLayoutEffect(() => {
+    if (liveRef.current) applyScrollTops(liveRef.current, []);
+  }, [shown.key]);
+
+  // 다음·이전 쪽 미리 받기
+  const current = useBookStore((s) => s.current);
+  useEffect(() => {
+    if (!current) return;
+    for (const dir of [1, -1] as const) {
+      const n = neighborOf(current.manifest, current.key, dir);
+      if (n) router.prefetch(n.href);
+    }
+  }, [current, router]);
+
+  // 쪽이 바뀌고 넘김이 끝나면 새 쪽 제목으로 포커스, 스크롤 기록 초기화
+  const mounted = useRef(false);
+  useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true;
+      return;
+    }
+    if (leaving) return;
+    scrollTops.current = [];
+    liveRef.current?.querySelector<HTMLElement>("[data-book-title]")?.focus({ preventScroll: true });
+  }, [shown.key, leaving]);
+
   return (
-    <div className="book-stage">
+    <div ref={stageRef} className="book-stage">
       <div className="book">
-        <div className="book-live">{children}</div>
+        <div ref={liveRef} className="book-live" data-book-live="">
+          {shown.node}
+        </div>
+        {leaving && (
+          <FlipLayer
+            key={leaving.id}
+            oldNode={leaving.node}
+            newNode={shown.node}
+            dir={leaving.dir}
+            leaves={leaving.leaves}
+            spread={spread}
+            reducedMotion={reducedMotion}
+            oldScrollTops={scrollTops}
+            onDone={() => setLeaving(null)}
+          />
+        )}
+        {/* Task 8: IndexTabs */}
       </div>
+      {/* Task 8: PageFooter go={go} */}
+      {/* Task 9: SwapSequence */}
     </div>
   );
 }

@@ -105,3 +105,78 @@
     text-align: center;
   }
 }
+
+/* ── 쪽 넘김 ─────────────────────────────── */
+.flip-layer {
+  --flip-ms: 600ms;
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+.flip-layer[data-rush="true"] { --flip-ms: 450ms; }
+.flip-under,
+.flip-face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 6px;
+  background: var(--home-parchment);
+}
+.flip-leaf {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  transform-style: preserve-3d;
+  transform-origin: left center;
+  animation: flip-next var(--flip-ms) cubic-bezier(0.45, 0.05, 0.3, 1) calc(var(--i) * 70ms) both;
+}
+.flip-leaf-blank { animation-duration: 350ms; }
+.flip-face { backface-visibility: hidden; }
+.flip-back { transform: rotateY(180deg); }
+.flip-front::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.22), transparent 14%);
+  pointer-events: none;
+}
+.flip-clip { position: absolute; top: 0; bottom: 0; left: 0; width: 100%; }
+
+/* 한 쪽(모바일) 이전: 새 쪽이 왼쪽에서 넘어와 덮는다 */
+.flip-layer[data-spread="false"][data-dir="prev"] .flip-leaf { animation-name: flip-in; }
+
+/* 양면(데스크톱) 다음: 오른쪽 반장이 왼쪽으로 */
+.flip-layer[data-spread="true"] .flip-leaf { width: 50%; }
+.flip-layer[data-spread="true"][data-dir="next"] .flip-leaf { left: 50%; }
+.flip-layer[data-spread="true"][data-dir="next"] .flip-under { clip-path: inset(0 50% 0 0); }
+.flip-layer[data-spread="true"][data-dir="next"] .flip-front .flip-clip { width: 200%; left: -100%; }
+.flip-layer[data-spread="true"][data-dir="next"] .flip-back .flip-clip { width: 200%; left: 0; }
+/* 양면 이전: 왼쪽 반장이 오른쪽으로 */
+.flip-layer[data-spread="true"][data-dir="prev"] .flip-leaf {
+  left: 0;
+  transform-origin: right center;
+  animation-name: flip-prev;
+}
+.flip-layer[data-spread="true"][data-dir="prev"] .flip-under { clip-path: inset(0 0 0 50%); }
+.flip-layer[data-spread="true"][data-dir="prev"] .flip-front .flip-clip { width: 200%; left: 0; }
+.flip-layer[data-spread="true"][data-dir="prev"] .flip-back .flip-clip { width: 200%; left: -100%; }
+.flip-layer[data-spread="true"][data-dir="prev"] .flip-front::after {
+  background: linear-gradient(270deg, rgba(0, 0, 0, 0.22), transparent 14%);
+}
+
+@keyframes flip-next { from { transform: rotateY(0deg); } to { transform: rotateY(-180deg); } }
+@keyframes flip-prev { from { transform: rotateY(0deg); } to { transform: rotateY(180deg); } }
+@keyframes flip-in { from { transform: rotateY(-180deg); } to { transform: rotateY(0deg); } }
+
+/* 움직임 줄이기: 150ms 페이드 */
+.flip-fade {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--home-parchment);
+  animation: book-fade-out 150ms ease both;
+}
+@keyframes book-fade-out { to { opacity: 0; } }
