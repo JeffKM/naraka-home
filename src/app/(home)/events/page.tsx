@@ -1,69 +1,110 @@
-import { HomeDeco } from "@/components/home/HomeDeco";
-import Image from "next/image";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BookMeta } from "@/components/home/book/BookMeta";
+import { MissingNote, PageIllust, PageTitle, Spread } from "@/components/home/book/Spread";
+import { CalendarSpread } from "@/components/home/spreads/CalendarSpread";
+import { storySrc } from "@/lib/book/art";
+import {
+  LIST_PAGE_SIZE, buildEventManifest, clampPage, eventListHref, eventPhase, listPageCount, orderEvents,
+  type EventPhase,
+} from "@/lib/book/manifest";
+import { pageKeyOfHref } from "@/lib/book/pageKey";
+import { getKstParts } from "@/lib/market";
 import { listPosts } from "@/services/homeContentService";
 
 export const metadata: Metadata = { title: "이벤트" };
 export const dynamic = "force-dynamic";
 
-export default async function EventsPage() {
-  const posts = await listPosts({ type: "event" });
+const PHASE_LABEL: Record<EventPhase, string> = { ongoing: "진행 중", upcoming: "예정", past: "지난" };
+
+export default async function EventsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string; month?: string; missing?: string }>;
+}) {
+  const { page: rawPage, month, missing } = await searchParams;
+  const today = getKstParts().date;
+  const ordered = orderEvents(await listPosts({ type: "event" }), today);
+  const manifest = buildEventManifest(ordered);
+
+  // 첫 쪽 = 달력 (온라인 이벤트 안내용)
+  if (rawPage === undefined) {
+    return (
+      <>
+        <BookMeta book="events" pageKey="/events" manifest={manifest} />
+        {missing === "1" ? (
+          <Spread
+            left={<PageTitle>이벤트</PageTitle>}
+            right={
+              <div className="flex flex-col gap-3">
+                <MissingNote>찾는 이벤트가 없어요.</MissingNote>
+                <Link href={eventListHref(1)} scroll={false} className="home-btn inline-flex min-h-11 w-fit items-center px-4 text-sm">
+                  이벤트 목록 펼치기
+                </Link>
+              </div>
+            }
+          />
+        ) : (
+          <CalendarSpread
+            rawMonth={month}
+            monthHrefBase="/events?month="
+            title="이달의 이벤트"
+            lead="날짜를 누르면 그날의 이벤트가 보여요. 다음 장을 넘기면 이벤트 목록이에요."
+          />
+        )}
+      </>
+    );
+  }
+
+  const total = listPageCount(ordered.length);
+  const page = clampPage(rawPage, total);
+  const shown = ordered.slice((page - 1) * LIST_PAGE_SIZE, page * LIST_PAGE_SIZE);
 
   return (
     <>
-      <HomeDeco />
-      {/* 릴스 발췌 소품 — 페이지 포인트 */}
-      <Image
-        src="/home/deco/video/v-stamp-tool.webp"
-        alt=""
-        aria-hidden
-        width={80}
-        height={113}
-        className="pointer-events-none absolute left-[3vw] top-[330px] -rotate-6 z-10 hidden select-none xl:block"
+      <BookMeta book="events" pageKey={pageKeyOfHref(eventListHref(page))} manifest={manifest} />
+      <Spread
+        left={
+          <>
+            <PageTitle>이벤트 목록</PageTitle>
+            <p className="text-sm tabular-nums text-[var(--home-sheet-muted)]">목록 {page} / {total}</p>
+            <PageIllust src={storySrc(9)} alt="노래하며 빙글 도는 미호" />
+          </>
+        }
+        right={
+          <div>
+            <ul className="flex flex-col gap-2">
+              {shown.map((p) => {
+                const phase = eventPhase(p, today);
+                return (
+                  <li key={p.id}>
+                    <Link href={`/events/${p.id}`} scroll={false} className="home-card flex min-h-11 items-center gap-2 px-3 py-2">
+                      <span
+                        className={[
+                          "home-tag shrink-0 px-2 text-xs",
+                          phase === "ongoing"
+                            ? "bg-[var(--home-red)] text-[var(--home-on-red)]"
+                            : "bg-[var(--home-chalk)] text-[var(--home-ink)]",
+                        ].join(" ")}
+                      >
+                        {PHASE_LABEL[phase]}
+                      </span>
+                      <span className="truncate font-medium">{p.title}</span>
+                      <span className="ml-auto shrink-0 text-xs tabular-nums text-[var(--home-sheet-muted)]">
+                        {p.eventStartDate}
+                        {p.eventEndDate ? ` ~ ${p.eventEndDate}` : ""}
+                      </span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+            {ordered.length === 0 && (
+              <p className="text-sm text-[var(--home-sheet-muted)]">지금 열린 이벤트가 없어요.</p>
+            )}
+          </div>
+        }
       />
-      <main className="mx-auto max-w-3xl px-4 py-10">
-        <div className="home-paper p-5 sm:p-8">
-      <h1 className="text-2xl font-bold">이벤트</h1>
-
-      {/* 나라카증권 상설 카드 — /event 주식앱 진입점 */}
-      <Link href="/event" className="home-card relative mt-8 block p-5">
-        <span className="home-tag absolute -top-3 left-4 bg-[var(--home-red)] px-2 text-xs text-[var(--home-on-red)]">
-          상설
-        </span>
-        <p className="home-ui mt-1 text-lg">나라카증권 — 모의 주식 거래</p>
-        <p className="mt-1 text-sm text-[var(--home-muted)]">
-          가상 화폐로 요괴 도시의 주식을 거래해보세요. 매장 방문 코드로 참여할 수
-          있습니다.
-        </p>
-        <div className="home-rule mt-3" aria-hidden />
-      </Link>
-
-      <ul className="mt-8 flex flex-col gap-5">
-        {posts.map((p) => (
-          <li key={p.id}>
-            <Link href={`/events/${p.id}`} className="home-card relative block p-4">
-              {p.pinned && (
-                <span className="home-tag absolute -top-3 left-4 bg-[var(--home-chalk)] px-2 text-xs text-[var(--home-ink)]">
-                  고정
-                </span>
-              )}
-              <p className="font-semibold">{p.title}</p>
-              <p className="mt-1 text-xs tabular-nums text-[var(--home-muted)]">
-                {p.eventStartDate}
-                {p.eventEndDate ? ` ~ ${p.eventEndDate}` : ""}
-              </p>
-            </Link>
-          </li>
-        ))}
-        {posts.length === 0 && (
-          <li className="text-sm text-[var(--home-muted)]">
-            진행 중인 이벤트가 없습니다.
-          </li>
-        )}
-      </ul>
-        </div>
-      </main>
     </>
   );
 }

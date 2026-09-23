@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildMonthGrid,
   formatMinute,
+  normalizeMonth,
   shiftMonth,
   type CalendarEventItem,
   type CalendarScheduleItem,
@@ -66,5 +67,16 @@ describe("shiftMonth", () => {
     expect(shiftMonth("2026-08", 1)).toBe("2026-09");
     expect(shiftMonth("2026-01", -1)).toBe("2025-12");
     expect(shiftMonth("2026-12", 1)).toBe("2027-01");
+  });
+});
+
+describe("normalizeMonth", () => {
+  it("올바른 YYYY-MM은 그대로", () => {
+    expect(normalizeMonth("2026-10", "2026-09-23")).toBe("2026-10");
+  });
+  it("비었거나 잘못되면 오늘의 달", () => {
+    expect(normalizeMonth(undefined, "2026-09-23")).toBe("2026-09");
+    expect(normalizeMonth("2026-13", "2026-09-23")).toBe("2026-09");
+    expect(normalizeMonth("abc", "2026-09-23")).toBe("2026-09");
   });
 });

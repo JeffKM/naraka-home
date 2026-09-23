@@ -1,39 +1,65 @@
-import { HomeDeco } from "@/components/home/HomeDeco";
-import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { cache } from "react";
+import { BookMeta } from "@/components/home/book/BookMeta";
+import { PageTitle, Spread } from "@/components/home/book/Spread";
 import { PostBody } from "@/components/home/PostBody";
-import { getPost } from "@/services/homeContentService";
+import { buildNoticeManifest, listPageOf, noticeListHref } from "@/lib/book/manifest";
+import { listPosts } from "@/services/homeContentService";
 
 export const dynamic = "force-dynamic";
 
-export default async function NoticeDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+// 탭 제목(generateMetadata)과 본문이 같은 요청 안에서 목록을 한 번만 읽게
+const getNotices = cache(() => listPosts({ type: "notice" }));
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
-  const numId = Number(id);
-  if (!Number.isInteger(numId) || numId <= 0) notFound();
-  const post = await getPost(numId);
-  if (!post || post.type !== "notice") notFound();
+  // 조회가 실패해도 제목 때문에 쪽 전체가 깨지지 않게 — 목록 제목으로 두고 본문 쪽(error.tsx)이 오류를 알린다
+  try {
+    const post = (await getNotices()).find((p) => String(p.id) === id);
+    // 없는 글은 본문이 목록으로 돌려보낸다 — 제목은 목록 것을 쓴다
+    return { title: post ? `${post.title} — 공지사항` : "공지사항" };
+  } catch (e) {
+    console.error("[notice/[id]] 탭 제목 조회 실패", e);
+    return { title: "공지사항" };
+  }
+}
+
+export default async function NoticeDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const posts = await getNotices();
+  const index = posts.findIndex((p) => String(p.id) === id);
+  if (index === -1) redirect("/notice?missing=1");
+  const post = posts[index];
 
   return (
     <>
-      <HomeDeco />
-      <main className="mx-auto max-w-3xl px-4 py-10">
-        <div className="home-paper p-5 sm:p-8">
-      <p className="text-xs text-[var(--home-muted)]">{post.publishedAt.slice(0, 10)}</p>
-      <h1 className="mt-1 text-2xl font-bold">{post.title}</h1>
-      {post.coverImageUrl && (
-        // eslint-disable-next-line @next/next/no-img-element -- Supabase Storage 공개 URL
-        <img
-          src={post.coverImageUrl}
-          alt=""
-          className="mt-4 w-full rounded-lg object-cover"
-        />
-      )}
-      <PostBody markdown={post.bodyMd} />
-        </div>
-      </main>
+      <BookMeta book="notice" pageKey={`/notice/${post.id}`} manifest={buildNoticeManifest(posts)} />
+      <Spread
+        left={
+          <>
+            <p className="text-xs tabular-nums text-[var(--home-sheet-muted)]">{post.publishedAt.slice(0, 10)}</p>
+            <PageTitle>{post.title}</PageTitle>
+            {post.coverImageUrl && (
+              // eslint-disable-next-line @next/next/no-img-element -- Supabase Storage 공개 URL
+              <img src={post.coverImageUrl} alt="" className="book-illust object-cover" />
+            )}
+          </>
+        }
+        right={
+          <div className="flex flex-col gap-4">
+            <PostBody markdown={post.bodyMd} />
+            <Link
+              href={noticeListHref(listPageOf(index))}
+              scroll={false}
+              className="home-btn inline-flex min-h-11 w-fit items-center px-4 text-sm"
+            >
+              목록으로
+            </Link>
+          </div>
+        }
+      />
     </>
   );
 }

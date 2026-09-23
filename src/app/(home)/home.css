@@ -39,6 +39,14 @@
   color: inherit;
 }
 
+/* 한국어 줄바꿈 — 기본값은 CJK를 아무 글자에서나 끊어 "요괴 / 들이"처럼
+   어절 중간이 갈라진다. keep-all로 어절 경계에서만 끊고, 끊을 수 없는
+   긴 토큰(URL 등)만 break-word로 흘린다. */
+.home-scope {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
 /* 타이포 위계: Hahmlet(제목·UI) → Gowun Dodum(본문) → Gaegu(손글씨·백묵) — 유지 */
 .home-scope h1,
 .home-scope h2 {
@@ -251,37 +259,6 @@
   font-family: var(--font-hahmlet), serif;
   font-weight: 600;
   transform: rotate(-8deg);
-}
-
-/* 장식 애니메이션 — 유지 */
-.home-hang {
-  animation: home-sway 7s ease-in-out infinite;
-  transform-origin: top center;
-}
-.home-hang::before {
-  content: "";
-  display: block;
-  width: 2.5px;
-  height: 64px;
-  margin: 0 auto;
-  background: #55403a;
-}
-@keyframes home-sway {
-  0%, 100% { transform: rotate(-1.5deg); }
-  50% { transform: rotate(1.8deg); }
-}
-.home-wisp-float {
-  animation: home-wisp 5s ease-in-out infinite;
-}
-@keyframes home-wisp {
-  0%, 100% { transform: translateY(0); opacity: 0.85; }
-  50% { transform: translateY(-9px); opacity: 1; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .home-hang,
-  .home-wisp-float {
-    animation: none;
-  }
 }
 
 /* 이력서 시트 — 콘텐츠 뭉치마다 양피지 한 장 (불규칙 모서리+얼룩 유지, 실측 종이색). 내부는 시트 잉크 */
