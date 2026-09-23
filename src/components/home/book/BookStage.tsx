@@ -53,6 +53,8 @@ export function BookStage({ children, reducedMotion }: { children: ReactNode; re
     // 직전 쪽은 커밋 전 DOM을 떠서 붙잡는다 — 앱 라우터의 레이아웃 children은 항상 "현재 경로"를 그리는
     // 슬롯이라, 예전 children(ReactNode)을 다시 그리면 새 쪽이 나온다
     // (렌더 단계 = 커밋 전이라 book-live에는 아직 직전 쪽이 있다. 쪽 이동은 클라이언트에서만 일어난다)
+    // 의도적으로 렌더 중 DOM을 읽는다 — 이 분기는 커밋 전(직전 쪽 DOM)에서만 실행되고 바로 setState로 버려진다.
+    // innerHTML 스냅샷은 폼 값·canvas·미디어 상태·리스너를 못 옮긴다: 쪽에 폼/라디오/id가 생기면 이 방식을 재검토.
     const oldHtml =
       plan?.kind === "flip" ? (document.querySelector("[data-book-live]")?.innerHTML ?? "") : "";
     setShown({ key, book, node: children });

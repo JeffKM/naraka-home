@@ -63,6 +63,10 @@
   overscroll-behavior: contain;
   background: var(--home-parchment);
   color: var(--home-sheet-ink);
+  /* 종이 위 — 하위 컴포넌트가 쓰는 잉크 변수를 시트 잉크로 */
+  --home-ink: var(--home-sheet-ink);
+  --home-muted: var(--home-sheet-muted);
+  --home-red: #a34c37;
 }
 .book-page { padding: 20px 18px; }
 .book-page-left { display: flex; flex-direction: column; gap: 12px; }
@@ -144,6 +148,9 @@
   pointer-events: none;
 }
 .flip-clip { position: absolute; top: 0; bottom: 0; left: 0; width: 100%; }
+
+/* 직전 쪽 HTML 스냅샷 — 안의 쪽이 absolute가 아니어도 높이가 무너지지 않게 */
+.flip-snapshot { position: absolute; inset: 0; }
 
 /* 한 쪽(모바일) 이전: 새 쪽이 왼쪽에서 넘어와 덮는다 */
 .flip-layer[data-spread="false"][data-dir="prev"] .flip-leaf { animation-name: flip-in; }
