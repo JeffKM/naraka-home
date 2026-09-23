@@ -15,9 +15,15 @@ const getNotices = cache(() => listPosts({ type: "notice" }));
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
-  const post = (await getNotices()).find((p) => String(p.id) === id);
-  // 없는 글은 본문이 목록으로 돌려보낸다 — 제목은 목록 것을 쓴다
-  return { title: post ? `${post.title} — 공지사항` : "공지사항" };
+  // 조회가 실패해도 제목 때문에 쪽 전체가 깨지지 않게 — 목록 제목으로 두고 본문 쪽(error.tsx)이 오류를 알린다
+  try {
+    const post = (await getNotices()).find((p) => String(p.id) === id);
+    // 없는 글은 본문이 목록으로 돌려보낸다 — 제목은 목록 것을 쓴다
+    return { title: post ? `${post.title} — 공지사항` : "공지사항" };
+  } catch (e) {
+    console.error("[notice/[id]] 탭 제목 조회 실패", e);
+    return { title: "공지사항" };
+  }
 }
 
 export default async function NoticeDetailPage({ params }: { params: Promise<{ id: string }> }) {

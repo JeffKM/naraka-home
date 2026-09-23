@@ -14,8 +14,14 @@ const getActiveStaff = cache(() => listStaff(true));
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
-  const s = (await getActiveStaff()).find((x) => String(x.id) === id);
-  return { title: s ? `${s.name} — 요괴 이력서` : "요괴 이력서" };
+  // 조회가 실패해도 제목 때문에 쪽 전체가 깨지지 않게 — 목록 제목으로 두고 본문 쪽(error.tsx)이 오류를 알린다
+  try {
+    const s = (await getActiveStaff()).find((x) => String(x.id) === id);
+    return { title: s ? `${s.name} — 요괴 이력서` : "요괴 이력서" };
+  } catch (e) {
+    console.error("[staff/[id]] 탭 제목 조회 실패", e);
+    return { title: "요괴 이력서" };
+  }
 }
 
 // 요괴 한 명 = 이력서 한 장

@@ -16,9 +16,15 @@ const getEvents = cache(() => listPosts({ type: "event" }));
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
-  const post = (await getEvents()).find((p) => String(p.id) === id);
-  // 없는 이벤트는 본문이 목록으로 돌려보낸다 — 제목은 목록 것을 쓴다
-  return { title: post ? `${post.title} — 이벤트` : "이벤트" };
+  // 조회가 실패해도 제목 때문에 쪽 전체가 깨지지 않게 — 목록 제목으로 두고 본문 쪽(error.tsx)이 오류를 알린다
+  try {
+    const post = (await getEvents()).find((p) => String(p.id) === id);
+    // 없는 이벤트는 본문이 목록으로 돌려보낸다 — 제목은 목록 것을 쓴다
+    return { title: post ? `${post.title} — 이벤트` : "이벤트" };
+  } catch (e) {
+    console.error("[events/[id]] 탭 제목 조회 실패", e);
+    return { title: "이벤트" };
+  }
 }
 
 export default async function EventDetailPage({ params }: { params: Promise<{ id: string }> }) {
