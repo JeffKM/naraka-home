@@ -55,7 +55,7 @@ export const INTRO_VIDEO: { desktop: string; mobile: string } | null = null;
 
 // 책 교체·인트로에 쓰는 그림을 뒤에서 미리 받는다 (브라우저 전용)
 const PRELOAD_KEYS: readonly ArtKey[] = [
-  "shelf", "hand-pull", "office", "office-m",
+  "shelf", "hand-pull", "hand-open", "office", "office-m",
   "cover-home", "cover-about", "cover-location", "cover-menu",
   "cover-staff", "cover-notice", "cover-events", "cover-games",
   "spine-home", "spine-about", "spine-location", "spine-menu",

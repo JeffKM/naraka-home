@@ -359,11 +359,9 @@ def do_hand_pull(im: Image.Image) -> None:
 
 
 def do_hand_open(im: Image.Image) -> None:
-    # 손이 갈색 책 위에 놓인 그림 — 손·소매 쪽만 잘라 쓴다 (책 몸통은 cover-home과 겹치므로 버림)
+    # 리테이크 v2(2026-09-24): 책 없이 빈손만 — 키잉 후 그대로 쓴다 (1차본은 15-hand-open-v1.png로 보관)
     keyed = chroma_key(im)
-    w, h = keyed.size
-    crop = keyed.crop((round(w * 0.46), round(h * 0.28), w, round(h * 0.86)))
-    save(fit(crop.crop(crop.getbbox()), 700), "hand-open")
+    save(fit(keyed.crop(keyed.getbbox()), 700), "hand-open")
 
 
 def fill_holes(alpha: Image.Image) -> Image.Image:

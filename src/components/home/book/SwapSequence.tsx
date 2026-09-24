@@ -89,7 +89,12 @@ export function SwapSequence({ from, to, arrived, fast, reducedMotion, onDone }:
           <ArtPlate art={`cover-${to}`} className="size-full object-contain" />
         </div>
       </div>
-      {/* hand-open(펼치는 손)은 리테이크 대기 — 인트로와 같은 이유로 뺀다 */}
+      {/* 펼치기 — 표지 오른쪽 끝을 짚은 손이 표지와 함께 왼쪽으로 넘긴다 */}
+      <div className="shelf-frame swap-covers swap-hands">
+        <div className="open-hand swap-hand">
+          <ArtPlate art="hand-open" className="size-full" />
+        </div>
+      </div>
     </div>
   );
 }
