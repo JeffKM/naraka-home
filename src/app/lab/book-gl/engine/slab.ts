@@ -11,11 +11,11 @@ export interface SlabShape {
   height: number; // 쪽 높이 (z, 가운데 0)
   thickness: number; // 0이면 낱장
   mirror: boolean; // y 뒤집기 — 왼쪽(경첩) 묶음은 같은 모양을 뒤집어 쓴다
+  segments?: number; // 길이 방향 마디 수 (기본 SEGMENTS)
 }
 
 // 각도 분포 phi[i] (i = 0..SEGMENTS)와 시작점 → 쪽 면 곡선 점·법선
-export function centerline(phi: Float32Array, length: number, y0: number) {
-  const n = SEGMENTS;
+export function centerline(phi: Float32Array, length: number, y0: number, n = SEGMENTS) {
   const ds = length / n;
   const px = new Float32Array(n + 1);
   const py = new Float32Array(n + 1);
@@ -36,14 +36,17 @@ export function centerline(phi: Float32Array, length: number, y0: number) {
 }
 
 // 덩어리: 윗면(쪽, 그룹0) · 옆면 3개(앞마구리·머리·꼬리, 그룹1) · 아랫면(그룹2)
-// 낱장: 윗면만(그룹0, 양면 재질로 그린다)
+// 낱장: 윗면만(그룹0, 양면 재질로 그린다) — 옥자 손도 이 낱장으로 만들어 손가락 마디·손목에서 접는다
 export class Slab {
   readonly geometry = new BufferGeometry();
   private readonly pos: BufferAttribute;
   private readonly nor: BufferAttribute;
 
+  readonly segments: number;
+
   constructor(private readonly shape: SlabShape) {
-    const n = SEGMENTS;
+    const n = shape.segments ?? SEGMENTS;
+    this.segments = n;
     const solid = shape.thickness > 0;
     // 면별 정점 수: 윗면·아랫면 (n+1)*2, 머리·꼬리 (n+1)*2, 앞마구리 4
     const counts = solid ? [(n + 1) * 2, (n + 1) * 2, (n + 1) * 2, 4, (n + 1) * 2] : [(n + 1) * 2];
@@ -106,8 +109,8 @@ export class Slab {
   // phi: 각 마디의 기울기(라디안, 0 = 수평). y0: 책등 쪽 시작 높이
   update(phi: Float32Array, y0: number) {
     const { length, height, thickness, mirror } = this.shape;
-    const n = SEGMENTS;
-    const { px, py, nx, ny } = centerline(phi, length, y0);
+    const n = this.segments;
+    const { px, py, nx, ny } = centerline(phi, length, y0, n);
     const s = mirror ? -1 : 1;
     const p = this.pos.array as Float32Array;
     const q = this.nor.array as Float32Array;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { TL, closingPose, deskness, handPhase, openingPose, toPlace } from "./timeline";
+import { HAND_SHAPE, TL, closingPose, deskness, handPhase, handShape, openingPose, toPlace } from "./timeline";
 
 const PI = Math.PI;
 const steps = (fn: (t: number) => void) => {
@@ -73,5 +73,20 @@ describe("책 교체 타임라인", () => {
     expect(handPhase(TL.slide[0] - 1).phase).toBe("hidden");
     expect(handPhase(TL.lift[0] + 1).phase).toBe("lift");
     expect(handPhase(TL.end).phase).toBe("hidden");
+  });
+
+  it("손 모양이 자세가 바뀌는 순간에도 이어지고, 쥘 때 갈고리·놓을 때 편다", () => {
+    let prev = handShape("push", 0, 0);
+    steps((t) => {
+      const { phase, u } = handPhase(t);
+      if (phase === "hidden") return;
+      const cover = t < TL.lift[0] ? 0 : openingPose(t).cover;
+      const s = handShape(phase, u, cover);
+      expect(Math.abs(s.curl - prev.curl)).toBeLessThan(0.05);
+      expect(Math.abs(s.wrist - prev.wrist)).toBeLessThan(0.05);
+      prev = s;
+    });
+    expect(handShape("lift", 0, 0).curl).toBeCloseTo(HAND_SHAPE.hook.curl);
+    expect(handShape("out", 0.5, 0).curl).toBeCloseTo(HAND_SHAPE.release.curl);
   });
 });

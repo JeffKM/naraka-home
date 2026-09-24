@@ -6,7 +6,7 @@ import type { BookPose } from "./book";
 // 표지가 제 무게로 넘어가고, 묶음과 낱장이 한 박자씩 늦게 따라 떨어진다 → 카메라가 다가간다.
 
 const PI = Math.PI;
-const LIFT_TO = 1.25; // 손이 표지를 세우는 각도 (약 72°)
+export const LIFT_TO = 1.25; // 손이 표지를 세우는 각도 (약 72°)
 
 export const TL = {
   closeLift: [0, 300],
@@ -104,5 +104,32 @@ export function handPhase(t: number): { phase: HandPhase; u: number } {
   if (t < TL.grip[0]) return { phase: "push", u: seg(t, TL.slide) };
   if (t < TL.lift[0]) return { phase: "grip", u: inOutSine(seg(t, TL.grip)) };
   if (t < TL.handOut[0]) return { phase: "lift", u: seg(t, TL.lift) };
-  return { phase: "out", u: inCubic(seg(t, TL.handOut)) };
+  return { phase: "out", u: seg(t, TL.handOut) };
 }
+
+// 손 모양 — curl: 손가락 마디 굽힘(+ = 손끝이 아래로 갈고리), wrist: 손목 젖힘(+ = 팔이 위로)
+//   밀기: 손가락을 살짝 구부려 표지에 얹는다
+//   잡으러 가기: 손을 들며 손가락을 편다 → 쪽 사이에 손끝을 갈고리처럼 넣는다
+//   들기: 쥔 채 손바닥이 서고 손목이 꺾여 팔은 낮게 남는다
+//   놓기: 손가락을 펴고 거둔다
+const lerp = (a: number, b: number, u: number) => a + (b - a) * u;
+export const HAND_SHAPE = {
+  push: { curl: 0.3, wrist: 0.1 },
+  open: { curl: -0.15, wrist: 0.25 },
+  hook: { curl: 0.95, wrist: 0.05 },
+  held: { curl: 0.75, wrist: -0.32 }, // 손바닥은 서고 팔은 낮게 — 손목이 꺾인다
+  release: { curl: -0.2, wrist: -0.05 },
+} as const;
+export function handShape(phase: HandPhase, u: number, cover: number): { curl: number; wrist: number } {
+  const S = HAND_SHAPE;
+  const mix = (a: { curl: number; wrist: number }, b: { curl: number; wrist: number }, v: number) => ({
+    curl: lerp(a.curl, b.curl, v),
+    wrist: lerp(a.wrist, b.wrist, v),
+  });
+  if (phase === "grip") return u < 0.5 ? mix(S.push, S.open, u * 2) : mix(S.open, S.hook, (u - 0.5) * 2);
+  if (phase === "lift") return mix(S.hook, S.held, clamp01(cover / LIFT_TO));
+  if (phase === "out") return mix(S.held, S.release, inOutSine(clamp01(u / 0.3)));
+  return { ...S.push };
+}
+// 손 거두기 이동량 — 손가락을 편 뒤(앞 30%) 빠르게 빠진다
+export const handWithdraw = (u: number) => inCubic(clamp01((u - 0.15) / 0.85));

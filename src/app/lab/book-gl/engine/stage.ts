@@ -22,7 +22,8 @@ import { BOOKS, type BookId } from "@/lib/book/books";
 import { storySrc } from "@/lib/book/art";
 import { PAGE, PAGE_NOTE } from "../../book-depth/content";
 import { BookModel, CLOSED, OPEN, PAGE_H, PAGE_L, PIVOT, TOP, W } from "./book";
-import { TL, closingPose, deskness, fromPlace, handPhase, openingPose, slideDrift, toPlace } from "./timeline";
+import { HAND_SHAPE, LIFT_TO, TL, closingPose, deskness, fromPlace, handPhase, handShape, handWithdraw, openingPose, slideDrift, toPlace } from "./timeline";
+import { Slab } from "./slab";
 import { blankPaper, imageTex, leatherBump, loadImage, pageEdges, pageTex, sampleLeather, spineTex } from "./textures";
 
 // 책상 장면 — 투명 캔버스를 책상 그림(DOM 겹) 위에 겹친다. 책의 그림자는 책상 높이의 그림자 받이에 떨어진다.
@@ -35,6 +36,8 @@ const HAND_SRC = { w: 2100, h: 452, handPart: 700 };
 const HAND_YAW = -0.35; // 팔이 앞(보는 쪽)·오른쪽으로 뻗는다
 const HAND_TILT = 0.08; // 팔이 어깨 쪽으로 살짝 올라간다 — 손끝 뒤로는 책보다 높아 표지를 뚫지 않는다
 const HAND_Z = 0.2;
+const HAND_SEGMENTS = 120;
+const HAND_JOINTS = { knuckle: 215, wrist: 350 }; // hand-reach 그림에서 손가락 마디·손목 x(px)
 const DESK_DRIFT = { desk: 46, back: 14 }; // 교체 중 책상 겹이 옆으로 흐르는 양(px)
 const DESK_NEAR = { desk: 1.12, back: 1.05 }; // 펼친 상태(가까이)에서 책상 겹 배율
 
@@ -64,6 +67,8 @@ export class Stage {
   private readonly shared = { bump: leatherBump(), edges: pageEdges(), blank: blankPaper() };
   private readonly sharedMats: { edges: MeshStandardMaterial; paper: MeshStandardMaterial; sheet: MeshStandardMaterial; endpaper: MeshStandardMaterial };
   private hand: Mesh | null = null;
+  private handStrip: Slab | null = null;
+  private handPhi: Float32Array | null = null;
   private current: BookId | null = null;
   private view = { k: 1, dRest: 1, dDesk: 1, restX: 0, zOff: 0, mobile: false, w: 1, h: 1 };
   private raf = 0;
@@ -124,15 +129,39 @@ export class Stage {
     const tex = imageTex(img);
     const w = HAND_W * (HAND_SRC.w / HAND_SRC.handPart);
     const h = HAND_W * (HAND_SRC.h / HAND_SRC.handPart);
-    // 손끝(그림 왼쪽 끝)이 원점, 평평하게 눕힌다 (그림 위쪽 = -z)
-    const geo = new PlaneGeometry(w, h).translate(w / 2, 0, 0).rotateX(-Math.PI / 2);
+    // 손끝(그림 왼쪽 끝)이 원점, 팔 쪽으로 +x. 손가락 마디·손목에서 접히는 낱장으로 만든다 (그림 위쪽 = -z)
+    this.handStrip = new Slab({ length: w, height: h, thickness: 0, mirror: false, segments: HAND_SEGMENTS });
+    this.handPhi = new Float32Array(HAND_SEGMENTS + 1);
     const mat = new MeshStandardMaterial({ map: tex, alphaTest: 0.5, side: DoubleSide, roughness: 0.8 });
-    const hand = new Mesh(geo, mat);
+    const hand = new Mesh(this.handStrip.geometry, mat);
     hand.castShadow = true;
     hand.customDepthMaterial = new MeshDepthMaterial({ depthPacking: RGBADepthPacking, map: tex, alphaTest: 0.5 });
     hand.rotation.order = "YZX";
     hand.visible = false;
     this.hand = hand;
+    this.shapeHand(HAND_SHAPE.push.curl, HAND_SHAPE.push.wrist);
+  }
+
+  // 손 접기 — 손끝에서 팔 쪽으로 갈수록: 손가락 구간은 curl만큼 올라가고(손끝이 아래로 갈고리),
+  // 손목 너머는 wrist만큼 더 올라간다. 접히는 곳은 몇 마디에 걸쳐 부드럽게
+  private shapeHand(curl: number, wrist: number) {
+    const strip = this.handStrip;
+    const phi = this.handPhi;
+    if (!strip || !phi) return;
+    const n = HAND_SEGMENTS;
+    const len = HAND_W * (HAND_SRC.w / HAND_SRC.handPart);
+    const px = len / HAND_SRC.w;
+    const smooth = (x: number, a: number, b: number) => {
+      const u = Math.min(1, Math.max(0, (x - a) / (b - a)));
+      return u * u * (3 - 2 * u);
+    };
+    const knuckle = HAND_JOINTS.knuckle * px;
+    const wristAt = HAND_JOINTS.wrist * px;
+    for (let i = 0; i <= n; i++) {
+      const s = (i / n) * len;
+      phi[i] = curl * (1 - smooth(s, knuckle - 0.09, knuckle + 0.09)) + wrist * smooth(s, wristAt - 0.1, wristAt + 0.1);
+    }
+    strip.update(phi, 0);
   }
 
   private async ensure(id: BookId): Promise<LoadedBook> {
@@ -292,7 +321,7 @@ export class Stage {
     // 손은 묶음만큼 세우지 않는다 — 손목이 꺾여 팔은 오른쪽에 남는다.
     // 들수록 손목을 돌려(팔 축 회전) 손등이 서고 손가락이 모서리를 감싼 모양이 된다
     const tiltHeld = (a: number) => a * 0.55;
-    const rollHeld = (a: number) => (a / 1.25) * 0.6;
+    const rollHeld = (a: number) => (a / LIFT_TO) * 0.6;
     let pos: Vector3;
     let tilt = HAND_TILT;
     let roll = 0;
@@ -305,14 +334,17 @@ export class Stage {
       tilt = tiltHeld(cover);
       roll = rollHeld(cover);
     } else {
-      // 놓고 거둔다 — 팔이 뻗어 온 쪽으로 빠지며 살짝 들린다
-      const a0 = 1.25;
+      // 놓고(손가락을 편 뒤) 거둔다 — 팔이 뻗어 온 쪽으로 빠지며 살짝 들린다
+      const a0 = LIFT_TO;
       const t0 = tiltHeld(a0);
-      tilt = t0 + (HAND_TILT - t0) * u;
-      roll = rollHeld(a0) * (1 - u);
+      const w = handWithdraw(u);
+      tilt = t0 + (HAND_TILT - t0) * w;
+      roll = rollHeld(a0) * (1 - w);
       const dir = new Vector3(Math.cos(tilt) * Math.cos(HAND_YAW), Math.sin(tilt), -Math.cos(tilt) * Math.sin(HAND_YAW));
-      pos = held(a0).addScaledVector(dir, 3.4 * u).add(new Vector3(0, 0.25 * u, 0));
+      pos = held(a0).addScaledVector(dir, 3.4 * w).add(new Vector3(0, 0.25 * w, 0));
     }
+    const shape = handShape(phase, u, cover);
+    this.shapeHand(shape.curl, shape.wrist);
     hand.position.copy(pos);
     hand.rotation.set(roll, HAND_YAW, tilt);
   }
