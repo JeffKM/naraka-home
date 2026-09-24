@@ -517,6 +517,32 @@
   to { transform: translate(-50%, -50%) rotateY(-100deg); opacity: 0; }
 }
 .swap-layer[data-phase="open"] { animation: swap-fade 350ms ease both; }
+
+/* 펼치는 손(hand-open) — 그림 왼쪽 끝(가로 0~4%, 세로 약 48%)이 손끝. 손끝이 표지 오른쪽 끝을 짚게 놓고,
+   표지가 왼쪽으로 열리는 동안 같은 방향으로 쓸어 넘긴 뒤 사라진다. 소매 끝은 그늘로 흐리게 */
+.open-hand {
+  position: absolute;
+  top: 50%;
+  width: calc(var(--cover-w) * 1.15);
+  aspect-ratio: 700 / 452;
+  /* 손끝이 표지 안쪽으로 표지 폭 8%만큼 걸치게 */
+  left: calc(var(--cover-right) - var(--cover-w) * 1.15 * 0.03 - var(--cover-w) * 0.08);
+  margin-top: calc(var(--cover-w) * 1.15 * 452 / 700 * -0.36);
+  mask-image: linear-gradient(90deg, #000 72%, transparent 97%);
+  opacity: 0;
+  pointer-events: none;
+}
+.swap-hands { z-index: 4; }
+.swap-hand { --cover-w: min(42vw, 340px); --cover-right: calc(50% + var(--cover-w) / 2); }
+.swap-layer[data-phase="open"] .swap-hand { animation: hand-flip 350ms cubic-bezier(0.45, 0.05, 0.3, 1) both; }
+.swap-layer[data-phase="open"] .shelf-hand { opacity: 0; transition-delay: 0ms; }
+/* 표지가 90도를 넘어 모로 서면(뒷면 숨김) 손도 같이 빠진다 — 빈 책상을 쓸고 지나가지 않게 */
+@keyframes hand-flip {
+  0% { transform: translateX(22%); opacity: 0; }
+  15% { transform: translateX(0); opacity: 1; }
+  40% { opacity: 1; }
+  60%, 100% { transform: translateX(calc(var(--cover-w) * -0.9)); opacity: 0; }
+}
 @keyframes swap-fade { 0%, 50% { opacity: 1; } 100% { opacity: 0; } }
 
 /* ── 인트로 ─────────────────────────────── */
@@ -591,6 +617,8 @@
   from { transform: translate(0, -50%) rotateY(0deg); }
   to { transform: translate(0, -50%) rotateY(-180deg); opacity: 0.2; }
 }
+.intro-hand { --cover-w: min(40vw, 340px); --cover-right: calc(50% + var(--cover-w)); z-index: 1; }
+.intro-layer[data-phase="open"] .intro-hand { animation: hand-flip 950ms cubic-bezier(0.45, 0.05, 0.3, 1) both; }
 .intro-layer[data-phase="open"] { animation: intro-out 1050ms ease both; }
 @keyframes intro-out { 0%, 70% { opacity: 1; } 100% { opacity: 0; } }
 

@@ -156,8 +156,10 @@ export function IntroSequence({ reducedMotion }: { reducedMotion: boolean }) {
         <div className="intro-cover">
           <ArtPlate art="cover-home" className="size-full object-contain" />
         </div>
-        {/* hand-open은 손이 갈색 책 위에 얹힌 그림이라 빨강 표지와 겹치면 책이 두 권으로 보여 뺀다 —
-            "손만, 책 없이" 리테이크가 오면 다시 넣는다 (Task 11 리포트) */}
+        {/* 옥자의 손이 표지 오른쪽 끝을 짚고 왼쪽으로 넘긴다 */}
+        <div className="open-hand intro-hand">
+          <ArtPlate art="hand-open" className="size-full" />
+        </div>
       </div>
       <div className="intro-gate">
         <div className="intro-door intro-door-l">
