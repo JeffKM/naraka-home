@@ -4,20 +4,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { BOOKS } from "@/lib/book/books";
 import { storySrc } from "@/lib/book/art";
 import { Book3D } from "./Book3D";
+import { PAGE, PAGE_NOTE } from "./content";
 
 type BookId = (typeof BOOKS)[number]["id"];
-
-// 시험판 쪽 내용 — 책마다 제목·원화 한 장·짧은 글
-const PAGE: Record<BookId, { story: number; line: string }> = {
-  home: { story: 13, line: "사고 치다 붙잡힌 요괴들이 일하는 동성로의 작은 지옥." },
-  about: { story: 1, line: "옥자님의 채용 공고는 늘 한 줄. 종신 계약." },
-  location: { story: 5, line: "동성로 골목 끝, 파란 불꽃이 새어 나오는 문." },
-  menu: { story: 12, line: "주방요괴가 차리는 오늘의 메뉴판." },
-  staff: { story: 3, line: "오늘 출근한 요괴들을 확인하세요." },
-  notice: { story: 9, line: "옥자님이 붙인 공지가 여기 모입니다." },
-  events: { story: 15, line: "이번 달 지옥에서 열리는 일들." },
-  games: { story: 17, line: "마작 한 판, 지는 쪽이 설거지." },
-};
 
 type Refs = { book: HTMLDivElement | null; hinge: HTMLDivElement | null; shade: HTMLDivElement | null; hand: HTMLDivElement | null };
 
@@ -218,7 +207,7 @@ export function BookDepthLab() {
                     <>
                       <p className="lab-line">{p.line}</p>
                       <div className="lab-rule" />
-                      <p className="lab-muted">시험판 쪽입니다. 실제 내용은 기존 쪽이 그대로 들어갑니다.</p>
+                      <p className="lab-muted">{PAGE_NOTE}</p>
                     </>
                   }
                 />

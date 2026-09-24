@@ -216,3 +216,22 @@
   .lab-stage { top: 12px; bottom: 132px; }
   .lab-toggles { margin-left: 0; }
 }
+
+/* 3D 책 시험판 — 투명 캔버스를 책상 겹 위에 */
+.lab-gl {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.lab-error {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--home-void) 85%, transparent);
+  color: var(--home-parchment);
+}
