@@ -171,6 +171,24 @@ solid pure green (#00FF00) background, no shadow. No face, no body. 1:1.
 | 14 | `14-hand-pull.png` | reaching forward and gripping the top of a book spine, pulling it out, seen from the side |
 | 15 | `15-hand-open.png` | palm down, gently pushing open a book cover from the right edge, seen from above |
 
+#### 15 리테이크 — `15-hand-open-v2.png` (2026-09-24)
+
+1차본은 손 아래에 갈색 책까지 그려져 책 표지와 겹쳐 쓸 수 없었다. [POSE]에서 "book"을 빼고, 빈손 동작만 그리게 한다. 책은 화면에서 HTML·표지 그림으로 따로 깐다.
+
+```
+[STYLE] A witch's hand and forearm only, matching the reference witch: orange-
+red ruffled sleeve with lace cuff, pale chibi hand. Seen from above, the hand
+enters from the right edge of the frame, palm down and fingers slightly curled,
+index and middle fingertips lifted as if about to flip something open to the
+left. The hand is empty and holds nothing. Nothing under or near the hand: no
+book, no paper, no page, no cover, no table, no object of any kind. Isolated on
+a flat solid pure green (#00FF00) background filling the whole frame, no
+shadow, no floor. No face, no body. 1:1.
+```
+
+- 첨부: 원화 `13.png`, `17.png` + 1차본 `14-hand-pull.png`(소매·손 모양 통일용)
+- 확인: 손 밑에 책·종이가 없고, 배경이 전부 #00FF00 한 가지 색인지 본다. 그림자가 생기면 다시 뽑는다.
+
 ### 16. 책 쪽 장식 시트 — `16-ornaments.png` (1:1, 초록)
 
 ```

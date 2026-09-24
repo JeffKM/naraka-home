@@ -6,6 +6,6 @@ export const HOME_INFO = {
   hoursNote: "영업시간과 휴무일은 인스타그램에 올려요",
   instagramHandle: "naraka_concafe",
   instagramUrl: "https://instagram.com/naraka_concafe",
-  // 예약은 외부 채널로 — 자체 예약 시스템 없음 (스펙 §7)
-  reserveUrl: "https://instagram.com/naraka_concafe",
+  // 예약은 외부 채널로 — 자체 예약 시스템 없음 (스펙 §7). 네이버 예약(지도 플레이스 booking)으로 연결
+  reserveUrl: "https://naver.me/FbqPguRm",
 } as const;
