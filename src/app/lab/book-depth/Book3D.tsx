@@ -35,10 +35,10 @@ export const Book3D = forwardRef<
         </div>
         <div className="b3d-page b3d-page-left book-paper">{left}</div>
       </div>
-      {/* 펼치는 손 — 손끝(그림 왼쪽 끝)이 앞표지 오른쪽 끝을 짚는다 */}
+      {/* 옥자 손 — 손끝(그림 왼쪽 끝)이 앞표지 오른쪽 끝을 짚고, 소매는 화면 밖까지 이어진다 */}
       <div ref={handRef} className="b3d-hand">
         {/* eslint-disable-next-line @next/next/no-img-element -- 시험판 정적 그림 */}
-        <img src="/home/book/art/hand-open.webp" alt="" draggable={false} />
+        <img src="/home/book/art/hand-reach.webp" alt="" draggable={false} />
       </div>
     </div>
   );

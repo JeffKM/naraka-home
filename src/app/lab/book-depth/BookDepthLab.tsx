@@ -115,7 +115,9 @@ export function BookDepthLab() {
       { transform: REST, easing: EASE_CAM },
       { transform: DESK, offset: (T.zoomOutEnd - T.zoomOutStart) / fromSpan, easing: "cubic-bezier(0.5, 0, 0.85, 0.4)" },
       { transform: DESK, offset: (T.slideStart - T.zoomOutStart) / fromSpan, easing: "cubic-bezier(0.5, 0, 0.85, 0.4)" },
-      { transform: OUT_L },
+      { transform: OUT_L, opacity: 1, offset: 0.97 },
+      // 화면 밖에 나간 뒤엔 숨긴다 — 모바일 원근에서 바닥 그림자가 비스듬히 늘어나 새 쪽 위에 걸린다
+      { transform: OUT_L, opacity: 0 },
     ], o(T.zoomOutStart, T.slideEnd, "linear"));
     // 새 책이 오른쪽에서 미끄러져 들어와 → 다가오며 → 앞표지가 열린다
     const toStart = T.slideStart + 40;
@@ -129,13 +131,17 @@ export function BookDepthLab() {
     add(to.hinge, [{ transform: "rotateY(0deg)" }, { transform: "rotateY(-180deg)" }], o(T.openStart, T.openEnd, EASE_TURN));
     add(to.shade, [{ opacity: 0 }, { opacity: 0.6 }], o(T.openStart, (T.openStart + T.openEnd) / 2, "ease-in"));
     if (hand && to.hand) {
+      // 옥자 손: 소매가 화면 밖까지 이어진 채로 새 책을 밀어 넣고 → 표지 끝을 짚어 들어 올리며 따라가다 →
+      // 화면 밖으로 거둔다. 허공에서 나타나거나 사라지지 않도록 투명도는 건드리지 않는다
+      const handSpan = T.openEnd - toStart;
+      const lift = T.openStart + (T.openEnd - T.openStart) * 0.35;
+      const at = (x: number) => `translateX(${x}px) translateZ(4px)`;
       add(to.hand, [
-        { transform: "translateX(22%)", opacity: 0 },
-        { transform: "translateX(0)", opacity: 1, offset: 0.2 },
-        { opacity: 1, offset: 0.45 },
-        { transform: `translateX(${-geo.pw * 0.9}px)`, opacity: 0, offset: 0.7 },
-        { transform: `translateX(${-geo.pw * 0.9}px)`, opacity: 0 },
-      ], o(T.openStart - 120, T.openEnd, EASE_TURN));
+        { transform: at(0), opacity: 1 },
+        { transform: at(0), opacity: 1, offset: (T.openStart - toStart) / handSpan, easing: "cubic-bezier(0.3, 0, 0.3, 1)" },
+        { transform: at(-geo.pw * 0.3), opacity: 1, offset: (lift - toStart) / handSpan, easing: "cubic-bezier(0.5, 0, 0.9, 0.6)" },
+        { transform: at(geo.pw * 2.6), opacity: 1 },
+      ], o(toStart, T.openEnd, "linear"));
     }
     // 책상 2.5D 겹 — 펼친 상태는 가까이(확대), 책이 눕는 동안 물러나고, 새 책이 들어올 때 옆으로 흘렀다가 다시 다가간다.
     // 앞 겹(책상)이 뒤 겹(벽·바닥)보다 크게 움직여 깊이가 생긴다

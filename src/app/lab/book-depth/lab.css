@@ -155,18 +155,26 @@
   -webkit-backface-visibility: hidden;
   box-shadow: inset -28px 0 30px -24px rgba(40, 20, 15, 0.45);
 }
+/* 옥자 손 — 손 부분 폭은 쪽 폭의 1.15배, 소매를 두 배 더 늘인 그림(hand-reach)이라 전체는 3배.
+   손끝(그림 왼쪽 끝)이 앞표지 오른쪽 끝을 짚고, 팔은 책 오른쪽으로 화면 밖까지 이어진다 */
 .b3d-hand {
+  --hand-w: calc(var(--pw) * 1.15);
   position: absolute;
-  top: calc(50% - var(--pw) * 1.15 * 452 / 700 * 0.36);
-  left: calc(var(--pw) * 0.92 - var(--pw) * 1.15 * 0.03);
-  width: calc(var(--pw) * 1.15);
-  aspect-ratio: 700 / 452;
+  top: calc(50% - var(--hand-w) * 452 / 700 * 0.36);
+  left: calc(var(--pw) * 0.92 - var(--hand-w) * 0.03);
+  width: calc(var(--hand-w) * 3);
+  aspect-ratio: 2100 / 452;
   transform: translateZ(4px);
   opacity: 0;
   pointer-events: none;
-  mask-image: linear-gradient(90deg, #000 72%, transparent 97%);
 }
-.b3d-hand img { width: 100%; height: 100%; display: block; }
+/* 책·책상에 떨어지는 그림자로 장면에 붙인다 */
+.b3d-hand img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(-6px 14px 10px rgba(20, 8, 16, 0.45));
+}
 
 /* 시험판 쪽 내용 */
 .lab-kicker { font-size: 0.8rem; letter-spacing: 0.12em; color: var(--home-sheet-muted); }

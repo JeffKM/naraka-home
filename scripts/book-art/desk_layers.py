@@ -1,93 +1,107 @@
-#!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.10"
+# dependencies = ["numpy", "scipy", "pillow", "opencv-python-headless"]
+# ///
 """책상 무대 2.5D 겹 나누기 — desk.webp → desk-back.webp(벽·바닥) + desk-top.webp(책상+소품, 투명 배경)
 
-시험판(feat/book-depth-lab)용. 책상 윤곽은 손으로 잰 다각형이고, 책상 윗선 위로 솟은 모자·두루마리는
-다각형 안에서도 벽 색(밝은 회청 돌·나무 기둥) 픽셀을 걸러 낸다. 뒤 겹의 책상 자리는
-정규화 합성곱(주변 색 번짐)으로 채운다 — 겹이 몇 px만 어긋나므로 가장자리 띠만 보이면 된다.
-PIL만 쓴다.
+사용: uv run scripts/book-art/desk_layers.py
+
+시험판(feat/book-depth-lab)용. 손으로 잰 다각형은 모자·유령 둘레가 어긋나서 버리고,
+그림의 검은 윤곽선을 벽으로 삼아 화면 가장자리(위·왼쪽·오른쪽)에서 배경을 채워 들어간다.
+  1. 어두운 픽셀(윤곽선) = 벽 → 가장자리에서 닿는 밝은 영역 = 배경(벽·바닥·유령)
+  2. 배경이 아닌 곳 = 책상 후보. 벽돌 줄눈 같은 가는 선은 열림 연산으로 떼고,
+     화면 가운데와 이어진 덩어리만 남긴 뒤 구멍을 메우고, 떼면서 깎인 바깥 윤곽선을 되살린다.
+  3. 뒤 겹의 책상 자리는 행마다 옆 벽·바닥의 거울상으로 채운다 — 겹이 수십 px만
+     어긋나므로 가장자리 띠만 자연스러우면 된다.
 """
 import pathlib
 
-from PIL import Image, ImageChops, ImageDraw, ImageFilter
+import cv2
+import numpy as np
+from PIL import Image
+from scipy import ndimage as ndi
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 ART = ROOT / "public/home/book/art"
 
-# 1920×1072 기준 책상 윤곽 (모자·두루마리 끝 포함)
-DESK = [(338, 140), (470, 138), (505, 92), (590, 92), (602, 146), (1160, 168), (1175, 150), (1330, 75),
-        (1395, 8), (1560, 8), (1560, 95), (1645, 105), (1648, 175), (1612, 190), (1640, 330), (1705, 420),
-        (1705, 470), (1735, 640), (1760, 760), (1800, 800), (1868, 880), (1868, 968), (1830, 975),
-        (1812, 1072), (125, 1072), (118, 975), (60, 965), (60, 880), (290, 240)]
+LINE_LUM = 70  # 이보다 어두우면 윤곽선
+THIN = 6  # 이 반경(px) 이하로 가는 선(벽 기둥·유령 윤곽)은 책상에서 뗀다
+BAND = 120  # 뒤 겹에서 거울상으로 채우는 경계 띠 폭(px) — 교체 중 드러나는 폭(약 30px)보다 넉넉히
+SHADOW = (58, 40, 48)  # 책상 밑 그늘색
+CORE = (600, 960)  # 책상 한가운데 (y, x) — 1920×1072 기준
 
 
-def top_edge_y(x: float) -> float:
-    # 책상 윗선 (338,140) → (1612,190)
-    return 140 + (x - 338) * (190 - 140) / (1612 - 338)
+def desk_mask(rgb: np.ndarray) -> np.ndarray:
+    lum = rgb[..., 0] * 0.299 + rgb[..., 1] * 0.587 + rgb[..., 2] * 0.114
+    wall = ndi.binary_dilation(lum < LINE_LUM, iterations=1)
+    free = ~wall
+    free[-1, :] = False  # 아래 가장자리는 책상 서랍이 닿으므로 씨앗에서 뺀다
+    lab, _ = ndi.label(free)
+    seeds = set(np.unique(lab[0, :])) | set(np.unique(lab[:-1, 0])) | set(np.unique(lab[:-1, -1]))
+    seeds.discard(0)
+    bg = np.isin(lab, list(seeds))
+    if bg[CORE]:
+        raise SystemExit("배경 채우기가 책상 안으로 샜다 — 윤곽선이 끊긴 곳을 확인할 것")
 
-
-def is_wall(rgb: tuple[int, int, int]) -> bool:
-    r, g, b = rgb
-    lum = (r * 299 + g * 587 + b * 114) / 1000
-    stone = lum > 95 and b >= r - 8 and abs(r - g) < 28  # 회청 돌
-    beam = lum > 70 and r > b + 12 and g > b and r < 175 and abs(r - g) < 45 and not (r > 150 and g < 90)  # 나무 기둥
-    return stone or beam
+    cand = ~bg
+    disk = ndi.generate_binary_structure(2, 1)
+    core = ndi.binary_opening(cand, structure=disk, iterations=THIN)
+    lab, _ = ndi.label(core)
+    core = lab == lab[CORE]
+    core = ndi.binary_fill_holes(core)
+    # 열림 연산에 깎인 책상 바깥 윤곽선을 되살린다 (배경 쪽으로는 넘지 않게)
+    mask = ndi.binary_dilation(core, structure=disk, iterations=THIN + 1) & cand
+    mask = ndi.binary_fill_holes(mask | core)
+    # 되살리면서 같이 자란 벽 기둥 선 토막(폭 ~8px)을 떼어 낸다
+    mask = ndi.binary_opening(mask, structure=disk, iterations=5)
+    return mask
 
 
 def main() -> None:
     src = Image.open(ART / "desk.webp").convert("RGB")
-    w, h = src.size
-    mask = Image.new("L", (w, h), 0)
-    ImageDraw.Draw(mask).polygon(DESK, fill=255)
-    # 책상 윗선 위쪽(모자·두루마리 영역)에서 벽 색 픽셀은 뒤 겹으로
-    px, mp = src.load(), mask.load()
-    for y in range(0, 200):
-        for x in range(300, 1700):
-            if mp[x, y] and y < top_edge_y(x) - 4 and is_wall(px[x, y]):
-                mp[x, y] = 0
-    # 잔티 제거: 작은 구멍 메우고 가장자리 1px 부드럽게
-    mask = mask.filter(ImageFilter.MaxFilter(3)).filter(ImageFilter.MinFilter(3)).filter(ImageFilter.GaussianBlur(0.8))
+    rgb = np.asarray(src)
+    mask = desk_mask(rgb.astype(np.float32))
 
-    top = src.convert("RGBA")
-    top.putalpha(mask)
-    top.save(ART / "desk-top.webp", quality=90, method=6)
+    # 앞 겹 — 가장자리 1px만 부드럽게
+    alpha = cv2.GaussianBlur(mask.astype(np.float32), (0, 0), 0.7)
+    top = np.dstack([rgb, (alpha * 255).round().astype(np.uint8)])
+    Image.fromarray(top, "RGBA").save(ART / "desk-top.webp", quality=90, method=6)
 
-    # 뒤 겹: 책상 자리를 주변 색으로 번져 채운다 (정규화 합성곱, 반경을 키워 가며)
-    hole = mask.point(lambda v: 255 if v > 8 else 0)
-    keep = ImageChops.invert(hole)
-    filled = src.copy()
-    small_scale = 8
-    sw, sh = w // small_scale, h // small_scale
-    s_img = src.resize((sw, sh), Image.BILINEAR)
-    s_keep = keep.resize((sw, sh), Image.BILINEAR)
-    acc = None
-    for radius in (4, 10, 24, 60):
-        num = Image.composite(s_img, Image.new("RGB", (sw, sh)), s_keep).filter(ImageFilter.GaussianBlur(radius))
-        den = s_keep.filter(ImageFilter.GaussianBlur(radius))
-        npx, dpx = num.load(), den.load()
-        out = Image.new("RGB", (sw, sh))
-        op = out.load()
-        for y in range(sh):
-            for x in range(sw):
-                d = dpx[x, y]
-                if d > 6:
-                    r, g, b = npx[x, y]
-                    k = 255 / d
-                    op[x, y] = (min(255, int(r * k)), min(255, int(g * k)), min(255, int(b * k)))
-                else:
-                    op[x, y] = (0, 0, 0)
-        if acc is None:
-            acc = out
-        else:
-            valid = den.point(lambda v: 255 if v > 6 else 0)
-            accv = acc_valid
-            acc = Image.composite(acc, out, accv)
-        acc_valid = den.point(lambda v: 255 if v > 6 else 0) if acc is out else ImageChops.lighter(acc_valid, den.point(lambda v: 255 if v > 6 else 0))
-    fill = acc.resize((w, h), Image.BILINEAR).filter(ImageFilter.GaussianBlur(6))
-    # 채운 자리는 살짝 어둡게 — 책상 그늘
-    fill = Image.blend(fill, Image.new("RGB", (w, h), (20, 14, 20)), 0.25)
-    filled = Image.composite(fill, src, hole.filter(ImageFilter.MaxFilter(5)))
-    filled.save(ART / "desk-back.webp", quality=82, method=6)
-    print("desk-top / desk-back 저장")
+    # 뒤 겹 — 책상 자리(넉넉히 넓힌)를 행마다 오른쪽 경계 기준 좌우 거울상으로 채운다.
+    # 교체 중 책상 겹이 왼쪽으로 더 흘러 드러나는 곳은 책상 오른쪽 가장자리 띠라서, 바로 옆 벽·바닥·유령의
+    # 결이 이어져 보이는 거울상이 번짐(inpaint)보다 자연스럽다. 오른쪽에 채울 거리가 없으면 왼쪽 거울상.
+    hole = ndi.binary_dilation(mask, iterations=6)
+    h, w = hole.shape
+    back = rgb.copy()
+    for y in range(h):
+        row = hole[y]
+        x = 0
+        while x < w:
+            if not row[x]:
+                x += 1
+                continue
+            x0 = x
+            while x < w and row[x]:
+                x += 1
+            x1 = x  # [x0, x1) 구멍 구간
+            xs = np.arange(x0, x1)
+            if x1 < w:
+                src_x = 2 * x1 - 1 - xs  # 오른쪽 경계 거울상
+            else:
+                src_x = 2 * x0 - 1 - xs  # 왼쪽 경계 거울상
+            src_x = np.clip(src_x, 0, w - 1)
+            back[y, x0:x1] = rgb[y, src_x]
+            # 경계에서 BAND보다 먼 안쪽은 드러날 일이 없으니 그늘색으로 (거울상 줄무늬 방지)
+            far = (x1 - 1 - xs) > BAND if x1 < w else (xs - x0) > BAND
+            back[y, x0:x1][far] = SHADOW
+    # 거울 이음매를 누그러뜨리고 살짝 어둡게 — 책상 그늘
+    soft_fill = cv2.GaussianBlur(back, (0, 0), 1.2).astype(np.float32)
+    shade = np.array([20, 14, 20], np.float32)
+    soft_fill = soft_fill * 0.85 + shade * 0.15
+    soft = cv2.GaussianBlur(hole.astype(np.float32), (0, 0), 2)[..., None]
+    back = rgb.astype(np.float32) * (1 - soft) + soft_fill * soft
+    Image.fromarray(back.clip(0, 255).astype(np.uint8)).save(ART / "desk-back.webp", quality=82, method=6)
+    print(f"desk-top / desk-back 저장 (책상 {mask.mean():.1%})")
 
 
 if __name__ == "__main__":
