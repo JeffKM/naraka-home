@@ -55,7 +55,7 @@ export default async function LocationPage({ searchParams }: { searchParams: Pro
           left={
             <>
               <PageTitle>예약</PageTitle>
-              <p className="leading-7">예약과 문의는 인스타그램 메시지로 받아요.</p>
+              <p className="leading-7">예약은 네이버 예약으로, 문의는 인스타그램 메시지로 받아요.</p>
             </>
           }
           right={
@@ -66,7 +66,16 @@ export default async function LocationPage({ searchParams }: { searchParams: Pro
                 rel="noreferrer"
                 className="home-btn home-btn-primary inline-flex min-h-11 w-fit items-center px-5"
               >
-                인스타그램으로 예약·문의하기
+                네이버로 예약하기
+                <span className="sr-only"> (새 창)</span>
+              </a>
+              <a
+                href={HOME_INFO.instagramUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="home-btn inline-flex min-h-11 w-fit items-center px-5"
+              >
+                인스타그램으로 문의하기
                 <span className="sr-only"> (새 창)</span>
               </a>
               <p className="text-sm text-[var(--home-sheet-muted)]">
