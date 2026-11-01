@@ -189,6 +189,35 @@ shadow, no floor. No face, no body. 1:1.
 - 첨부: 원화 `13.png`, `17.png` + 1차본 `14-hand-pull.png`(소매·손 모양 통일용)
 - 확인: 손 밑에 책·종이가 없고, 배경이 전부 #00FF00 한 가지 색인지 본다. 그림자가 생기면 다시 뽑는다.
 
+#### 15-P. 손 자세 5종 — 3D 책 시험판용 (2026-09-24)
+
+3D 책 시험판(`/lab/book-gl`)에서 손 한 장을 손가락 마디·손목에서 접어 움직이니 종이처럼 보인다. 동작마다 다른 그림으로 바꿔 끼운다(접기는 손목 쪽에만 조금 남긴다). 다섯 장이 한 손처럼 이어져야 하므로 **구도를 다섯 장 모두 같게** 고정한다: 팔은 오른쪽 가장자리 세로 가운데로 들어오고, 레이스 소맷부리는 오른쪽에서 1/3 지점, 손은 왼쪽 2/3 안에 둔다.
+
+```
+[STYLE] A witch's hand and forearm only, the same hand as the attached hand
+reference: orange-red ruffled sleeve with black lace cuff and teal band, pale
+chibi hand, same size and line weight. Framing identical for every image in
+this set: the forearm enters horizontally from the RIGHT edge of the frame at
+exactly mid-height, the sleeve cut off cleanly by the right edge, the lace cuff
+about one third in from the right edge, the hand in the left two thirds.
+Seen from the front and slightly above, like looking across a desk. [POSE].
+The hand is empty and holds nothing: no book, no paper, no page, no edge, no
+object of any kind. Isolated on a flat solid pure green (#00FF00) background
+filling the whole frame, no shadow, no floor. No face, no body. 4:3.
+```
+
+| # | 파일명 | 쓰는 곳 | [POSE] |
+|---|---|---|---|
+| P1 | `15-hand-p1-push.png` | 새 책 밀어 넣기 | palm down and flat, fingers together and relaxed, fingertips pressing lightly downward as if sliding something to the left along a table |
+| P2 | `15-hand-p2-reach.png` | 잡으러 가기 | hand raised a little above the palm-down position, fingers straight and slightly spread, reaching forward to the left, about to take hold of something |
+| P3 | `15-hand-p3-hook.png` | 쪽 사이에 손끝 넣기 | back of the hand up, knuckles raised, the four fingers curled downward like a hook, fingertips pointing down and slightly to the right, thumb tucked underneath |
+| P4 | `15-hand-p4-hold.png` | 쥐고 세우기 | wrist turned so the palm faces left, thumb on the near side and the four fingers on the far side pinching together as if gripping a thin vertical sheet, wrist bent slightly upward |
+| P5 | `15-hand-p5-release.png` | 놓기 | palm facing left and slightly down, all five fingers opened wide and spread apart, letting go, wrist relaxed |
+
+- 첨부: 원화 `13.png`, `17.png` + `15-hand-open-v2.png`(손·소매 기준). P1을 먼저 뽑아 마음에 들면 **P2~P5에는 P1 결과도 함께 첨부**해 손 크기·소매를 맞춘다.
+- 확인: ① 다섯 장 모두 소맷부리가 같은 자리(오른쪽에서 1/3)에 있는지 ② 손 밑에 책·종이·모서리가 그려지지 않았는지 ③ 배경이 #00FF00 한 색이고 그림자가 없는지. 셋 중 하나라도 어긋나면 그 장만 다시 뽑는다.
+- 받으면: `process.py`에서 키잉 → 소맷부리 위치로 다섯 장을 정렬 → 소매를 화면 밖까지 늘인다(`hand_reach.py`와 같은 방식). 시험판은 자세가 바뀌는 구간마다 두 그림을 짧게 겹쳐 바꾼다.
+
 ### 16. 책 쪽 장식 시트 — `16-ornaments.png` (1:1, 초록)
 
 ```

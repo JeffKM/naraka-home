@@ -1,0 +1,237 @@
+/* 입체 시험판 — 책 입체(D) + 책상 2.5D 겹(B) */
+.lab-root {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--home-void);
+  color: var(--home-ink);
+}
+.lab-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: 50% 58%;
+  will-change: transform;
+}
+/* 펼친 상태 = 가까이 (앞 겹이 더 크게) */
+.lab-back { transform: scale(1.05); }
+.lab-desk { transform: scale(1.12); }
+.lab-mobile { display: none; }
+@media (max-width: 767px) {
+  .lab-back, .lab-desk { display: none; }
+  .lab-mobile { display: block; }
+}
+
+.lab-stage {
+  position: absolute;
+  top: 24px;
+  left: 0;
+  right: 0;
+  bottom: 88px;
+  perspective: 2200px;
+  perspective-origin: 50% 35%;
+}
+.lab-anchor {
+  position: absolute;
+  top: 50%;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+}
+
+/* ── 책 ── 원점 = 책등. 두께는 쪽 폭의 6% */
+.b3d {
+  --d: calc(var(--pw) * 0.06);
+  --leather: #5a2431;
+  --leather-deep: #3a1620;
+  position: absolute;
+  left: 0;
+  top: calc(var(--ph) / -2);
+  width: var(--pw);
+  height: var(--ph);
+  transform-style: preserve-3d;
+  transform-origin: 50% 50%;
+}
+/* 새 책은 연출이 잡기 전 첫 프레임에도 화면 밖·닫힌 채로 */
+.b3d[data-incoming] { transform: translateX(300vw); }
+.b3d[data-incoming] .b3d-hinge { transform: translateZ(1px) rotateY(0deg); }
+
+.b3d-floor-shadow {
+  position: absolute;
+  inset: 3% -3% -5% 2%;
+  transform: translateZ(calc(var(--d) * -1 - 3px));
+  background: radial-gradient(ellipse at 50% 50%, rgba(10, 5, 10, 0.55), transparent 70%);
+  filter: blur(14px);
+}
+.b3d-back {
+  position: absolute;
+  inset: 0;
+  transform: translateZ(calc(var(--d) * -1));
+  border-radius: 3px 10px 10px 3px;
+  background: linear-gradient(90deg, var(--leather-deep), var(--leather) 12%, var(--leather));
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.35);
+}
+/* 속지 옆면 3개 — 종이 결 줄무늬, 가장자리 쪽이 어둡게 */
+.b3d-edge {
+  position: absolute;
+  background:
+    linear-gradient(var(--edge-dir, 90deg), rgba(60, 30, 20, 0.35), transparent 30%, transparent 70%, rgba(60, 30, 20, 0.25)),
+    repeating-linear-gradient(var(--grain-dir, 0deg), #f1e6cc 0 2px, #d8c7a3 2px 3px);
+}
+.b3d-edge-fore {
+  --edge-dir: 0deg;
+  --grain-dir: 90deg;
+  top: 2%;
+  height: 96%;
+  left: calc(var(--pw) * 0.975 - var(--d));
+  width: var(--d);
+  transform-origin: right center;
+  transform: rotateY(-90deg);
+}
+.b3d-edge-top,
+.b3d-edge-bottom {
+  left: 0;
+  width: 97.5%;
+  height: var(--d);
+}
+.b3d-edge-top { top: 2%; transform-origin: top center; transform: rotateX(-90deg); }
+.b3d-edge-bottom { bottom: 2%; transform-origin: bottom center; transform: rotateX(90deg); }
+.b3d-spine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--d);
+  height: 100%;
+  transform-origin: left center;
+  transform: rotateY(90deg);
+  background: var(--leather-deep);
+  overflow: hidden;
+}
+.b3d-spine img { width: 100%; height: 100%; object-fit: cover; }
+
+.b3d-page {
+  position: absolute;
+  top: 2%;
+  bottom: 2%;
+  overflow: hidden;
+  padding: 7% 8%;
+  color: var(--home-sheet-ink);
+  --home-ink: var(--home-sheet-ink);
+  --home-muted: var(--home-sheet-muted);
+}
+.b3d-page-right {
+  left: 0;
+  right: 2.5%;
+  transform: translateZ(-1px);
+  /* 제본선 쪽 그늘 */
+  box-shadow: inset 28px 0 30px -24px rgba(40, 20, 15, 0.45);
+}
+.b3d-hinge {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform-origin: left center;
+  transform: translateZ(1px) rotateY(-180deg);
+}
+.b3d-cover {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 3px 10px 10px 3px;
+  overflow: hidden;
+  background: var(--leather);
+}
+.b3d-cover img { width: 100%; height: 100%; object-fit: fill; display: block; }
+/* 표지가 모로 설수록 어둡게 — 빛이 위에서 온다 */
+.b3d-cover-shade { position: absolute; inset: 0; background: #120a10; opacity: 0; }
+.b3d-page-left {
+  left: 2.5%;
+  right: 0;
+  transform: rotateY(180deg) translateZ(1px);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  box-shadow: inset -28px 0 30px -24px rgba(40, 20, 15, 0.45);
+}
+/* 옥자 손 — 손 부분 폭은 쪽 폭의 1.15배, 소매를 두 배 더 늘인 그림(hand-reach)이라 전체는 3배.
+   손끝(그림 왼쪽 끝)이 앞표지 오른쪽 끝을 짚고, 팔은 책 오른쪽으로 화면 밖까지 이어진다 */
+.b3d-hand {
+  --hand-w: calc(var(--pw) * 1.15);
+  position: absolute;
+  top: calc(50% - var(--hand-w) * 452 / 700 * 0.36);
+  left: calc(var(--pw) * 0.92 - var(--hand-w) * 0.03);
+  width: calc(var(--hand-w) * 3);
+  aspect-ratio: 2100 / 452;
+  transform: translateZ(4px);
+  opacity: 0;
+  pointer-events: none;
+}
+/* 책·책상에 떨어지는 그림자로 장면에 붙인다 */
+.b3d-hand img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(-6px 14px 10px rgba(20, 8, 16, 0.45));
+}
+
+/* 시험판 쪽 내용 */
+.lab-kicker { font-size: 0.8rem; letter-spacing: 0.12em; color: var(--home-sheet-muted); }
+.lab-title { margin-top: 0.4rem; font-size: clamp(1.2rem, 2.4vw, 2rem); font-weight: 800; }
+.lab-illust { margin-top: 1.2rem; width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 6px; }
+.lab-line { font-size: 1.05rem; line-height: 1.9; }
+.lab-rule { margin: 1.4rem 0; height: 1px; background: color-mix(in srgb, var(--home-sheet-ink) 20%, transparent); }
+.lab-muted { font-size: 0.85rem; line-height: 1.7; color: var(--home-sheet-muted); }
+
+/* 조작 막대 */
+.lab-controls {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--home-void) 82%, transparent);
+  backdrop-filter: blur(6px);
+  font-size: 0.85rem;
+}
+.lab-badge { font-weight: 800; color: var(--home-parchment); }
+.lab-books, .lab-toggles { display: flex; flex-wrap: wrap; gap: 6px; }
+.lab-toggles { margin-left: auto; }
+.lab-controls button {
+  min-height: 36px;
+  padding: 0 10px;
+  border-radius: 8px;
+  color: var(--home-parchment);
+  background: color-mix(in srgb, var(--home-parchment) 10%, transparent);
+}
+.lab-controls button[aria-pressed="true"] { background: var(--home-red, #a34c37); }
+.lab-controls button:disabled { opacity: 0.5; }
+@media (max-width: 767px) {
+  .lab-stage { top: 12px; bottom: 132px; }
+  .lab-toggles { margin-left: 0; }
+}
+
+/* 3D 책 시험판 — 투명 캔버스를 책상 겹 위에 */
+.lab-gl {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.lab-error {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--home-void) 85%, transparent);
+  color: var(--home-parchment);
+}
