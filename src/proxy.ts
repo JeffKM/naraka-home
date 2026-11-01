@@ -17,10 +17,28 @@ const AUTH_PAGES = ["/event/login", "/event/signup"];
 // 어드민 리다이렉트 예외 — 게임 방법 등 어드민도 볼 수 있는 공용 안내 페이지
 const ADMIN_ALLOWED_PAGES = ["/event/guide"];
 
+// 카페 홈 잠금(2026-11-01 owner): 홈이 아직 개발 중이라 방문자에게는 "준비 중" 화면만 보인다.
+// 어드민은 홈 콘텐츠를 다듬으며 미리 봐야 하므로 그대로 통과. /event(나라카증권)·/admin은 잠그지 않는다.
+// 공개할 때는 Vercel 환경 변수 SITE_OPEN=true 를 넣고 다시 배포한다.
+const COMING_SOON_PATH = "/coming-soon";
+
+export function isHomePath(pathname: string): boolean {
+  return !(
+    pathname === "/event" ||
+    pathname.startsWith("/event/") ||
+    pathname.startsWith("/admin") ||
+    pathname === COMING_SOON_PATH
+  );
+}
+
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get(SESSION_COOKIE_NAME)?.value;
   const session = token ? await verifySessionToken(token) : null;
+
+  if (process.env.SITE_OPEN !== "true" && !session?.isAdmin && isHomePath(pathname)) {
+    return NextResponse.rewrite(new URL(COMING_SOON_PATH, request.url));
+  }
 
   // 어드민 → 이벤트 방문자 페이지 대신 운영자 콘솔로 (카페 홈은 공용이라 예외)
   // "/event"·"/event/..."만 매칭 — "/events"(카페 홈 이벤트 탭)는 startsWith("/event")로 잘못 걸리므로 제외

@@ -19,9 +19,17 @@ export function AdminTopBar() {
         <Link href="/" className="font-semibold">
           나라카 콘솔
         </Link>
-        <Button size="sm" variant="ghost" onClick={logout} className="text-muted-foreground">
-          로그아웃
-        </Button>
+        <div className="flex items-center gap-1">
+          {/* 테이블 타이머: 직원용 별도 앱(naraka-table-timer, 별도 로그인) — 새 탭으로 연다 */}
+          <Button asChild size="sm" variant="outline">
+            <a href="https://timer.naraka.cafe" target="_blank" rel="noopener noreferrer">
+              테이블 타이머
+            </a>
+          </Button>
+          <Button size="sm" variant="ghost" onClick={logout} className="text-muted-foreground">
+            로그아웃
+          </Button>
+        </div>
       </div>
     </header>
   );
